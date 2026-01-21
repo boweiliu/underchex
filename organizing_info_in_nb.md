@@ -1,5 +1,3 @@
-Status: unreviewed
-
 Tags: #nb #knowledge-base #onboarding #workflow
 
 ## Goal
