@@ -65,5 +65,6 @@ LLM-generated docs should be clearly labeled with LLMS_ or *.llms.md.
  - `nb sync --all # note that raw nb sync fails for some reason`
  - To verify, run `git pull` and note that the branch now exists
 * direnv
+* AGENTS.md - i tested this with AGENTS.test.md and AGENTS.expected.md, you might as well just to check you are configuring things properly.
 
 * winow: Custom dev tool that wraps any agent in a tmux + a worktree and sends keystrokes into it. (Need to write this)
