@@ -56,6 +56,27 @@ Use conventional format:
 - `refactor:` code restructuring
 - `test:` test additions/changes
 
+**Agent Sign-off Required**: All commits made by AI agents MUST include a sign-off line in the commit message footer indicating:
+- The model used (e.g., `claude-sonnet-4`, `gpt-4o`, `claude-opus-4`)
+- The harness/tool used (e.g., `opencode`, `claude-code`, `codex`)
+
+Example commit message:
+```
+feat: add pawn promotion logic
+
+Implements promotion when pawns reach the far edge of the board.
+
+Signed-off-by: claude-sonnet-4 via opencode
+```
+
+### Documentation Updates
+
+When updating documentation files (README, AGENTS.md, design docs, etc.), agents MUST add a sign-off at the end of their changes or in the commit message indicating:
+- The model used
+- The harness/tool used
+
+This helps track which agent made what changes and enables better debugging and review.
+
 ### Git Workflow
 
 - Work on feature branches or use git worktrees for isolation
@@ -124,10 +145,23 @@ AI Agent Session Manager - launches agents in isolated tmux sessions with git wo
 - Python version managed via `.python-version`
 - Package management with `uv`
 
+## Finding Information
+
+Use the `nb` tool to look up information about topics you're unfamiliar with. The notebook contains project notes, design decisions, and reference material that may not be in the main docs.
+
+```bash
+nb search <topic>    # Search for notes on a topic
+nb list              # List available notebooks
+nb show <note>       # View a specific note
+```
+
+When encountering unfamiliar concepts or needing context, check `nb` before asking the user.
+
 ## Questions or Ambiguity
 
 When encountering ambiguous requirements:
 1. Check existing documentation (README, design docs)
-2. Look at similar patterns in the codebase
-3. Make a reasonable choice and document it
-4. Prefer reversible decisions
+2. Use `nb` to search for relevant notes and context
+3. Look at similar patterns in the codebase
+4. Make a reasonable choice and document it
+5. Prefer reversible decisions
