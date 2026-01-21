@@ -1,5 +1,5 @@
 # Project/Underchex - Reference - Structure
-Tags: #project #underchex #reference #structure
+Tags: #project #underchex #reference #structure #project-structure
 
 ## Overview
 
@@ -38,4 +38,4 @@ Shared test case format for cross-implementation validation. Example test case s
 Empty placeholder directories for each planned implementation.
 
 Signed-off-by: gpt-5 via codex
-
+Signed-off-by: gpt-5 via codex
