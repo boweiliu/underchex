@@ -1,7 +1,5 @@
 # NB - Debug - Remote Set
 
-# NB - Debug - Remote Set
-
 Tags: #nb #debug #git #remote
 
 ## Problem
