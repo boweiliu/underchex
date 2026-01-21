@@ -1,7 +1,3 @@
-# Git worktrees (UNDERCHEX)
-
-#git #worktrees #onboarding
-
 #git #worktrees #onboarding
 
 This guide is specific to this repo. It standardizes where worktrees live and how branches are named.
@@ -9,21 +5,28 @@ This guide is specific to this repo. It standardizes where worktrees live and ho
 ## Rules
 
 - Worktrees live under `.worktrees/` at the repo root.
-- Branch names must include the model + harness name (for example: `gpt-5-codex`, `claude-opus-4-claude-code`).
+- Branch names must include the model + harness name and use slashes.
+- Worktree folder names mirror the branch name but with slashes replaced by hyphens.
 - After initializing a new worktree, always run `direnv allow` inside it.
 
 ## Recommended naming format
 
-Use a short topic prefix followed by the model+harness string:
+Branch names should follow this pattern:
 
 ```
-<topic>-<model>-<harness>
+<harness>/<model>/<topic>/<area>/<detail>
 ```
 
-Example:
+Example branch name:
 
 ```
-feature-eval-gpt-5-codex
+opencode/sonnet/feature/winow/cli
+```
+
+Worktree folder name for that branch:
+
+```
+opencode-sonnet-feature-winow-cli
 ```
 
 ## Create a new worktree
@@ -32,8 +35,8 @@ From the repo root:
 
 ```bash
 mkdir -p .worktrees
-git worktree add .worktrees/<branch> -b <branch>
-cd .worktrees/<branch>
+git worktree add .worktrees/<worktree-folder> -b <branch>
+cd .worktrees/<worktree-folder>
 direnv allow
 ```
 
@@ -41,15 +44,15 @@ direnv allow
 
 ```bash
 mkdir -p .worktrees
-git worktree add .worktrees/<branch> <branch>
-cd .worktrees/<branch>
+git worktree add .worktrees/<worktree-folder> <branch>
+cd .worktrees/<worktree-folder>
 direnv allow
 ```
 
 ## Remove a worktree
 
 ```bash
-git worktree remove .worktrees/<branch>
+git worktree remove .worktrees/<worktree-folder>
 ```
 
 Signed-off-by: gpt-5 via codex
