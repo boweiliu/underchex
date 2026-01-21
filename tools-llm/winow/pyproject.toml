@@ -1,0 +1,7 @@
+[project]
+name = "winow"
+version = "0.1.0"
+description = "AI Agent Session Manager - launch coding agents in tmux with git worktrees"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []

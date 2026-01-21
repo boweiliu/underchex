@@ -14,3 +14,10 @@
 - Renamed the notebook branch to the desired mirror target:
   `git -C .nb_docs_repo/home branch -m docs/nb`
 - `nb remote` then reported `https://github.com/boweiliu/underchex.git (docs/nb)`.
+
+## Suspected root cause
+- `nb remote set` is interactive and prompts with `read -p "Proceed?"`.
+- When run without a TTY, the prompt fails; with `set -e`, the script exits
+  before it reaches `git remote add origin`, so no remote is written.
+- There is another prompt if the target branch does not exist on the remote
+  (choose merge vs orphan), which also fails in non-interactive runs.
