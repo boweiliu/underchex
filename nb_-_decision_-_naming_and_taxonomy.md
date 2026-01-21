@@ -1,3 +1,7 @@
+# NB - Decision - Naming and Taxonomy
+
+Tags: #nb #workflow #decision #knowledge-base
+
 ## Goal
 Standardize note titles so they are predictable, searchable, and easy to link.
 
