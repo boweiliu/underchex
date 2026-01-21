@@ -13,4 +13,3 @@ Entry point for worktree usage in this repo.
 - [[Project/Underchex - Hub]] - Underchex project hub.
 
 Signed-off-by: gpt-5 via codex
-Signed-off-by: gpt-5 via codex
