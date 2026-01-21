@@ -10,14 +10,13 @@ Entry point for nb-related notes in this repo.
 ## Notes
 - [[NB - Onboarding - Repo Notes]] - How to use nb commands
 - [[NB - Guide - Note Formatting]] - Note formatting guidelines
-- [[NB - Guide - Multiline Content via Heredoc]] - Using heredocs for multiline nb content
 - [[NB - Debug - Remote Set]] - Troubleshooting remote setup
 - [[NB - Decision - Naming and Taxonomy]] - Note naming conventions
 - [[NB - Decision - Knowledge Base Structure]] - Hub-and-links architecture
-- [[Worktrees - Hub]] - Worktree entry point and rules
 
 ## Related
 - `AGENTS.md` (repo root) - Agent guidelines and nb requirements
+- [[Project/Underchex - Hub]] - Underchex project hub
 
-Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code, claude-sonnet-4 via opencode
+Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code
 Signed-off-by: gpt-5 via codex
