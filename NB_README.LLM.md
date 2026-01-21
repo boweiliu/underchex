@@ -29,7 +29,7 @@ Use `nb search` to find notes about commands, scripts, or workflows.
 - Search for a command or keyword:
 
   ```sh
-  nb search codex --list
+  nb search '#codex' --list
   ```
 
 - Search within a specific notebook (replace `home` with the notebook name):
