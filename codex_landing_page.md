@@ -1,6 +1,6 @@
 # Codex - Hub
 
-#onboarding #codex
+# onboarding #codex
 
 Quick links: [[Codex - Reference - Config and Debugging]]
 
@@ -14,4 +14,8 @@ This is the landing page for Codex-related notes in this repo. Add generic usage
 ## Setup
 See [[Codex - Reference - Config and Debugging]] for the current setup instructions and config details.
 
+## Related
+- [[Project/Underchex - Hub]] - Underchex project hub.
+
+Signed-off-by: gpt-5 via codex
 Signed-off-by: gpt-5 via codex
