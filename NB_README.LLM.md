@@ -63,3 +63,23 @@ nb add --title "Codex usage" --tags onboarding,commands "Notes go here..."
 ```
 
 Keep command examples short and practical. The notebook is the source of truth for onboarding details.
+
+## Performance tips
+
+`auto_sync` is disabled to avoid network latency on every command:
+
+```sh
+nb settings set auto_sync 0
+```
+
+With `auto_sync=1`, every `nb` command triggers a git fetch/push, which adds noticeable delay. Instead, sync manually when needed:
+
+```sh
+nb sync
+```
+
+For fastest reads, you can also access files directly:
+
+```sh
+cat .nb_docs_repo/home/<filename>.md
+```
