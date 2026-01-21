@@ -1,9 +1,3 @@
-# Organizing info in nb
-
-#nb #knowledge-base #onboarding #workflow
-
-# Organizing info in nb
-
 Status: unreviewed
 
 Tags: #nb #knowledge-base #onboarding #workflow
@@ -17,7 +11,7 @@ Create small-sized docs that link to other docs rather than a single big one. Us
 - Start with a short hub note for a topic (1-2 screens). Link out to focused sub-notes for details.
 - Keep each sub-note scoped to one command, workflow, or decision.
 - Use consistent titles so links are predictable and search friendly.
-- Add #tags to every note so  can find the right entry quickly.
+- Add #tags to every note so `nb search` can find the right entry quickly.
 
 ## Structure
 
@@ -39,4 +33,3 @@ Create small-sized docs that link to other docs rather than a single big one. Us
 - Prefer editing existing notes over adding duplicates.
 
 Signed-off-by: gpt-5 via codex
-
