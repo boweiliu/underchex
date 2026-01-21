@@ -18,4 +18,3 @@ See [[Codex - Reference - Config and Debugging]] for the current setup instructi
 - [[Project/Underchex - Hub]] - Underchex project hub.
 
 Signed-off-by: gpt-5 via codex
-Signed-off-by: gpt-5 via codex
