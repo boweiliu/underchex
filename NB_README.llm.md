@@ -1,5 +1,7 @@
 # nb onboarding (repo notes)
 
+Tags: #nb #onboarding #commands #workflow
+
 This repo uses `nb` as a local note store for onboarding knowledge, command tips, and other project context. The goal is to keep long-form knowledge in `nb` and keep the repo light.
 
 ## Getting started
@@ -87,3 +89,5 @@ For fastest reads, you can also access files directly:
 ```sh
 cat .nb_docs_repo/home/<filename>.md
 ```
+
+Signed-off-by: gpt-5 via codex
