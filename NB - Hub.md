@@ -1,6 +1,6 @@
 # NB - Hub
 
-Tags: #nb #hub
+Tags: #nb #hub #knowledge-base
 
 ## Purpose
 Entry point for nb-related notes in this repo.
