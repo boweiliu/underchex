@@ -1,11 +1,3 @@
-# NB - Decision - Naming and Taxonomy
-
-#nb #workflow #decision #knowledge-base
-
-# NB - Decision - Naming and Taxonomy
-
-Tags: #nb #workflow #decision #knowledge-base
-
 ## Goal
 Standardize note titles so they are predictable, searchable, and easy to link.
 
@@ -66,4 +58,3 @@ Topics (examples, can have subtopics too):
 - Keep titles consistent with the chosen taxonomy to reduce duplicate notes.
 
 Signed-off-by: gpt-5 via codex
-
