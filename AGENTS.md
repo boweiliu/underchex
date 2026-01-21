@@ -1,6 +1,10 @@
 # AGENTS.md
 # Written by LLMs for LLMs
 
+## Documentation
+
+Most documentation for this repo lives in the `nb` CLI tool (a note-taking tool, NOT Jupyter/ipynb notebooks). Agents should consult `nb` when they need context about the project, design decisions, or implementation details. See the [Finding Information](#finding-information) section for usage.
+
 ## Project Overview
 
 **UNDERCHEX** is a hexagonal chess variant project featuring:
@@ -70,6 +74,12 @@ nb show <note>       # View a specific note
 ```
 
 When encountering unfamiliar concepts or needing context, **you MUST run `nb search #<topic>` and open the relevant notes before asking the user.**
+
+### Key NB Documentation
+
+Before editing nb notes, **read these documents first** (note: `nb` is a CLI note tool, NOT Jupyter/ipynb):
+
+- **[[NB - Hub]]**  - Entry point for nb-related notes. You MUST follow links here to find out other docs to read.
 
 ## Questions or Ambiguity
 
