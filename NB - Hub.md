@@ -1,3 +1,7 @@
+# NB - Hub
+
+Tags: #nb #hub
+
 ## Purpose
 Entry point for nb-related notes in this repo.
 
