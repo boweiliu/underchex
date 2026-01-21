@@ -21,3 +21,10 @@
   before it reaches `git remote add origin`, so no remote is written.
 - There is another prompt if the target branch does not exist on the remote
   (choose merge vs orphan), which also fails in non-interactive runs.
+
+## Noninteractive attempts (skipped for now)
+- `printf "2\n\n" | nb remote set https://github.com/boweiliu/underchex.git docs/nb --skip-confirmation`
+  printed the update banner, then `Exiting...`; remote unchanged.
+- `printf "2\n\n" | nb remote set https://github.com/boweiliu/underchex.git docs/nb --skip-preamble`
+  skipped the first prompt but still showed the branch-selection prompts and
+  timed out waiting for input; remote unchanged.

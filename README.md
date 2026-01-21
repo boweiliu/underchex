@@ -60,7 +60,10 @@ LLM-generated docs should be clearly labeled with LLMS_ or *.llms.md.
 * opencode
 * codex
 * claude code
-* nb
+* nb. Setup:
+ - `nb remote set git@github.com:boweiliu/underchex.git docs/nb`
+ - `nb sync --all # note that raw nb sync fails for some reason`
+ - To verify, run `git pull` and note that the branch now exists
 * direnv
 
 * winow: Custom dev tool that wraps any agent in a tmux + a worktree and sends keystrokes into it. (Need to write this)

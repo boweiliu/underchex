@@ -58,3 +58,60 @@ Possible causes:
 - CLI flags or env vars override config.toml (as of v0.20+)
 - Org-level `requirements.toml` enforcing restrictions
 - Need to restart codex after config changes
+
+## Test Results (2026-01-20)
+
+Tested with codex-cli 0.87.0.
+
+### Test 1: Simple command
+```bash
+codex exec "run ls in the current directory"
+```
+
+Output confirmed config applied:
+```
+approval: never
+sandbox: danger-full-access
+```
+Command ran without prompting.
+
+### Test 2: Network command (the original failure case)
+```bash
+codex exec "run: nb remote set https://github.com/example/test.git"
+```
+
+Output:
+```
+approval: never
+sandbox: danger-full-access
+...
+exec
+/bin/zsh -lc 'nb remote set https://github.com/example/test.git' in /Users/bowei/code/underchex exited 1
+```
+
+Command ran without prompting for approval. (Exit code 1 was because the test URL doesn't exist, not a permissions issue.)
+
+### Conclusion
+Fix confirmed working. The original config's wrong key names (`approval_mode`, `sandbox`) were being silently ignored, causing codex to use default approval behavior.
+
+```
+# Global auto-approval settings
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+
+# Original settings (commented out - may be from older codex version)
+# [sandbox_workspace_write]
+# network_access = true
+
+# [tool_approval]
+# mode = "auto"
+# allow = [
+#   "filesystem:*",
+#   "shell:*",
+#   "network:*",
+#   "git:*"
+# ]
+
+[projects."/Users/bowei/code/underchex"]
+trust_level = "trusted"
+```
