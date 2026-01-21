@@ -1,4 +1,3 @@
-
 # codex detailed usage and debugging
 
 Quick links: [[Codex landing page]]
@@ -8,8 +7,8 @@ Quick links: [[Codex landing page]]
 - `codex --full-auto`
 
 ## Config fixes applied (in `~/.codex/config.toml`)
-- `approval_mode` → `approval_policy`
-- `sandbox` → `sandbox_mode`
+- `approval_mode` -> `approval_policy`
+- `sandbox` -> `sandbox_mode`
 - Old sections were commented out because they are no longer in current docs:
   - `[sandbox_workspace_write]`
   - `[tool_approval]`
