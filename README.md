@@ -51,7 +51,11 @@ Build and reimplement in a couple different languages, all of which should be ab
 8. elixir server supporting telnet clients, nethack style
 
 
-## Dev tools
+## Development
+
+LLM-generated docs should be clearly labeled with LLMS_ or *.llms.md.
+
+### Tools
 
 * opencode
 * codex
