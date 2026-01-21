@@ -64,6 +64,10 @@ nb add --title "Codex usage" --tags onboarding,commands "Notes go here..."
 
 Keep command examples short and practical. The notebook is the source of truth for onboarding details.
 
+## Editing existing notes safely
+
+When using `nb edit --content`, include `--overwrite`. Without it, `nb` appends new content to the existing note, which can duplicate sections and leave stale links behind.
+
 ## Performance tips
 
 `auto_sync` is disabled to avoid network latency on every command:
