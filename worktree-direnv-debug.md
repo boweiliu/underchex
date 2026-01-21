@@ -1,4 +1,4 @@
-# worktree-direnv-debug
+# Worktrees/Direnv - Debug - NB_DIR
 
 #worktrees #direnv #debugging
 
@@ -36,7 +36,7 @@ This works correctly from:
 
 ## Related
 
-- [[git_worktrees_(underchex)]]
+- [[Project/Underchex - Onboarding - Worktrees]]
 
 Signed-off-by: claude-sonnet-4 via opencode
-
+Signed-off-by: gpt-5 via codex

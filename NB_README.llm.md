@@ -1,4 +1,4 @@
-# nb onboarding (repo notes)
+# NB - Onboarding - Repo Notes
 
 Tags: #nb #onboarding #commands #workflow
 
@@ -61,7 +61,7 @@ nb edit <id>
 Add new onboarding notes as you discover gaps, and tag them for searchability.
 
 ```sh
-nb add --title "Codex usage" --tags onboarding,commands "Notes go here..."
+nb add --title "Codex - Guide - Setup" --tags onboarding,commands "Notes go here..."
 ```
 
 Keep command examples short and practical. The notebook is the source of truth for onboarding details.

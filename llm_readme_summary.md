@@ -1,6 +1,6 @@
-# codex detailed usage and debugging
+# Codex - Reference - Config and Debugging
 
-Quick links: [[Codex landing page]]
+Quick links: [[Codex - Hub]]
 
 ## Key setup commands
 - `codex --ask-for-approval never`
@@ -60,3 +60,5 @@ sandbox_mode = "danger-full-access"
 [projects."/Users/bowei/code/underchex"]
 trust_level = "trusted"
 ```
+
+Signed-off-by: gpt-5 via codex

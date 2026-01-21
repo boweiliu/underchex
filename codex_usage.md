@@ -1,4 +1,6 @@
 
-# Codex usage (deprecated)
+# Codex - Deprecated
 
-This note is deprecated. Use [[Codex landing page]] instead.
+This note is deprecated. Use [[Codex - Hub]] instead.
+
+Signed-off-by: gpt-5 via codex

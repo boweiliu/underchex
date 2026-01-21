@@ -1,3 +1,5 @@
+# Project/Underchex - Onboarding - Worktrees
+
 #git #worktrees #onboarding
 
 This guide is specific to this repo. It standardizes where worktrees live and how branches are named.
@@ -116,6 +118,7 @@ git worktree remove .worktrees/<worktree-folder>
 
 ## Related
 
-- [[worktree-direnv-debug]] - Fixing direnv NB_DIR to point to root repo
+- [[Worktrees/Direnv - Debug - NB_DIR]] - Fixing direnv NB_DIR to point to root repo
 
 Signed-off-by: gpt-5 via codex, claude-sonnet-4 via opencode
+Signed-off-by: gpt-5 via codex

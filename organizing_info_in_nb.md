@@ -1,4 +1,4 @@
-# Organizing info in nb
+# NB - Decision - Knowledge Base Structure
 
 Status: unreviewed
 I've edited.
@@ -21,9 +21,9 @@ Create small-sized docs that link to other docs rather than a single big one. Us
 1. **Hub note**
    - Purpose, scope, and a short bullet list of linked sub-notes.
    - Example links:
-     - [[nb setup]]
-     - [[nb search tips]]
-     - [[nb sync workflow]]
+    - [[NB - Guide - Setup]]
+    - [[NB - Guide - Search Tips]]
+    - [[NB - Guide - Sync Workflow]]
 
 2. **Sub-notes**
    - One idea per note (ex: a command or workflow).

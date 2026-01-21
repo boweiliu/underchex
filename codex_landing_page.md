@@ -1,8 +1,8 @@
-# Codex landing page
+# Codex - Hub
 
 #onboarding #codex
 
-Quick links: [[codex detailed usage and debugging]]
+Quick links: [[Codex - Reference - Config and Debugging]]
 
 This is the landing page for Codex-related notes in this repo. Add generic usage tips, workflows, and links here; keep setup details in the detailed usage note.
 
@@ -12,4 +12,6 @@ This is the landing page for Codex-related notes in this repo. Add generic usage
 - Links to deeper notes (setup, tooling, integrations)
 
 ## Setup
-See [[codex detailed usage and debugging]] for the current setup instructions and config details.
+See [[Codex - Reference - Config and Debugging]] for the current setup instructions and config details.
+
+Signed-off-by: gpt-5 via codex
