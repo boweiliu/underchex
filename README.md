@@ -59,3 +59,4 @@ Build and reimplement in a couple different languages, all of which should be ab
 * nb
 * direnv
 
+* winow: Custom dev tool that wraps any agent in a tmux + a worktree and sends keystrokes into it. (Need to write this)
