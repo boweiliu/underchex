@@ -1,3 +1,8 @@
+# Organizing info in nb
+
+Status: unreviewed
+I've edited.
+
 Tags: #nb #knowledge-base #onboarding #workflow
 
 ## Goal
