@@ -57,6 +57,13 @@ Topics (examples, can have subtopics too):
 - Specific segment should be short; use Title Case or ALLCAPS for env vars.
 - Deprecated notes must include `- Deprecated` in the title AND in the body.
 
+## H1 heading requirement
+- **The H1 heading (`# Title`) is the canonical title** - `nb list` displays the H1 heading, not the filename.
+- Every note MUST have an H1 heading as the first line, followed by a Tags line.
+- The H1 heading must follow the naming convention above.
+- If a note lacks an H1 heading, nb falls back to the filename (including `.md` extension), which looks inconsistent.
+- Filenames may use underscores or other patterns for legacy reasons, but the H1 heading is what matters for display and linking.
+
 ## Notes
 - If a topic becomes large, keep the topic stable and extend the third segment.
 - Keep titles consistent with the chosen taxonomy to reduce duplicate notes.
