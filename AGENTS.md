@@ -81,6 +81,10 @@ Before editing nb notes, **read these documents first** (note: `nb` is a CLI not
 
 - **[[NB - Hub]]**  - Entry point for nb-related notes. You MUST follow links here to find out other docs to read.
 
+## Worktrees
+
+Before using any worktree commands, agents MUST check **[[Worktrees - Hub]]** first (very important!!).
+
 ## Questions or Ambiguity
 
 When encountering ambiguous requirements:
@@ -89,3 +93,5 @@ When encountering ambiguous requirements:
 3. Look at similar patterns in the codebase
 4. Make a reasonable choice and document it in nb
 5. Prefer reversible decisions
+
+Signed-off-by: gpt-5 via codex
