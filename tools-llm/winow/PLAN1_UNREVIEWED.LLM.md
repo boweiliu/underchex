@@ -6,124 +6,72 @@
 > 2. Write a spec for the cli interface. it should be very similar to the `docker` interface, like `winow start "blah prompt here"`, `winow ps`, `winow send "follow up prompt here"`, `winow attach <id>`.
 > 3. Have the spec pass peer review
 > 4. Implement the commands in the spec but have them be noops
+> 4.1. Clean up old code that is no longer relevant
+> 4.2. Make winow runnable from the repo root
+> 4.3. Add aliases: create<>start and ps<>list
 > 5. Start setting up a test framework - install necessary deps, write a failing and a passing test, etc.
 > 6. Write reasonable test flows
 
 ---
 
-## Current State
+## Current State (2026-01-21)
 
-- `main.py` - Empty stub
-- `pyproject.toml` - Basic project config, no deps
+**Completed through step 4.** Verification results in `PHASE1_VERIFICATION.LLM.md`.
+
+Files:
+- `winow/cli.py` - Click CLI with noop commands (start, ps, send, attach)
+- `winow/__init__.py` - Package init
+- `pyproject.toml` - Dependencies (click, rich) and entry point configured
 - `README.md` - Documents intended CLI interface
+- `main.py` - **OLD STUB - TO BE REMOVED**
 - Design doc at `../../WINOW.LLMS.md`
 
----
-
-## Phase 1: Dependencies & CLI Spec
-
-### 1.1 Add Dependencies
-
-```toml
-[project]
-dependencies = [
-    "click>=8.0",      # CLI framework
-    "rich>=13.0",      # Pretty terminal output
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
-    "pytest-mock>=3.0",
-]
-```
-
-Keep it minimal. No pydantic yet - start with dataclasses.
-
-### 1.2 CLI Spec (Docker-like)
-
-```bash
-winow start <agent> "<prompt>"   # Like `docker run`
-winow ps                         # Like `docker ps`
-winow send <session> "<msg>"     # Like `docker exec`
-winow attach <session>           # Like `docker attach`
-```
-
-**Review checkpoint**: Get spec approved before implementation.
+**Next steps**: 4.1-4.3 (cleanup, repo-root runnable, aliases), then Phase 3 (tests)
 
 ---
 
-## Phase 2: Skeleton Implementation (No-ops)
+## Phase 1-2: COMPLETED
 
-### 2.1 Module Structure
+See `PHASE1_VERIFICATION.LLM.md` for verification results.
 
-```
-tools-llm/winow/
-├── pyproject.toml
-├── README.md
-├── PLAN.human.md
-├── PLAN.LLM.md
-├── winow/
-│   ├── __init__.py
-│   ├── cli.py          # Click commands (entry point)
-│   ├── core.py         # Session operations (start, list, send, attach)
-│   ├── git.py          # Git worktree helpers
-│   ├── tmux.py         # Tmux helpers
-│   └── config.py       # Agent registry + paths
-└── tests/
-    ├── __init__.py
-    ├── conftest.py     # Fixtures
-    └── test_cli.py     # CLI integration tests
-```
+Summary:
+- Dependencies added (click>=8.0, rich>=13.0)
+- CLI spec implemented as noops
+- Entry point configured: `winow = "winow.cli:cli"`
+- All commands verified working: `--help`, `start`, `ps`, `send`, `attach`
 
-**Design principles**:
-- `cli.py` is thin - just Click decorators, delegates to `core.py`
-- `core.py` orchestrates git/tmux operations
-- `git.py` and `tmux.py` are pure wrappers around shell commands
-- `config.py` holds agent definitions and path conventions
+---
 
-### 2.2 Implement No-op Commands
+## Phase 2.5: Cleanup & Polish (NEW)
+
+### 2.5.1 Remove Old Code
+
+- [ ] Delete `main.py` (old stub, no longer used)
+
+### 2.5.2 Make Runnable from Repo Root
+
+Options:
+1. Add `tools-llm/winow` to PATH in `.envrc`
+2. Create a wrapper script at repo root
+3. Install as editable package in repo-level venv
+
+Recommended: Option 1 (PATH in .envrc)
+
+### 2.5.3 Add Command Aliases
 
 ```python
-# winow/cli.py
-import click
-
-@click.group()
-def cli():
-    """AI Agent Session Manager"""
-    pass
-
-@cli.command()
+# In cli.py - add aliases
+@cli.command('create')
 @click.argument('agent')
 @click.argument('prompt')
-def start(agent: str, prompt: str):
-    """Start a new agent session"""
-    click.echo(f"[noop] Would start {agent} with: {prompt}")
+def create(agent: str, prompt: str):
+    """Alias for 'start'"""
+    start.callback(agent, prompt)
 
-@cli.command()
-def ps():
-    """List active sessions"""
-    click.echo("[noop] Would list sessions")
-
-@cli.command()
-@click.argument('session')
-@click.argument('message')
-def send(session: str, message: str):
-    """Send message to a session"""
-    click.echo(f"[noop] Would send to {session}: {message}")
-
-@cli.command()
-@click.argument('session')
-def attach(session: str):
-    """Attach to a session"""
-    click.echo(f"[noop] Would attach to {session}")
-```
-
-### 2.3 Entry Point
-
-```toml
-[project.scripts]
-winow = "winow.cli:cli"
+@cli.command('list')
+def list_sessions():
+    """Alias for 'ps'"""
+    ps.callback()
 ```
 
 ---
@@ -478,16 +426,21 @@ def test_full_flow(temp_git_repo, monkeypatch):
 
 ## Task Checklist
 
-### Phase 1: Setup
-- [ ] Add click, rich to dependencies
-- [ ] Add pytest, pytest-mock to dev dependencies
-- [ ] Document CLI spec in README
+### Phase 1: Setup - COMPLETED
+- [x] Add click, rich to dependencies
+- [x] Add pytest, pytest-mock to dev dependencies
+- [x] Document CLI spec in README
 
-### Phase 2: Skeleton
-- [ ] Create `winow/` package structure
-- [ ] Implement no-op CLI commands
-- [ ] Add entry point to pyproject.toml
-- [ ] Verify `winow --help` works
+### Phase 2: Skeleton - COMPLETED
+- [x] Create `winow/` package structure
+- [x] Implement no-op CLI commands
+- [x] Add entry point to pyproject.toml
+- [x] Verify `winow --help` works
+
+### Phase 2.5: Cleanup & Polish - IN PROGRESS
+- [ ] Delete `main.py` (old stub)
+- [ ] Make winow runnable from repo root
+- [ ] Add aliases: `create` -> `start`, `list` -> `ps`
 
 ### Phase 3: Tests
 - [ ] Create tests/ directory with conftest.py
@@ -510,13 +463,13 @@ def test_full_flow(temp_git_repo, monkeypatch):
 
 ---
 
-## Open Questions
+## Open Questions (Resolved)
 
-1. **`ps` vs `list`**: Human plan says `ps` (docker-like), README says `list`. Recommend: use `ps` for docker consistency, alias `list` to it.
+1. **`ps` vs `list`**: ~~Human plan says `ps` (docker-like), README says `list`.~~ **RESOLVED**: Use both as aliases.
 
-2. **Worktree location**: `.worktrees/` in repo root? Add to `.gitignore`?
+2. **Worktree location**: `.worktrees/` in repo root - already in `.gitignore`.
 
-3. **Agent startup delay**: Hardcoded 2s or configurable?
+3. **Agent startup delay**: Hardcoded 2s or configurable? - Defer to Phase 4.
 
 ---
 
