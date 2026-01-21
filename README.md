@@ -29,6 +29,26 @@ We considered these pieces with 3-way symmetry, but they feel extremely weird du
 Y-rider: moves and takes along any of: NW, NE, S
 Charger: moves and takes along any of: N, SW, SE
 
+## Project scope
+
+1. Allow playing 2player hex chess games
+2. Allow quickly changing the rules of the game (size of board, location of starting pieces, functionality and rule set)
+3. Implement a chess playing AI using tree lookahead, alpha-beta pruning, and table base / positional lookup
+4. Implement some sort of self-play that allows us to recompute and refine the data fed into the runtime AI
+5. Figure out more about chess AIs and how they are designed & built.
+
+## Implementation
+
+Build and reimplement in a couple different languages, all of which should be able to communicate with each other:
+
+1. Typescript + html + react, visual website
+2. Raw html + js with no dependencies
+3. Python via a suitable GUI library
+4. Kotlin via a suitable java GUI
+5. Terminal via curses and raw C
+6. Terminal via native direct rendering
+7. rust compiling to wasm running in the browser
+8. elixir server supporting telnet clients, nethack style
 
 
 ## Dev tools
