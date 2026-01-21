@@ -14,8 +14,10 @@ Entry point for nb-related notes in this repo.
 - [[NB - Debug - Remote Set]] - Troubleshooting remote setup
 - [[NB - Decision - Naming and Taxonomy]] - Note naming conventions
 - [[NB - Decision - Knowledge Base Structure]] - Hub-and-links architecture
+- [[Worktrees - Hub]] - Worktree entry point and rules
 
 ## Related
 - `AGENTS.md` (repo root) - Agent guidelines and nb requirements
 
 Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code, claude-sonnet-4 via opencode
+Signed-off-by: gpt-5 via codex
