@@ -2,6 +2,8 @@
 
 Tags: #nb #onboarding #commands #workflow
 
+**For agents**: See `AGENTS.md` in the repo root for project guidelines and nb usage requirements.
+
 This repo uses `nb` as a local note store for onboarding knowledge, command tips, and other project context. The goal is to keep long-form knowledge in `nb` and keep the repo light.
 
 ## Getting started
@@ -68,7 +70,17 @@ Keep command examples short and practical. The notebook is the source of truth f
 
 ## Editing existing notes safely
 
-When using `nb edit --content`, include `--overwrite`. Without it, `nb` appends new content to the existing note, which can duplicate sections and leave stale links behind.
+**CRITICAL FOR AGENTS**: When using `nb edit --content`, you MUST include `--overwrite`. Without it, `nb` appends new content to the existing note, which creates duplicates.
+
+```sh
+# WRONG - appends and creates duplication:
+nb edit <id> --content "new content"
+
+# CORRECT - replaces content:
+nb edit <id> --content "new content" --overwrite
+```
+
+Failure to use `--overwrite` has caused duplicate content in notes. Always verify your edit didn't create duplication by running `nb show <id>` afterward.
 
 ## Performance tips
 
@@ -90,4 +102,9 @@ For fastest reads, you can also access files directly:
 cat .nb_docs_repo/home/<filename>.md
 ```
 
-Signed-off-by: gpt-5 via codex
+## Related
+- [[NB - Hub]] - Entry point for nb-related notes
+- [[NB - Decision - Naming and Taxonomy]] - Note naming conventions
+- `AGENTS.md` (repo root) - Agent guidelines and commit conventions
+
+Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code
