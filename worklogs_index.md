@@ -26,8 +26,10 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 18 - Cleanup]] - Documentation cleanup and project status summary.
 - [[Worklog - Agent 19 - Cleanup]] - Documentation cleanup and Python 3.9 compatibility fix.
 - [[Worklog - Agent 20 - Cleanup]] - Documentation cleanup and hub refactoring.
+- [[Worklog - Agent 21 - Rust WASM Implementation]] - Rust/WASM implementation for web.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
 
 Created-by: agent #20 claude-sonnet-4 via opencode 20260122T06:30:00
+Edited-by: agent #21 claude-sonnet-4 via opencode 20260122T06:45:00
