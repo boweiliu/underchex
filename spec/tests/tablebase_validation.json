@@ -1,0 +1,285 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Underchex Tablebase Validation Test Cases",
+  "version": "0.1.0",
+  
+  "description": "Cross-implementation test suite for endgame tablebase validation. Tests verify that all implementations produce consistent tablebase results for the same positions.",
+  
+  "testCases": [
+    {
+      "id": "tb_config_001",
+      "description": "KvK configuration detection - two kings only",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KvK", "supported": true}
+    },
+    {
+      "id": "tb_config_002",
+      "description": "KQvK configuration detection - white queen",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KQvK", "supported": true}
+    },
+    {
+      "id": "tb_config_003",
+      "description": "KQvK configuration detection - black queen",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "black", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KQvK", "supported": true}
+    },
+    {
+      "id": "tb_config_004",
+      "description": "KLvK configuration detection - lance",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "lance", "color": "white", "q": 2, "r": 0, "variant": "A"},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KLvK", "supported": true}
+    },
+    {
+      "id": "tb_config_005",
+      "description": "KCvK configuration detection - chariot",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "chariot", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KCvK", "supported": true}
+    },
+    {
+      "id": "tb_config_006",
+      "description": "KNvK configuration detection - knight",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "knight", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"config": "KNvK", "supported": true}
+    },
+    {
+      "id": "tb_config_007",
+      "description": "Complex position not supported by tablebase",
+      "type": "tablebaseConfig",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "white", "q": 2, "r": 0},
+          {"piece": "queen", "color": "white", "q": 1, "r": 0},
+          {"piece": "queen", "color": "white", "q": -1, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ]
+      },
+      "expected": {"supported": false}
+    },
+    
+    {
+      "id": "tb_wdl_001",
+      "description": "KvK is always a draw",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "draw"}
+    },
+    {
+      "id": "tb_wdl_002",
+      "description": "KvK is draw for black too",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ],
+        "turn": "black"
+      },
+      "expected": {"wdl": "draw"}
+    },
+    {
+      "id": "tb_wdl_003",
+      "description": "KQvK - queen side to move is winning",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "win"}
+    },
+    {
+      "id": "tb_wdl_004",
+      "description": "KQvK - lone king to move is losing",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "black"
+      },
+      "expected": {"wdl": "loss"}
+    },
+    {
+      "id": "tb_wdl_005",
+      "description": "KQvK - checkmate position (DTM=0)",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 2},
+          {"piece": "queen", "color": "white", "q": 0, "r": -3},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "black"
+      },
+      "expected": {"wdl": "loss", "dtm": 0}
+    },
+    {
+      "id": "tb_wdl_006",
+      "description": "KNvK - knight alone cannot checkmate (draw)",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "knight", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "draw"}
+    },
+    {
+      "id": "tb_wdl_007",
+      "description": "KLvK - lance with good position is winning",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "lance", "color": "white", "q": 0, "r": -2, "variant": "A"},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "win"}
+    },
+    {
+      "id": "tb_wdl_008",
+      "description": "KCvK - chariot with good position is winning",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "chariot", "color": "white", "q": 2, "r": -2},
+          {"piece": "king", "color": "black", "q": 3, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "win"}
+    },
+    
+    {
+      "id": "tb_move_001",
+      "description": "KQvK - tablebase returns a move that maintains win",
+      "type": "tablebaseMove",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "white", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "expected": {"hasMove": true, "preservesWin": true}
+    },
+    {
+      "id": "tb_move_002",
+      "description": "KvK - no winning move available (draw)",
+      "type": "tablebaseMove",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": -3}
+        ],
+        "turn": "white"
+      },
+      "expected": {"hasMove": false}
+    },
+    
+    {
+      "id": "tb_stalemate_001",
+      "description": "Stalemate is a draw",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 3},
+          {"piece": "queen", "color": "white", "q": 1, "r": -4},
+          {"piece": "king", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "black"
+      },
+      "expected": {"wdl": "draw", "dtm": -1}
+    },
+    
+    {
+      "id": "tb_symmetric_001",
+      "description": "Position is symmetric - black queen vs white king",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 4},
+          {"piece": "queen", "color": "black", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": 0}
+        ],
+        "turn": "black"
+      },
+      "expected": {"wdl": "win"}
+    },
+    {
+      "id": "tb_symmetric_002",
+      "description": "Position is symmetric - white king defending",
+      "type": "tablebaseWDL",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 4},
+          {"piece": "queen", "color": "black", "q": 2, "r": 0},
+          {"piece": "king", "color": "black", "q": 0, "r": 0}
+        ],
+        "turn": "white"
+      },
+      "expected": {"wdl": "loss"}
+    }
+  ]
+}
