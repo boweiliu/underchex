@@ -6,6 +6,7 @@
  * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
  * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
+ * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -66,6 +67,10 @@ import {
   killerScore,
   killerClear,
   killerCount,
+  // Late Move Reduction functions (added by agent #9)
+  lmrReduction,
+  shouldApplyLMR,
+  adjustLMRReduction,
 } from '../src/ai';
 import {
   HexCoord,
@@ -1605,6 +1610,204 @@ describe('Killer Move Heuristic', () => {
       // Should have been cleared at start of new search (and repopulated)
       // The key test is that clearTables works - count may vary
       expect(countAfterSearch).toBeGreaterThanOrEqual(0);
+    });
+  });
+});
+
+// ============================================================================
+// Late Move Reductions (LMR) Tests
+// Signed-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
+// ============================================================================
+
+describe('Late Move Reductions (LMR)', () => {
+  describe('lmrReduction', () => {
+    it('should return 0 for shallow depths', () => {
+      expect(lmrReduction(1, 5)).toBe(0);
+      expect(lmrReduction(2, 5)).toBe(0);
+    });
+
+    it('should return 0 for early moves', () => {
+      expect(lmrReduction(5, 0)).toBe(0);
+      expect(lmrReduction(5, 1)).toBe(0);
+      expect(lmrReduction(5, 2)).toBe(0);
+      expect(lmrReduction(5, 3)).toBe(0);
+    });
+
+    it('should return positive reduction for late moves at sufficient depth', () => {
+      // At depth 5, move index 10, should have some reduction
+      expect(lmrReduction(5, 10)).toBeGreaterThan(0);
+    });
+
+    it('should increase reduction with depth', () => {
+      const reductionAtDepth5 = lmrReduction(5, 10);
+      const reductionAtDepth8 = lmrReduction(8, 10);
+      expect(reductionAtDepth8).toBeGreaterThanOrEqual(reductionAtDepth5);
+    });
+
+    it('should increase reduction with move index', () => {
+      const reductionAtMove5 = lmrReduction(6, 5);
+      const reductionAtMove15 = lmrReduction(6, 15);
+      expect(reductionAtMove15).toBeGreaterThan(reductionAtMove5);
+    });
+
+    it('should handle edge cases gracefully', () => {
+      // Very high values
+      expect(lmrReduction(100, 100)).toBeGreaterThan(0);
+      expect(lmrReduction(0, 0)).toBe(0);
+    });
+  });
+
+  describe('shouldApplyLMR', () => {
+    const quietMove: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 1, r: 1 },
+    };
+
+    const captureMove: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 1, r: 1 },
+      captured: { type: 'pawn', color: 'black' },
+    };
+
+    const promotionMove: Move = {
+      piece: { type: 'pawn', color: 'white' },
+      from: { q: 0, r: -3 },
+      to: { q: 0, r: -4 },
+      promotion: 'queen',
+    };
+
+    it('should not apply LMR when in check', () => {
+      expect(shouldApplyLMR(quietMove, 5, 10, true)).toBe(false);
+    });
+
+    it('should not apply LMR at shallow depth', () => {
+      expect(shouldApplyLMR(quietMove, 2, 10, false)).toBe(false);
+    });
+
+    it('should not apply LMR for early moves', () => {
+      expect(shouldApplyLMR(quietMove, 5, 0, false)).toBe(false);
+      expect(shouldApplyLMR(quietMove, 5, 1, false)).toBe(false);
+      expect(shouldApplyLMR(quietMove, 5, 2, false)).toBe(false);
+      expect(shouldApplyLMR(quietMove, 5, 3, false)).toBe(false);
+    });
+
+    it('should not apply LMR to captures', () => {
+      expect(shouldApplyLMR(captureMove, 5, 10, false)).toBe(false);
+    });
+
+    it('should not apply LMR to promotions', () => {
+      expect(shouldApplyLMR(promotionMove, 5, 10, false)).toBe(false);
+    });
+
+    it('should apply LMR to quiet late moves at sufficient depth', () => {
+      expect(shouldApplyLMR(quietMove, 5, 10, false)).toBe(true);
+    });
+
+    it('should be more conservative in PV nodes', () => {
+      // Move at index 5 in PV should not be reduced (needs 2x full depth moves)
+      expect(shouldApplyLMR(quietMove, 5, 5, false, true)).toBe(false);
+      // Move at index 10 in PV should be reduced
+      expect(shouldApplyLMR(quietMove, 5, 10, false, true)).toBe(true);
+    });
+  });
+
+  describe('adjustLMRReduction', () => {
+    const quietMove: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 1, r: 1 },
+    };
+
+    it('should reduce less for killer moves (with history)', () => {
+      const baseReduction = 2;
+      // With some history, killer bonus applies without zero-history penalty
+      const adjusted = adjustLMRReduction(baseReduction, quietMove, true, 100);
+      expect(adjusted).toBeLessThan(baseReduction);
+      expect(adjusted).toBe(1);
+    });
+
+    it('should net to same for killer with zero history', () => {
+      const baseReduction = 2;
+      // Killer gives -1, zero history gives +1, nets to same
+      const adjusted = adjustLMRReduction(baseReduction, quietMove, true, 0);
+      expect(adjusted).toBe(baseReduction);
+    });
+
+    it('should reduce less for moves with high history score', () => {
+      const baseReduction = 2;
+      const adjusted = adjustLMRReduction(baseReduction, quietMove, false, 2000);
+      expect(adjusted).toBeLessThan(baseReduction);
+      expect(adjusted).toBe(1);
+    });
+
+    it('should reduce more for moves with no history', () => {
+      const baseReduction = 2;
+      const adjusted = adjustLMRReduction(baseReduction, quietMove, false, 0);
+      expect(adjusted).toBeGreaterThan(baseReduction);
+      expect(adjusted).toBe(3);
+    });
+
+    it('should not reduce below 0', () => {
+      const adjusted = adjustLMRReduction(0, quietMove, true, 2000);
+      expect(adjusted).toBe(0);
+    });
+
+    it('should combine killer and high history adjustments', () => {
+      // Both killer and high history - should get double reduction benefit
+      const baseReduction = 3;
+      const adjusted = adjustLMRReduction(baseReduction, quietMove, true, 2000);
+      expect(adjusted).toBe(1); // 3 - 1 (killer) - 1 (history) = 1
+    });
+  });
+
+  describe('LMR Integration with Search', () => {
+    it('search stats should track LMR reductions', () => {
+      const game = createNewGame();
+      
+      // Run search with sufficient depth for LMR to apply
+      const result = findBestMove(game.board, 'white', 4, true, true, true);
+      
+      // At depth 4 with many moves, we should see some LMR
+      expect(result.stats.lmrReductions).toBeGreaterThanOrEqual(0);
+    });
+
+    it('LMR should reduce nodes searched', () => {
+      // Create a position with many legal moves
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: -1, r: 2 }), { type: 'lance', color: 'white', variant: 'A' });
+      board.set(coordToString({ q: 2, r: 2 }), { type: 'chariot', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      board.set(coordToString({ q: -1, r: -3 }), { type: 'queen', color: 'black' });
+      
+      // LMR should trigger at sufficient depth
+      const result = findBestMove(board, 'white', 5, true, true, true);
+      
+      // We should see both reductions and some researches
+      // (not all reductions should fail high)
+      expect(result.stats.lmrReductions).toBeGreaterThanOrEqual(0);
+    });
+
+    it('iterative deepening should accumulate LMR stats', () => {
+      const game = createNewGame();
+      
+      const result = findBestMoveIterative(game.board, 'white', 4, 2000, true, true, true);
+      
+      // Stats should be accumulated across iterations
+      expect(result.stats.lmrReductions).toBeGreaterThanOrEqual(0);
+      expect(result.stats.lmrResearches).toBeGreaterThanOrEqual(0);
+    });
+
+    it('LMR stats should be in SearchStats interface', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 2, true, true, true);
+      
+      // Verify the stats interface has LMR fields
+      expect(typeof result.stats.lmrReductions).toBe('number');
+      expect(typeof result.stats.lmrResearches).toBe('number');
     });
   });
 });

@@ -155,6 +155,10 @@ export {
   killerScore,
   killerClear,
   killerCount,
+  // Late Move Reductions exports (added by agent #9)
+  lmrReduction,
+  shouldApplyLMR,
+  adjustLMRReduction,
 } from './ai';
 
 // Re-export self-play

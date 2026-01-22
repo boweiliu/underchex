@@ -14,12 +14,14 @@
  * - Null Move Pruning for faster search (added by agent #7)
  * - History Heuristic for improved move ordering (added by agent #7)
  * - Killer Move Heuristic for improved move ordering at each ply (added by agent #8)
+ * - Late Move Reductions (LMR) for faster search with adaptive reduction (added by agent #9)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
  * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
+ * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  */
 
 import {
@@ -677,6 +679,167 @@ export function shouldTryNullMove(
 }
 
 // ============================================================================
+// Late Move Reductions (LMR)
+// ============================================================================
+
+/**
+ * Late Move Reductions (LMR) is a search optimization technique.
+ * 
+ * Idea: Moves that appear later in the move ordering are less likely to be good.
+ * Instead of searching them at full depth, we search with reduced depth first.
+ * If the reduced search suggests the move might be good (fails high), we re-search
+ * at full depth to verify.
+ * 
+ * Conditions for LMR:
+ * - Not in check (need full depth to escape check)
+ * - Not a capture or promotion (tactical moves need full depth)
+ * - Sufficient depth remaining (LMR at low depth is wasteful)
+ * - Move is late enough in the move list (first few moves need full depth)
+ * 
+ * The reduction amount is typically log-based: R = log(depth) * log(moveIndex)
+ * This means deeper searches and later moves get more reduction.
+ * 
+ * Signed-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
+ */
+
+/**
+ * Minimum depth required to apply LMR.
+ */
+const LMR_MIN_DEPTH = 3;
+
+/**
+ * Minimum move index to apply LMR (first N moves searched at full depth).
+ * The first few moves (typically hash move, killers, good captures) shouldn't be reduced.
+ */
+const LMR_FULL_DEPTH_MOVES = 4;
+
+/**
+ * Pre-computed LMR reduction table.
+ * Using log-based formula: reduction = floor(ln(depth) * ln(moveIndex) / 2)
+ * Max reduction is capped at depth - 1 (must search at least depth 1).
+ */
+const LMR_MAX_DEPTH = 64;
+const LMR_MAX_MOVES = 64;
+
+/**
+ * LMR reduction table: [depth][moveIndex] -> reduction amount
+ */
+const lmrTable: number[][] = [];
+
+/**
+ * Initialize LMR reduction table with log-based values.
+ */
+function initLMRTable(): void {
+  for (let depth = 0; depth < LMR_MAX_DEPTH; depth++) {
+    lmrTable[depth] = [];
+    for (let move = 0; move < LMR_MAX_MOVES; move++) {
+      if (depth < LMR_MIN_DEPTH || move < LMR_FULL_DEPTH_MOVES) {
+        lmrTable[depth]![move] = 0;
+      } else {
+        // Standard log-based LMR formula
+        // Divide by 2.0 to be slightly conservative
+        const reduction = Math.floor(
+          Math.log(depth) * Math.log(move) / 2.0
+        );
+        // Cap reduction at depth - 1 (must search at least 1 ply)
+        lmrTable[depth]![move] = Math.min(reduction, depth - 1);
+      }
+    }
+  }
+}
+
+// Initialize the table on module load
+initLMRTable();
+
+/**
+ * Get LMR reduction amount for a given depth and move index.
+ * 
+ * @param depth Current search depth
+ * @param moveIndex Index of move in ordered move list (0-based)
+ * @returns Number of plies to reduce by
+ */
+export function lmrReduction(depth: number, moveIndex: number): number {
+  if (depth >= LMR_MAX_DEPTH) depth = LMR_MAX_DEPTH - 1;
+  if (moveIndex >= LMR_MAX_MOVES) moveIndex = LMR_MAX_MOVES - 1;
+  return lmrTable[depth]?.[moveIndex] ?? 0;
+}
+
+/**
+ * Check if LMR should be applied to a move.
+ * 
+ * @param move The move to check
+ * @param depth Current search depth
+ * @param moveIndex Index in the ordered move list
+ * @param inCheck Whether the moving side is in check
+ * @param isPV Whether this is a principal variation node
+ * @returns true if LMR should be applied
+ */
+export function shouldApplyLMR(
+  move: Move,
+  depth: number,
+  moveIndex: number,
+  inCheck: boolean,
+  isPV: boolean = false
+): boolean {
+  // Don't reduce in check - need full depth to escape
+  if (inCheck) return false;
+  
+  // Don't reduce at shallow depths
+  if (depth < LMR_MIN_DEPTH) return false;
+  
+  // Don't reduce first few moves (best candidates)
+  if (moveIndex < LMR_FULL_DEPTH_MOVES) return false;
+  
+  // Don't reduce captures (tactical)
+  if (move.captured) return false;
+  
+  // Don't reduce promotions (tactical)
+  if (move.promotion) return false;
+  
+  // More conservative in PV nodes
+  if (isPV && moveIndex < LMR_FULL_DEPTH_MOVES * 2) return false;
+  
+  return true;
+}
+
+/**
+ * Adjust LMR reduction based on various factors.
+ * Can increase or decrease the base reduction.
+ * 
+ * @param baseReduction The base reduction from lmrReduction()
+ * @param move The move being reduced
+ * @param isKiller Whether this is a killer move
+ * @param historyScore The history heuristic score for this move
+ * @returns Adjusted reduction amount
+ */
+export function adjustLMRReduction(
+  baseReduction: number,
+  move: Move,
+  isKiller: boolean,
+  historyScoreValue: number
+): number {
+  let reduction = baseReduction;
+  
+  // Reduce less for killer moves (they've caused cutoffs before)
+  if (isKiller) {
+    reduction = Math.max(0, reduction - 1);
+  }
+  
+  // Reduce less for moves with high history scores
+  // Threshold is somewhat arbitrary but tuned for typical history values
+  if (historyScoreValue > 1000) {
+    reduction = Math.max(0, reduction - 1);
+  }
+  
+  // Reduce more for moves with very low history
+  if (historyScoreValue === 0 && baseReduction > 0) {
+    reduction = Math.min(reduction + 1, LMR_MAX_DEPTH - 1);
+  }
+  
+  return reduction;
+}
+
+// ============================================================================
 // Piece-Square Tables (PST)
 // ============================================================================
 
@@ -1215,6 +1378,8 @@ export interface SearchStats {
   quiescenceNodes: number;
   nullMoveCutoffs: number;
   nullMoveAttempts: number;
+  lmrReductions: number;
+  lmrResearches: number;
 }
 
 /**
@@ -1366,9 +1531,51 @@ function alphaBeta(
   if (maximizing) {
     let maxEval = -Infinity;
     
-    for (const move of orderedMoves) {
+    for (let moveIndex = 0; moveIndex < orderedMoves.length; moveIndex++) {
+      const move = orderedMoves[moveIndex]!;
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      
+      let evalScore: number;
+      
+      // Late Move Reductions (LMR)
+      // Search late moves with reduced depth first
+      if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
+        const baseReduction = lmrReduction(depth, moveIndex);
+        const isKiller = isKillerMove(move, ply);
+        const histScore = historyScore(move);
+        const reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+        
+        if (reduction > 0) {
+          stats.lmrReductions++;
+          // Reduced depth search with null window
+          const reducedDepth = depth - 1 - reduction;
+          evalScore = alphaBeta(
+            newBoard, 
+            Math.max(1, reducedDepth), // At least depth 1
+            alpha, 
+            alpha + 1, // Null window
+            false, 
+            stats, 
+            ply + 1, 
+            useTT, 
+            useQuiescence, 
+            useNullMove, 
+            false
+          );
+          
+          // If reduced search fails high, re-search at full depth
+          if (evalScore > alpha) {
+            stats.lmrResearches++;
+            evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+          }
+        } else {
+          // No reduction (LMR conditions not met or reduction is 0)
+          evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+        }
+      } else {
+        // No LMR - search at full depth
+        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      }
       
       if (evalScore > maxEval) {
         maxEval = evalScore;
@@ -1399,9 +1606,51 @@ function alphaBeta(
   } else {
     let minEval = Infinity;
     
-    for (const move of orderedMoves) {
+    for (let moveIndex = 0; moveIndex < orderedMoves.length; moveIndex++) {
+      const move = orderedMoves[moveIndex]!;
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      
+      let evalScore: number;
+      
+      // Late Move Reductions (LMR)
+      // Search late moves with reduced depth first
+      if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
+        const baseReduction = lmrReduction(depth, moveIndex);
+        const isKiller = isKillerMove(move, ply);
+        const histScore = historyScore(move);
+        const reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+        
+        if (reduction > 0) {
+          stats.lmrReductions++;
+          // Reduced depth search with null window
+          const reducedDepth = depth - 1 - reduction;
+          evalScore = alphaBeta(
+            newBoard, 
+            Math.max(1, reducedDepth), // At least depth 1
+            beta - 1, // Null window
+            beta, 
+            true, 
+            stats, 
+            ply + 1, 
+            useTT, 
+            useQuiescence, 
+            useNullMove, 
+            false
+          );
+          
+          // If reduced search fails low, re-search at full depth
+          if (evalScore < beta) {
+            stats.lmrResearches++;
+            evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+          }
+        } else {
+          // No reduction (LMR conditions not met or reduction is 0)
+          evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+        }
+      } else {
+        // No LMR - search at full depth
+        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      }
       
       if (evalScore < minEval) {
         minEval = evalScore;
@@ -1461,6 +1710,8 @@ export function findBestMove(
     quiescenceNodes: 0,
     nullMoveCutoffs: 0,
     nullMoveAttempts: 0,
+    lmrReductions: 0,
+    lmrResearches: 0,
   };
   
   // Clear killer moves at start of new search
@@ -1566,6 +1817,8 @@ export function findBestMoveIterative(
       quiescenceNodes: 0,
       nullMoveCutoffs: 0,
       nullMoveAttempts: 0,
+      lmrReductions: 0,
+      lmrResearches: 0,
     } 
   };
   
@@ -1576,6 +1829,8 @@ export function findBestMoveIterative(
   let totalQNodes = 0;
   let totalNullCutoffs = 0;
   let totalNullAttempts = 0;
+  let totalLMRReductions = 0;
+  let totalLMRResearches = 0;
   
   // Get initial moves quickly at depth 1
   // clearKillers=true for first iteration
@@ -1587,6 +1842,8 @@ export function findBestMoveIterative(
   totalQNodes += initialResult.stats.quiescenceNodes;
   totalNullCutoffs += initialResult.stats.nullMoveCutoffs;
   totalNullAttempts += initialResult.stats.nullMoveAttempts;
+  totalLMRReductions += initialResult.stats.lmrReductions;
+  totalLMRResearches += initialResult.stats.lmrResearches;
   
   for (let depth = 2; depth <= maxDepth; depth++) {
     const elapsed = Date.now() - startTime;
@@ -1612,6 +1869,8 @@ export function findBestMoveIterative(
     totalQNodes += result.stats.quiescenceNodes;
     totalNullCutoffs += result.stats.nullMoveCutoffs;
     totalNullAttempts += result.stats.nullMoveAttempts;
+    totalLMRReductions += result.stats.lmrReductions;
+    totalLMRResearches += result.stats.lmrResearches;
     
     // If we found a winning move, stop searching
     if (Math.abs(result.score) > CHECKMATE_VALUE - 1000) {
@@ -1626,6 +1885,8 @@ export function findBestMoveIterative(
   bestResult.stats.quiescenceNodes = totalQNodes;
   bestResult.stats.nullMoveCutoffs = totalNullCutoffs;
   bestResult.stats.nullMoveAttempts = totalNullAttempts;
+  bestResult.stats.lmrReductions = totalLMRReductions;
+  bestResult.stats.lmrResearches = totalLMRResearches;
   
   return bestResult;
 }
@@ -1678,6 +1939,8 @@ export function getAIMove(
         quiescenceNodes: 0,
         nullMoveCutoffs: 0,
         nullMoveAttempts: 0,
+        lmrReductions: 0,
+        lmrResearches: 0,
       } 
     };
   }
