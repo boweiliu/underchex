@@ -594,10 +594,19 @@ def find_best_move_iterative(
 AIDifficulty = Literal["easy", "medium", "hard"]
 
 
+@dataclass
+class AIOptions:
+    """Options for AI move selection."""
+    use_opening_book: bool = False
+    book_temperature: float = 1.0
+    book_min_play_count: int = 3
+
+
 def get_ai_move(
     board: BoardState,
     color: Color,
-    difficulty: AIDifficulty = "medium"
+    difficulty: AIDifficulty = "medium",
+    options: Optional[AIOptions] = None
 ) -> SearchResult:
     """
     Get AI move based on difficulty level.
@@ -605,7 +614,29 @@ def get_ai_move(
     - easy: depth 2, no quiescence
     - medium: depth 4, with quiescence
     - hard: depth 6, with quiescence, iterative deepening
+    
+    If options.use_opening_book is True, will check opening book first.
     """
+    # Check opening book if enabled
+    if options is not None and options.use_opening_book:
+        # Import here to avoid circular import
+        from .openingbook import lookup_book_move, BookLookupOptions
+        
+        book_options = BookLookupOptions(
+            min_play_count=options.book_min_play_count,
+            temperature=options.book_temperature,
+            use_win_rate_weight=True,
+        )
+        book_result = lookup_book_move(board, color, book_options)
+        
+        if book_result.move is not None:
+            # Return book move with zero-node search stats
+            return SearchResult(
+                move=book_result.move,
+                score=0,  # Unknown score from book
+                stats=SearchStats(nodes_searched=0)
+            )
+    
     if difficulty == "easy":
         return find_best_move(board, color, depth=2, use_quiescence=False)
     elif difficulty == "medium":
