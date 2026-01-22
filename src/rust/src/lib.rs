@@ -4,19 +4,28 @@
 //! designed as a "downgrade" from 8-way to 6-way movement.
 //!
 //! Signed-by: agent #21 claude-sonnet-4 via opencode 20260122T06:31:01
+//! Edited-by: agent #22 claude-sonnet-4 via opencode 20260122T06:43:39 (added AI module)
 
+pub mod ai;
 pub mod board;
 pub mod game;
 pub mod moves;
 pub mod types;
 
+use std::sync::Mutex;
 use wasm_bindgen::prelude::*;
 
 // Re-export main types for convenience
+pub use ai::*;
 pub use board::*;
 pub use game::*;
 pub use moves::*;
 pub use types::*;
+
+// Global transposition table for WASM (wrapped in Mutex for thread safety)
+lazy_static::lazy_static! {
+    static ref GLOBAL_TT: Mutex<ai::TranspositionTable> = Mutex::new(ai::TranspositionTable::new(50000));
+}
 
 // ============================================================================
 // WASM Bindings
@@ -121,6 +130,66 @@ impl WasmGame {
             }
         }
         "[]".to_string()
+    }
+
+    /// Get AI move for the current player.
+    /// Difficulty: "easy", "medium", or "hard"
+    /// Returns JSON with { from: [q, r], to: [q, r], score: number } or null if no move.
+    pub fn get_ai_move(&self, difficulty: &str) -> String {
+        let diff = match difficulty {
+            "easy" => ai::AIDifficulty::Easy,
+            "hard" => ai::AIDifficulty::Hard,
+            _ => ai::AIDifficulty::Medium,
+        };
+
+        let mut tt = GLOBAL_TT.lock().unwrap();
+        let result = ai::get_ai_move(&self.state.board, self.state.turn, diff, &mut tt);
+
+        if let Some(mv) = result.best_move {
+            serde_json::json!({
+                "from": [mv.from.q, mv.from.r],
+                "to": [mv.to.q, mv.to.r],
+                "score": result.score,
+                "nodes": result.stats.nodes_searched,
+            })
+            .to_string()
+        } else {
+            "null".to_string()
+        }
+    }
+
+    /// Make the AI move for the current player.
+    /// Returns true if a move was made, false if no legal moves.
+    pub fn make_ai_move(&mut self, difficulty: &str) -> bool {
+        let diff = match difficulty {
+            "easy" => ai::AIDifficulty::Easy,
+            "hard" => ai::AIDifficulty::Hard,
+            _ => ai::AIDifficulty::Medium,
+        };
+
+        let mut tt = GLOBAL_TT.lock().unwrap();
+        let result = ai::get_ai_move(&self.state.board, self.state.turn, diff, &mut tt);
+
+        if let Some(mv) = result.best_move {
+            if let Some(new_state) = make_move(&self.state, mv.from, mv.to) {
+                self.state = new_state;
+                return true;
+            }
+        }
+        false
+    }
+
+    /// Clear the AI transposition table (useful when starting a new game).
+    pub fn clear_ai_cache(&self) {
+        if let Ok(mut tt) = GLOBAL_TT.lock() {
+            tt.clear();
+        }
+    }
+
+    /// Get the static evaluation of the current position.
+    /// Returns score from white's perspective in centipawns.
+    pub fn evaluate(&self) -> i32 {
+        ai::evaluate_position(&self.state.board)
     }
 }
 
