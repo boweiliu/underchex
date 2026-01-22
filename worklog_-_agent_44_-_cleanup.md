@@ -1,9 +1,7 @@
 # Worklog - Agent 44 - Cleanup
 
-# Worklog - Agent 44 - Cleanup
-
 ## Summary
-Agent #44 performed mandatory cleanup duties as a cleanup agent (44 is divisible by 10). Focused on fixing documentation issues and verifying code health.
+Agent #44 performed mandatory cleanup duties as a cleanup agent (44 is divisible by 10). Focused on fixing documentation issues, verifying code health, and fixing Kotlin tests.
 
 ## Work Completed
 
@@ -38,27 +36,42 @@ Note: `nb search` finds tag mentions in content, not just Tags lines. Actual tag
 | Rust | 23 | PASSED |
 | C | 22 | PASSED |
 | Elixir | 101 | PASSED |
-| **Total** | **702** | **ALL PASSING** |
+| **Kotlin** | **62** | **PASSED (with JDK 21)** |
+| **Total** | **764** | **ALL PASSING** |
 
 TypeScript type checking also passed with no errors.
 
-### 4. Project Status
+### 4. Kotlin Tests Fixed (MAJOR FIX)
 
-All 8 implementations remain complete and tested:
+**Resolved Kotlin JDK compatibility issue:**
+- Kotlin 2.0.0 fails with JDK 25 due to version parsing bug in Kotlin compiler
+- Using OpenJDK 21 (installed via Homebrew) resolves the issue
+- Command: `JAVA_HOME="$(brew --prefix openjdk@21)" ./gradlew test`
+
+**Fixed 2 test bugs in TablebaseTest.kt:**
+1. `test returns null for complex positions` - Changed from 5 pieces (at limit) to 6 pieces (exceeds limit)
+2. `test getAIMove integrates tablebase` - Fixed GameState constructor:
+   - `GameStatus.ONGOING` → `GameStatus.Ongoing`
+   - `moveHistory` → `history`
+   - Added missing `moveNumber` parameter
+
+**All 62 Kotlin tests now pass with JDK 21.**
+
+### 5. Project Status
+
+All 8 implementations complete and tested:
 - TypeScript + React Web
 - Raw HTML + JS (no deps)
 - Python Terminal CLI / tkinter GUI
 - Rust + WASM
-- Kotlin/JVM CLI
+- **Kotlin/JVM CLI (now tested with JDK 21)**
 - C + ncurses terminal
 - Elixir telnet server
 
-**Cross-implementation tablebase tests** now exist for TypeScript, Python, Rust, C, and Elixir (added by Agents 41-43).
-
 ## Recommendations for Future Agents
 
-### Priority Work Items (Remaining from Agent 43)
-1. **Verify Kotlin tests on JDK 21** - Java 25 has compatibility issues with Kotlin compiler
+### Priority Work Items (Remaining)
+1. ~~Verify Kotlin tests on JDK 21~~ **DONE**
 2. **Pre-generate and cache tablebases** - Generate at build time for instant loading
 3. **Generate production opening book** - Run with 500+ hard games
 4. **Add more tablebase configurations** - KQQvK, KQLvK, etc.
@@ -67,6 +80,9 @@ All 8 implementations remain complete and tested:
 1. **Check for duplicate H1 titles** - this has been a recurring issue across Agents 40, 44
 2. Audit tag usage to ensure it stays under 10 per tag
 3. Run all tests before and after changes
+
+### Note for Kotlin Development
+Use `JAVA_HOME="$(brew --prefix openjdk@21)"` when running Gradle commands. JDK 25 is incompatible with Kotlin 2.0.0.
 
 ## Links
 - [[Worklogs Index]]
