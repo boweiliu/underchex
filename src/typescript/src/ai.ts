@@ -13,11 +13,13 @@
  * - Endgame detection for king PST switching (added by agent #6)
  * - Null Move Pruning for faster search (added by agent #7)
  * - History Heuristic for improved move ordering (added by agent #7)
+ * - Killer Move Heuristic for improved move ordering at each ply (added by agent #8)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
  * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
+ * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
  */
 
 import {
@@ -445,6 +447,160 @@ export function historyAge(): void {
  */
 export function historySize(): number {
   return historyTable.white.size + historyTable.black.size;
+}
+
+// ============================================================================
+// Killer Move Heuristic
+// ============================================================================
+
+/**
+ * Killer Move Heuristic stores moves that caused beta cutoffs at each ply.
+ * Unlike history heuristic which accumulates across the search, killer moves
+ * are stored per-ply and are more specific to the current search tree.
+ * 
+ * Key insight: A move that causes a cutoff at depth D in one branch of the
+ * tree often causes a cutoff at depth D in sibling branches too.
+ * 
+ * We store 2 killer moves per ply (standard in chess engines).
+ * 
+ * Signed-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
+ */
+
+/**
+ * Number of killer moves to store per ply.
+ */
+const NUM_KILLERS = 2;
+
+/**
+ * Maximum depth for killer move storage.
+ */
+const MAX_KILLER_DEPTH = 64;
+
+/**
+ * Killer move table structure.
+ * Indexed by ply depth, each entry contains up to NUM_KILLERS moves.
+ */
+export interface KillerTable {
+  moves: (Move | null)[][];
+}
+
+/**
+ * Global killer move table.
+ */
+const killerTable: KillerTable = {
+  moves: Array.from({ length: MAX_KILLER_DEPTH }, () => Array(NUM_KILLERS).fill(null)),
+};
+
+/**
+ * Check if two moves are the same (same from/to coordinates).
+ */
+function movesEqual(a: Move, b: Move): boolean {
+  return (
+    a.from.q === b.from.q &&
+    a.from.r === b.from.r &&
+    a.to.q === b.to.q &&
+    a.to.r === b.to.r
+  );
+}
+
+/**
+ * Store a killer move for a given ply depth.
+ * Uses replacement scheme: new killer replaces slot 0, old slot 0 moves to slot 1.
+ * Only stores quiet moves (non-captures, non-promotions).
+ */
+export function killerStore(move: Move, ply: number): void {
+  if (ply >= MAX_KILLER_DEPTH) return;
+  
+  // Don't store captures or promotions as killers
+  if (move.captured || move.promotion) return;
+  
+  const killers = killerTable.moves[ply]!;
+  
+  // Don't store if it's already the primary killer
+  if (killers[0] && movesEqual(killers[0], move)) {
+    return;
+  }
+  
+  // Check if it's already the secondary killer
+  if (killers[1] && movesEqual(killers[1], move)) {
+    // Promote to primary
+    killers[1] = killers[0] ?? null;
+    killers[0] = move;
+    return;
+  }
+  
+  // Standard replacement: new -> slot 0, old slot 0 -> slot 1
+  killers[1] = killers[0] ?? null;
+  killers[0] = move;
+}
+
+/**
+ * Get killer moves for a given ply depth.
+ * Returns array of killer moves (may contain nulls).
+ */
+export function killerGet(ply: number): (Move | null)[] {
+  if (ply >= MAX_KILLER_DEPTH) return [];
+  return killerTable.moves[ply]!;
+}
+
+/**
+ * Check if a move is a killer move at the given ply.
+ */
+export function isKillerMove(move: Move, ply: number): boolean {
+  if (ply >= MAX_KILLER_DEPTH) return false;
+  
+  const killers = killerTable.moves[ply]!;
+  for (const killer of killers) {
+    if (killer && movesEqual(killer, move)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Get killer move score bonus for move ordering.
+ * Primary killer gets higher bonus than secondary.
+ */
+export function killerScore(move: Move, ply: number): number {
+  if (ply >= MAX_KILLER_DEPTH) return 0;
+  
+  const killers = killerTable.moves[ply]!;
+  
+  // Primary killer gets 8000 (below captures/promotions, above history)
+  if (killers[0] && movesEqual(killers[0], move)) {
+    return 8000;
+  }
+  
+  // Secondary killer gets 7000
+  if (killers[1] && movesEqual(killers[1], move)) {
+    return 7000;
+  }
+  
+  return 0;
+}
+
+/**
+ * Clear all killer moves.
+ * Called at the start of a new search or game.
+ */
+export function killerClear(): void {
+  for (let i = 0; i < MAX_KILLER_DEPTH; i++) {
+    killerTable.moves[i] = Array(NUM_KILLERS).fill(null);
+  }
+}
+
+/**
+ * Get total number of stored killer moves (for stats).
+ */
+export function killerCount(): number {
+  let count = 0;
+  for (const plyKillers of killerTable.moves) {
+    for (const killer of plyKillers) {
+      if (killer) count++;
+    }
+  }
+  return count;
 }
 
 // ============================================================================
@@ -892,9 +1048,12 @@ export function evaluateForColor(board: BoardState, color: Color): number {
 /**
  * Estimate move value for ordering (higher is better).
  * Good move ordering improves alpha-beta pruning efficiency.
- * Uses history heuristic for quiet moves.
+ * Uses killer moves and history heuristic for quiet moves.
+ * 
+ * @param move The move to evaluate
+ * @param ply Current ply depth (for killer move lookup)
  */
-export function estimateMoveValue(move: Move): number {
+export function estimateMoveValue(move: Move, ply: number = 0): number {
   let score = 0;
   
   // Captures: MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
@@ -910,8 +1069,12 @@ export function estimateMoveValue(move: Move): number {
     score += 9000 + PIECE_VALUES[move.promotion] - PIECE_VALUES['pawn'];
   }
   
+  // Killer moves (quiet moves that caused cutoffs at this ply)
+  // Killer bonus (7000-8000) is below captures/promotions but above history
+  score += killerScore(move, ply);
+  
   // History heuristic for quiet moves
-  // Scaled down to not overshadow captures/promotions
+  // Scaled down to not overshadow captures/promotions/killers
   const history = historyScore(move);
   score += Math.min(history / 100, 1000);
   
@@ -923,9 +1086,12 @@ export function estimateMoveValue(move: Move): number {
 
 /**
  * Sort moves by estimated value (best first).
+ * 
+ * @param moves Array of moves to sort
+ * @param ply Current ply depth (for killer move lookup)
  */
-export function orderMoves(moves: Move[]): Move[] {
-  return [...moves].sort((a, b) => estimateMoveValue(b) - estimateMoveValue(a));
+export function orderMoves(moves: Move[], ply: number = 0): Move[] {
+  return [...moves].sort((a, b) => estimateMoveValue(b, ply) - estimateMoveValue(a, ply));
 }
 
 // ============================================================================
@@ -1062,7 +1228,7 @@ export interface SearchResult {
 
 /**
  * Alpha-beta search with pruning, transposition table, quiescence search,
- * null move pruning, and history heuristic.
+ * null move pruning, killer moves, and history heuristic.
  * 
  * @param board Current board state
  * @param depth Remaining search depth
@@ -1070,6 +1236,7 @@ export interface SearchResult {
  * @param beta Best score for minimizing player
  * @param maximizing True if current player is maximizing (white)
  * @param stats Statistics object to update
+ * @param ply Current ply from root (for killer move table)
  * @param useTT Whether to use transposition table (default true)
  * @param useQuiescence Whether to use quiescence search (default true)
  * @param useNullMove Whether to use null move pruning (default true)
@@ -1083,6 +1250,7 @@ function alphaBeta(
   beta: number,
   maximizing: boolean,
   stats: SearchStats,
+  ply: number = 0,
   useTT: boolean = true,
   useQuiescence: boolean = true,
   useNullMove: boolean = true,
@@ -1151,6 +1319,7 @@ function alphaBeta(
       maximizing ? -beta + 1 : -beta + 1,
       !maximizing, // Opponent's turn
       stats,
+      ply + 1, // Increment ply
       useTT,
       useQuiescence,
       false, // Don't do null move in verification search
@@ -1184,12 +1353,12 @@ function alphaBeta(
         m.to.q !== ttEntry.bestMove!.to.q ||
         m.to.r !== ttEntry.bestMove!.to.r
       );
-      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves)];
+      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves, ply)];
     } else {
-      orderedMoves = orderMoves(moves);
+      orderedMoves = orderMoves(moves, ply);
     }
   } else {
-    orderedMoves = orderMoves(moves);
+    orderedMoves = orderMoves(moves, ply);
   }
   
   let bestMove: Move | null = null;
@@ -1199,7 +1368,7 @@ function alphaBeta(
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, useTT, useQuiescence, useNullMove, false);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
       
       if (evalScore > maxEval) {
         maxEval = evalScore;
@@ -1209,8 +1378,9 @@ function alphaBeta(
       
       if (beta <= alpha) {
         stats.cutoffs++;
-        // Update history for the cutoff move (quiet moves only)
+        // Update killer and history for the cutoff move (quiet moves only)
         if (!move.captured && !move.promotion) {
+          killerStore(move, ply);
           historyUpdate(move, depth);
         }
         break; // Beta cutoff
@@ -1231,7 +1401,7 @@ function alphaBeta(
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, useTT, useQuiescence, useNullMove, false);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
       
       if (evalScore < minEval) {
         minEval = evalScore;
@@ -1241,8 +1411,9 @@ function alphaBeta(
       
       if (beta <= alpha) {
         stats.cutoffs++;
-        // Update history for the cutoff move (quiet moves only)
+        // Update killer and history for the cutoff move (quiet moves only)
         if (!move.captured && !move.promotion) {
+          killerStore(move, ply);
           historyUpdate(move, depth);
         }
         break; // Alpha cutoff
@@ -1270,6 +1441,7 @@ function alphaBeta(
  * @param useTT Whether to use transposition table
  * @param useQuiescence Whether to use quiescence search
  * @param useNullMove Whether to use null move pruning
+ * @param clearKillers Whether to clear killer table at start (default true for new searches)
  * @returns Best move and evaluation
  */
 export function findBestMove(
@@ -1278,7 +1450,8 @@ export function findBestMove(
   depth: number = 4,
   useTT: boolean = true,
   useQuiescence: boolean = true,
-  useNullMove: boolean = true
+  useNullMove: boolean = true,
+  clearKillers: boolean = true
 ): SearchResult {
   const stats: SearchStats = {
     nodesSearched: 0,
@@ -1290,6 +1463,11 @@ export function findBestMove(
     nullMoveAttempts: 0,
   };
   
+  // Clear killer moves at start of new search
+  if (clearKillers) {
+    killerClear();
+  }
+  
   const moves = generateAllLegalMoves(board, color);
   
   if (moves.length === 0) {
@@ -1299,6 +1477,7 @@ export function findBestMove(
   const maximizing = color === 'white';
   
   // Check TT for best move from previous search
+  // Root is ply 0
   let orderedMoves: Move[];
   if (useTT) {
     const ttEntry = ttProbe(board);
@@ -1309,12 +1488,12 @@ export function findBestMove(
         m.to.q !== ttEntry.bestMove!.to.q ||
         m.to.r !== ttEntry.bestMove!.to.r
       );
-      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves)];
+      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves, 0)];
     } else {
-      orderedMoves = orderMoves(moves);
+      orderedMoves = orderMoves(moves, 0);
     }
   } else {
-    orderedMoves = orderMoves(moves);
+    orderedMoves = orderMoves(moves, 0);
   }
   
   let bestMove = orderedMoves[0]!;
@@ -1324,7 +1503,8 @@ export function findBestMove(
   
   for (const move of orderedMoves) {
     const newBoard = applyMove(board, move);
-    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats, useTT, useQuiescence, useNullMove, false);
+    // Root is ply 0, so first recursive call is ply 1
+    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats, 1, useTT, useQuiescence, useNullMove, false);
     
     if (maximizing) {
       if (evalScore > bestScore) {
@@ -1354,6 +1534,7 @@ export function findBestMove(
  * Searches at increasing depths until time limit is reached.
  * Transposition table is preserved across depths for better move ordering.
  * History table is aged between iterations to prevent stale data.
+ * Killer moves are preserved across iterations (they're still useful).
  * 
  * @param board Current board state
  * @param color Color to find best move for
@@ -1397,7 +1578,8 @@ export function findBestMoveIterative(
   let totalNullAttempts = 0;
   
   // Get initial moves quickly at depth 1
-  const initialResult = findBestMove(board, color, 1, useTT, useQuiescence, useNullMove);
+  // clearKillers=true for first iteration
+  const initialResult = findBestMove(board, color, 1, useTT, useQuiescence, useNullMove, true);
   bestResult = initialResult;
   totalNodes += initialResult.stats.nodesSearched;
   totalCutoffs += initialResult.stats.cutoffs;
@@ -1421,7 +1603,8 @@ export function findBestMoveIterative(
     // Age history between iterations to prevent stale data from dominating
     historyAge();
     
-    const result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove);
+    // Don't clear killers between iterations - they're still useful
+    const result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove, false);
     bestResult = result;
     totalNodes += result.stats.nodesSearched;
     totalCutoffs += result.stats.cutoffs;
@@ -1475,7 +1658,7 @@ export function getDifficultyParams(difficulty: AIDifficulty): { depth: number; 
  * 
  * @param state Current game state
  * @param difficulty AI difficulty level
- * @param clearTables Whether to clear transposition and history tables (default false, set true for new games)
+ * @param clearTables Whether to clear transposition, history, and killer tables (default false, set true for new games)
  * @returns Best move or null if game is over
  */
 export function getAIMove(
@@ -1502,6 +1685,7 @@ export function getAIMove(
   if (clearTables) {
     ttClear();
     historyClear();
+    killerClear();
   }
   
   const params = getDifficultyParams(difficulty);

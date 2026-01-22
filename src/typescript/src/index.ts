@@ -147,6 +147,14 @@ export {
   nullMoveReduction,
   hasNullMoveMaterial,
   shouldTryNullMove,
+  // Killer move heuristic exports (added by agent #8)
+  KillerTable,
+  killerStore,
+  killerGet,
+  isKillerMove,
+  killerScore,
+  killerClear,
+  killerCount,
 } from './ai';
 
 // Re-export self-play
