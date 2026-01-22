@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underchex WASM Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+        }
+        h1 { color: #00d9ff; }
+        .board-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        #board {
+            position: relative;
+            width: 500px;
+            height: 500px;
+        }
+        .hex {
+            position: absolute;
+            width: 50px;
+            height: 58px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .hex:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        .hex.color-0 { background: #2d3748; }
+        .hex.color-1 { background: #4a5568; }
+        .hex.color-2 { background: #718096; }
+        .hex.selected { box-shadow: 0 0 0 3px #00ff88; }
+        .hex.legal-move { box-shadow: 0 0 0 3px #00d9ff; }
+        .hex.legal-capture { box-shadow: 0 0 0 3px #ff6b6b; }
+        .piece { font-size: 28px; user-select: none; }
+        .piece.white { filter: drop-shadow(0 0 2px #fff); }
+        .piece.black { filter: drop-shadow(0 0 2px #000); }
+        #info {
+            background: #16213e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        #moves-list {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #0f0f23;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .status { font-size: 18px; font-weight: bold; }
+        .status.check { color: #ff6b6b; }
+        button {
+            background: #00d9ff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        button:hover { background: #00b8e6; }
+    </style>
+</head>
+<body>
+    <h1>Underchex - Rust/WASM Demo</h1>
+    <p>Hexagonal chess variant running on WebAssembly</p>
+    
+    <div class="board-container">
+        <div id="board"></div>
+    </div>
+    
+    <div id="info">
+        <p class="status" id="status">Loading WASM...</p>
+        <p>Turn: <span id="turn">-</span> | Move: <span id="move-num">-</span></p>
+        <button onclick="newGame()">New Game</button>
+        <button onclick="resign()">Resign</button>
+        <h3>Move History</h3>
+        <div id="moves-list"></div>
+    </div>
+
+    <script type="module">
+        import init, { WasmGame, wasm_get_all_cells, wasm_is_valid_cell } from './pkg/underchex_wasm.js';
+
+        let game;
+        let selectedCell = null;
+        let legalMoves = [];
+
+        // Piece unicode symbols
+        const PIECE_SYMBOLS = {
+            King: { white: '♔', black: '♚' },
+            Queen: { white: '♕', black: '♛' },
+            Chariot: { white: '♖', black: '♜' },
+            Lance: { white: '♗', black: '♝' },
+            Knight: { white: '♘', black: '♞' },
+            Pawn: { white: '♙', black: '♟' },
+        };
+
+        // Convert axial coords to screen position
+        function hexToPixel(q, r) {
+            const size = 25;
+            const x = size * (Math.sqrt(3) * q + Math.sqrt(3)/2 * r) + 250;
+            const y = size * (3/2 * r) + 250;
+            return { x: x - 25, y: y - 29 };
+        }
+
+        // Get color class for hex cell (3-color pattern)
+        function getCellColor(q, r) {
+            const s = -q - r;
+            const mod = ((q % 3) + 3) % 3;
+            return `color-${mod}`;
+        }
+
+        function renderBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+
+            const cells = JSON.parse(wasm_get_all_cells());
+            const boardState = JSON.parse(game.get_board());
+            
+            cells.forEach(([q, r]) => {
+                const hex = document.createElement('div');
+                hex.className = `hex ${getCellColor(q, r)}`;
+                
+                const pos = hexToPixel(q, r);
+                hex.style.left = `${pos.x}px`;
+                hex.style.top = `${pos.y}px`;
+                
+                const key = `${q},${r}`;
+                const piece = boardState[key];
+                
+                if (piece) {
+                    const pieceEl = document.createElement('span');
+                    pieceEl.className = `piece ${piece.color.toLowerCase()}`;
+                    const colorKey = piece.color === 'White' ? 'white' : 'black';
+                    pieceEl.textContent = PIECE_SYMBOLS[piece.piece_type]?.[colorKey] || '?';
+                    hex.appendChild(pieceEl);
+                }
+                
+                // Highlight selected cell
+                if (selectedCell && selectedCell.q === q && selectedCell.r === r) {
+                    hex.classList.add('selected');
+                }
+                
+                // Highlight legal moves
+                const isLegalMove = legalMoves.some(m => m.to.q === q && m.to.r === r);
+                if (isLegalMove) {
+                    const move = legalMoves.find(m => m.to.q === q && m.to.r === r);
+                    hex.classList.add(move.captured ? 'legal-capture' : 'legal-move');
+                }
+                
+                hex.onclick = () => handleClick(q, r);
+                boardEl.appendChild(hex);
+            });
+        }
+
+        function handleClick(q, r) {
+            const key = `${q},${r}`;
+            const boardState = JSON.parse(game.get_board());
+            const piece = boardState[key];
+            const currentTurn = game.get_turn();
+            
+            // If clicking on a legal move destination
+            if (selectedCell && legalMoves.some(m => m.to.q === q && m.to.r === r)) {
+                const success = game.make_move(selectedCell.q, selectedCell.r, q, r);
+                if (success) {
+                    selectedCell = null;
+                    legalMoves = [];
+                    updateUI();
+                    return;
+                }
+            }
+            
+            // If clicking on own piece, select it
+            if (piece && piece.color.toLowerCase() === currentTurn) {
+                selectedCell = { q, r };
+                legalMoves = JSON.parse(game.get_legal_moves_for_piece(q, r));
+            } else {
+                selectedCell = null;
+                legalMoves = [];
+            }
+            
+            renderBoard();
+        }
+
+        function updateUI() {
+            renderBoard();
+            
+            const turn = game.get_turn();
+            const status = JSON.parse(game.get_status());
+            const moveNum = game.get_move_number();
+            const isCheck = game.is_in_check();
+            
+            document.getElementById('turn').textContent = turn;
+            document.getElementById('move-num').textContent = moveNum;
+            
+            const statusEl = document.getElementById('status');
+            if (status === 'Ongoing') {
+                statusEl.textContent = isCheck ? `${turn.toUpperCase()} is in CHECK!` : 'Game in progress';
+                statusEl.className = isCheck ? 'status check' : 'status';
+            } else if (status.Checkmate) {
+                statusEl.textContent = `CHECKMATE! ${status.Checkmate.winner} wins!`;
+                statusEl.className = 'status';
+            } else if (status === 'Stalemate') {
+                statusEl.textContent = 'STALEMATE! Draw.';
+                statusEl.className = 'status';
+            } else if (status.Resigned) {
+                statusEl.textContent = `${status.Resigned.winner} wins by resignation!`;
+                statusEl.className = 'status';
+            }
+            
+            // Update move history
+            const history = JSON.parse(game.get_history());
+            const historyEl = document.getElementById('moves-list');
+            historyEl.innerHTML = history.map((m, i) => {
+                const num = Math.floor(i/2) + 1;
+                const prefix = i % 2 === 0 ? `${num}. ` : '';
+                return `${prefix}${m.from.q},${m.from.r} → ${m.to.q},${m.to.r}`;
+            }).join('<br>');
+        }
+
+        window.newGame = function() {
+            game = new WasmGame();
+            selectedCell = null;
+            legalMoves = [];
+            updateUI();
+        };
+
+        window.resign = function() {
+            game.resign();
+            updateUI();
+        };
+
+        // Initialize
+        async function main() {
+            await init();
+            game = new WasmGame();
+            updateUI();
+            document.getElementById('status').textContent = 'Game ready - White to move';
+        }
+
+        main().catch(console.error);
+    </script>
+</body>
+</html>
