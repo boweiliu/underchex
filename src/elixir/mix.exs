@@ -20,7 +20,8 @@ defmodule Underchex.MixProject do
 
   defp deps do
     [
-      {:ranch, "~> 2.1"}
+      {:ranch, "~> 2.1"},
+      {:jason, "~> 1.4"}
     ]
   end
 end

@@ -23,7 +23,12 @@ TEST_SRCS = tests/test_main.c board.c moves.c ai.c
 TEST_OBJS = $(TEST_SRCS:.c=.o)
 TEST_TARGET = test_underchex
 
-.PHONY: all clean test
+# Cross-implementation test files
+CROSSIMPL_SRCS = tests/test_crossimpl.c board.c moves.c ai.c
+CROSSIMPL_OBJS = $(CROSSIMPL_SRCS:.c=.o)
+CROSSIMPL_TARGET = test_crossimpl
+
+.PHONY: all clean test test-crossimpl test-all
 
 all: $(TARGET)
 
@@ -36,15 +41,27 @@ $(TARGET): $(OBJS)
 test: $(TEST_TARGET)
 	./$(TEST_TARGET)
 
+test-crossimpl: $(CROSSIMPL_TARGET)
+	./$(CROSSIMPL_TARGET)
+
+test-all: test test-crossimpl
+
 $(TEST_TARGET): $(TEST_OBJS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+$(CROSSIMPL_TARGET): $(CROSSIMPL_OBJS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 tests/test_main.o: tests/test_main.c
 	@mkdir -p tests
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+tests/test_crossimpl.o: tests/test_crossimpl.c
+	@mkdir -p tests
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 clean:
-	rm -f $(OBJS) $(TARGET) $(TEST_OBJS) $(TEST_TARGET)
+	rm -f $(OBJS) $(TARGET) $(TEST_OBJS) $(TEST_TARGET) $(CROSSIMPL_OBJS) $(CROSSIMPL_TARGET)
 
 # Dependencies
 board.o: board.c board.h

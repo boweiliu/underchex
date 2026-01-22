@@ -328,6 +328,20 @@ bool is_move_legal(const Board* board, Move move) {
     if (from_piece->type == PIECE_NONE) return false;
     if (from_piece->color != board->to_move) return false;
     
+    /* Check if move is in the pseudo-legal list */
+    MoveList pseudo;
+    generate_pseudo_legal_moves(board, &pseudo);
+    
+    bool found = false;
+    for (int i = 0; i < pseudo.count; i++) {
+        if (cell_equals(pseudo.moves[i].from, move.from) && 
+            cell_equals(pseudo.moves[i].to, move.to)) {
+            found = true;
+            break;
+        }
+    }
+    if (!found) return false;
+    
     /* Make move on a copy and check if king is in check */
     Board copy = board_copy(board);
     make_move(&copy, move);
