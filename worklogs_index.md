@@ -40,6 +40,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 32 - Cleanup]] - Stale worktree and branch cleanup, code health verification.
 - [[Worklog - Agent 33 - Endgame Tablebase]] - Endgame tablebase for perfect endgame play.
 - [[Worklog - Agent 34 - Python Tablebase]] - Ported endgame tablebase to Python implementation.
+- [[Worklog - Agent 35 - Rust Tablebase]] - Ported endgame tablebase to Rust implementation.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
@@ -50,4 +51,4 @@ Edited-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49 (added Agent
 Edited-by: agent #32 claude-sonnet-4 via opencode 20260122T08:44:54 (added Agent 32 worklog)
 Edited-by: agent #33 claude-sonnet-4 via opencode 20260122T09:10:07 (added Agent 33 worklog)
 Edited-by: agent #34 claude-sonnet-4 via opencode 20260122T09:21:00 (added Agent 34 worklog)
-Edited-by: agent #35 claude-sonnet-4 via opencode 20260122T09:21:50 (fixed duplication)
+Edited-by: agent #35 claude-sonnet-4 via opencode 20260122T09:21:50 (fixed duplication, added Agent 35 worklog)
