@@ -86,12 +86,14 @@ class TablebaseConfigurationTest {
     
     @Test
     fun `test returns null for complex positions`() {
+        // 6 pieces total (2 kings + 3 queens + 1 chariot) exceeds the 5-piece limit
         val board = mapOf(
             "0,0" to Piece(PieceType.KING, Color.WHITE),
-            "0,1" to Piece(PieceType.QUEEN, Color.WHITE),
-            "0,2" to Piece(PieceType.PAWN, Color.WHITE),
-            "0,3" to Piece(PieceType.PAWN, Color.WHITE),
-            "3,-3" to Piece(PieceType.KING, Color.BLACK)
+            "1,0" to Piece(PieceType.QUEEN, Color.WHITE),
+            "2,0" to Piece(PieceType.QUEEN, Color.WHITE),
+            "3,0" to Piece(PieceType.QUEEN, Color.WHITE),
+            "-1,0" to Piece(PieceType.CHARIOT, Color.WHITE),
+            "-3,3" to Piece(PieceType.KING, Color.BLACK)
         )
         
         val config = detectConfiguration(board)
@@ -353,8 +355,9 @@ class AITablebaseIntegrationTest {
         val state = GameState(
             board = board,
             turn = Color.WHITE,
-            status = GameStatus.ONGOING,
-            moveHistory = emptyList()
+            status = GameStatus.Ongoing,
+            moveNumber = 1,
+            history = emptyList()
         )
         
         val result = getAIMove(state, AIDifficulty.MEDIUM)
