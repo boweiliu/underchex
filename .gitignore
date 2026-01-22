@@ -21,3 +21,4 @@ src/kotlin/.gradle/
 src/kotlin/.kotlin/
 # Rust
 src/rust/target/
+src/c/test_crossimpl_tablebase
