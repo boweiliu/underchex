@@ -1,6 +1,6 @@
 # Worktrees/Direnv - Debug - NB_DIR
 
-#worktrees #direnv #debugging
+Tags: #worktrees #direnv #debugging
 
 ## Problem
 

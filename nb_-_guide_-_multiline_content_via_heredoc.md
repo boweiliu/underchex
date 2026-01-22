@@ -1,7 +1,5 @@
 # NB - Guide - Multiline Content via Heredoc
 
-# NB - Guide - Multiline Content via Heredoc
-
 Tags: #nb #guide #shell #heredoc
 
 ## Problem

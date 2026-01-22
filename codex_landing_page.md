@@ -1,6 +1,6 @@
 # Codex - Hub
 
-# onboarding #codex
+Tags: #codex #hub #onboarding
 
 Quick links: [[Codex - Reference - Config and Debugging]]
 
