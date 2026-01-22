@@ -259,8 +259,21 @@
       <h2>Move History</h2>
       <div id="move-history" class="move-history"></div>
       
-      <button id="new-game-btn">New Game</button>
+      <button id="new-game-btn">New Game (2 Player)</button>
+      <button id="ai-game-btn">Play vs AI</button>
       <button id="undo-btn">Undo Move</button>
+      
+      <div id="ai-controls" style="display: none; margin-top: 10px;">
+        <label style="display: block; margin-bottom: 5px; color: #888;">AI Difficulty:</label>
+        <select id="ai-difficulty" style="width: 100%; padding: 8px; border-radius: 5px; background: #0f0f23; color: #eee; border: 1px solid #444;">
+          <option value="easy">Easy (Depth 2)</option>
+          <option value="medium" selected>Medium (Depth 4)</option>
+          <option value="hard">Hard (Depth 6)</option>
+        </select>
+        <div id="ai-thinking" style="display: none; margin-top: 10px; color: #e94560; text-align: center;">
+          AI is thinking...
+        </div>
+      </div>
       
       <div class="legend">
         <h3>Pieces</h3>
@@ -700,6 +713,191 @@
     }
     
     // =========================================================================
+    // AI ENGINE
+    // Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
+    // =========================================================================
+    
+    const PIECE_VALUES = {
+      pawn: 100,
+      knight: 300,
+      lance: 450,
+      chariot: 450,
+      queen: 900,
+      king: 0
+    };
+    
+    const CHECKMATE_VALUE = 100000;
+    
+    function hexDistance(a, b) {
+      const dq = Math.abs(a.q - b.q);
+      const dr = Math.abs(a.r - b.r);
+      const ds = Math.abs((-a.q - a.r) - (-b.q - b.r));
+      return Math.max(dq, dr, ds);
+    }
+    
+    function getCentralityBonus(coord) {
+      const distanceFromCenter = hexDistance(coord, { q: 0, r: 0 });
+      return (BOARD_RADIUS - distanceFromCenter) * 5;
+    }
+    
+    function getPawnAdvancementBonus(coord, color) {
+      const targetR = color === 'white' ? -BOARD_RADIUS : BOARD_RADIUS;
+      const startR = color === 'white' ? BOARD_RADIUS : -BOARD_RADIUS;
+      const totalDistance = Math.abs(targetR - startR);
+      const distanceFromStart = Math.abs(coord.r - startR);
+      const progress = distanceFromStart / totalDistance;
+      return Math.floor(progress * progress * 50);
+    }
+    
+    function getPiecePositionBonus(piece, coord) {
+      let bonus = getCentralityBonus(coord);
+      if (piece.type === 'pawn') {
+        bonus += getPawnAdvancementBonus(coord, piece.color);
+      }
+      if (piece.type === 'king') {
+        const distFromCenter = hexDistance(coord, { q: 0, r: 0 });
+        if (distFromCenter < 2) bonus -= 30;
+      }
+      return bonus;
+    }
+    
+    function evaluateMaterial(board) {
+      let score = 0;
+      for (const [posStr, piece] of board.entries()) {
+        const value = PIECE_VALUES[piece.type];
+        const coord = stringToCoord(posStr);
+        const positionBonus = getPiecePositionBonus(piece, coord);
+        const totalValue = value + positionBonus;
+        score += piece.color === 'white' ? totalValue : -totalValue;
+      }
+      return score;
+    }
+    
+    function evaluateMobility(board, color) {
+      const moves = generateAllLegalMoves(board, color);
+      return moves.length * 2;
+    }
+    
+    function evaluatePosition(board) {
+      let score = evaluateMaterial(board);
+      score += evaluateMobility(board, 'white') - evaluateMobility(board, 'black');
+      if (isInCheck(board, 'white')) score -= 50;
+      if (isInCheck(board, 'black')) score += 50;
+      return score;
+    }
+    
+    function estimateMoveValue(move) {
+      let score = 0;
+      if (move.captured) {
+        score += PIECE_VALUES[move.captured.type] * 10 - PIECE_VALUES[move.piece.type];
+      }
+      if (move.promotion) {
+        score += PIECE_VALUES[move.promotion] - PIECE_VALUES.pawn;
+      }
+      score += getCentralityBonus(move.to);
+      return score;
+    }
+    
+    function orderMoves(moves) {
+      return [...moves].sort((a, b) => estimateMoveValue(b) - estimateMoveValue(a));
+    }
+    
+    function alphaBeta(board, depth, alpha, beta, maximizing, stats) {
+      stats.nodesSearched++;
+      
+      const color = maximizing ? 'white' : 'black';
+      const moves = generateAllLegalMoves(board, color);
+      
+      if (moves.length === 0) {
+        if (isInCheck(board, color)) {
+          return maximizing ? -CHECKMATE_VALUE + stats.nodesSearched : CHECKMATE_VALUE - stats.nodesSearched;
+        }
+        return 0; // Stalemate
+      }
+      
+      if (depth === 0) {
+        return evaluatePosition(board);
+      }
+      
+      const orderedMoves = orderMoves(moves);
+      
+      if (maximizing) {
+        let maxEval = -Infinity;
+        for (const move of orderedMoves) {
+          const newBoard = applyMove(board, move);
+          const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats);
+          maxEval = Math.max(maxEval, evalScore);
+          alpha = Math.max(alpha, evalScore);
+          if (beta <= alpha) {
+            stats.cutoffs++;
+            break;
+          }
+        }
+        return maxEval;
+      } else {
+        let minEval = Infinity;
+        for (const move of orderedMoves) {
+          const newBoard = applyMove(board, move);
+          const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats);
+          minEval = Math.min(minEval, evalScore);
+          beta = Math.min(beta, evalScore);
+          if (beta <= alpha) {
+            stats.cutoffs++;
+            break;
+          }
+        }
+        return minEval;
+      }
+    }
+    
+    function findBestMove(board, color, depth) {
+      const stats = { nodesSearched: 0, cutoffs: 0 };
+      const moves = generateAllLegalMoves(board, color);
+      
+      if (moves.length === 0) {
+        return { move: null, score: 0, stats };
+      }
+      
+      const maximizing = color === 'white';
+      const orderedMoves = orderMoves(moves);
+      
+      let bestMove = orderedMoves[0];
+      let bestScore = maximizing ? -Infinity : Infinity;
+      let alpha = -Infinity;
+      let beta = Infinity;
+      
+      for (const move of orderedMoves) {
+        const newBoard = applyMove(board, move);
+        const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats);
+        
+        if (maximizing) {
+          if (evalScore > bestScore) {
+            bestScore = evalScore;
+            bestMove = move;
+          }
+          alpha = Math.max(alpha, evalScore);
+        } else {
+          if (evalScore < bestScore) {
+            bestScore = evalScore;
+            bestMove = move;
+          }
+          beta = Math.min(beta, evalScore);
+        }
+      }
+      
+      return { move: bestMove, score: bestScore, stats };
+    }
+    
+    function getDifficultyDepth(difficulty) {
+      switch (difficulty) {
+        case 'easy': return 2;
+        case 'medium': return 4;
+        case 'hard': return 6;
+        default: return 4;
+      }
+    }
+    
+    // =========================================================================
     // UI RENDERING
     // =========================================================================
     
@@ -714,6 +912,9 @@
     let selectedCell = null;
     let legalMovesForSelected = [];
     let hoveredCell = null;
+    let aiEnabled = false;
+    let aiColor = 'black'; // AI always plays black when enabled
+    let aiThinking = false;
     
     // Convert axial to pixel coordinates
     function axialToPixel(q, r) {
@@ -865,6 +1066,39 @@
       }
     }
     
+    // Make AI move
+    function makeAIMove() {
+      if (!aiEnabled || gameState.turn !== aiColor || gameState.status.type !== 'ongoing') {
+        return;
+      }
+      
+      aiThinking = true;
+      document.getElementById('ai-thinking').style.display = 'block';
+      updateUI();
+      
+      // Use setTimeout to allow UI to update before heavy computation
+      setTimeout(() => {
+        const difficulty = document.getElementById('ai-difficulty').value;
+        const depth = getDifficultyDepth(difficulty);
+        
+        const result = findBestMove(gameState.board, aiColor, depth);
+        
+        if (result.move) {
+          const move = result.move;
+          const newState = makeMove(gameState, move.from, move.to, move.promotion);
+          if (newState) {
+            gameState = newState;
+          }
+        }
+        
+        aiThinking = false;
+        document.getElementById('ai-thinking').style.display = 'none';
+        selectedCell = null;
+        legalMovesForSelected = [];
+        updateUI();
+      }, 50);
+    }
+    
     function updateUI() {
       drawBoard();
       
@@ -944,6 +1178,11 @@
         legalMovesForSelected = [];
         hidePromotionDialog();
         updateUI();
+        
+        // Trigger AI move after player promotion
+        if (aiEnabled && gameState.status.type === 'ongoing') {
+          setTimeout(makeAIMove, 100);
+        }
       });
     });
     
@@ -957,6 +1196,9 @@
       if (!isValidCell(cell)) return;
       
       if (gameState.status.type !== 'ongoing') return;
+      
+      // Don't allow moves when AI is thinking or during AI's turn
+      if (aiThinking || (aiEnabled && gameState.turn === aiColor)) return;
       
       if (selectedCell) {
         // Check if this is a promotion move
@@ -972,6 +1214,12 @@
           gameState = newState;
           selectedCell = null;
           legalMovesForSelected = [];
+          updateUI();
+          // Trigger AI move after player move
+          if (aiEnabled && gameState.status.type === 'ongoing') {
+            setTimeout(makeAIMove, 100);
+          }
+          return;
         } else if (coordsEqual(selectedCell, cell)) {
           // Deselect
           selectedCell = null;
@@ -1026,18 +1274,50 @@
       gameState = createNewGame();
       selectedCell = null;
       legalMovesForSelected = [];
+      aiEnabled = false;
+      document.getElementById('ai-controls').style.display = 'none';
+      updateUI();
+    });
+    
+    document.getElementById('ai-game-btn').addEventListener('click', () => {
+      gameState = createNewGame();
+      selectedCell = null;
+      legalMovesForSelected = [];
+      aiEnabled = true;
+      aiColor = 'black';
+      document.getElementById('ai-controls').style.display = 'block';
       updateUI();
     });
     
     document.getElementById('undo-btn').addEventListener('click', () => {
+      if (aiThinking) return; // Don't undo while AI is thinking
+      
       if (gameState.history.length > 0) {
-        const lastEntry = gameState.history[gameState.history.length - 1];
-        const previousTurn = lastEntry.move.piece.color;
+        // In AI mode, undo both AI and player moves
+        let movesToUndo = aiEnabled ? Math.min(2, gameState.history.length) : 1;
+        
+        let newHistory = gameState.history;
+        let newBoard = gameState.board;
+        let newTurn = gameState.turn;
+        let newMoveNumber = gameState.moveNumber;
+        
+        for (let i = 0; i < movesToUndo; i++) {
+          if (newHistory.length === 0) break;
+          const lastEntry = newHistory[newHistory.length - 1];
+          const previousTurn = lastEntry.move.piece.color;
+          newBoard = lastEntry.previousBoard;
+          newTurn = previousTurn;
+          if (previousTurn === 'black') {
+            newMoveNumber = Math.max(1, newMoveNumber - 1);
+          }
+          newHistory = newHistory.slice(0, -1);
+        }
+        
         gameState = {
-          board: lastEntry.previousBoard,
-          turn: previousTurn,
-          moveNumber: previousTurn === 'black' ? gameState.moveNumber - 1 : gameState.moveNumber,
-          history: gameState.history.slice(0, -1),
+          board: newBoard,
+          turn: newTurn,
+          moveNumber: newMoveNumber,
+          history: newHistory,
           status: { type: 'ongoing' }
         };
         selectedCell = null;

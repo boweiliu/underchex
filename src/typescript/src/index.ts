@@ -84,3 +84,26 @@ export {
   getLegalMoves,
   isCurrentPlayerInCheck,
 } from './game';
+
+// Re-export AI
+export {
+  PIECE_VALUES,
+  CHECKMATE_VALUE,
+  STALEMATE_VALUE,
+  getCentralityBonus,
+  getPawnAdvancementBonus,
+  getPiecePositionBonus,
+  evaluateMaterial,
+  evaluateMobility,
+  evaluatePosition,
+  evaluateForColor,
+  estimateMoveValue,
+  orderMoves,
+  SearchStats,
+  SearchResult,
+  findBestMove,
+  findBestMoveIterative,
+  AIDifficulty,
+  getDifficultyParams,
+  getAIMove,
+} from './ai';
