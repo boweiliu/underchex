@@ -190,3 +190,27 @@ export {
   analyzeCaptureFrequency,
   analyzeGamePhases,
 } from './selfplay';
+
+// Re-export puzzle generation (added by agent #14)
+export {
+  PuzzleDifficulty,
+  PuzzleTheme,
+  Puzzle,
+  PuzzleGeneratorConfig,
+  PuzzleGenerationResult,
+  DEFAULT_PUZZLE_CONFIG,
+  classifyDifficulty,
+  identifyThemes,
+  extractPrincipalVariation,
+  validatePuzzle,
+  generatePuzzlesFromGame,
+  generatePuzzlesFromGames,
+  createPuzzleFromPosition,
+  checkPuzzleMove,
+  getPuzzlePositionAfterMoves,
+  getPuzzleHint,
+  serializePuzzle,
+  deserializePuzzle,
+  formatPuzzle,
+  formatPuzzleReport,
+} from './puzzles';
