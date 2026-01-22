@@ -17,6 +17,8 @@
  * - Late Move Reductions (LMR) for faster search with adaptive reduction (added by agent #9)
  * - Principal Variation Search (PVS) for faster search (added by agent #11)
  * - Aspiration Windows for faster iterative deepening (added by agent #11)
+ * - Futility Pruning for faster search at shallow depths (added by agent #12)
+ * - Static Exchange Evaluation (SEE) for accurate capture ordering (added by agent #13)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
@@ -25,6 +27,7 @@
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
+ * Edited-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
  */
 
 import {
@@ -35,6 +38,8 @@ import {
   BoardState,
   GameState,
   Move,
+  Direction,
+  ALL_DIRECTIONS,
   BOARD_RADIUS,
   coordToString,
   oppositeColor,
@@ -45,9 +50,12 @@ import {
   applyMove,
   isInCheck,
   getPieceAt,
+  getPieceDirections,
+  isSlider,
+  getPawnCaptureDirections,
 } from './moves';
 
-import { isValidCell, hexDistance } from './board';
+import { isValidCell, hexDistance, getNeighbor, getRay, getKnightTargets } from './board';
 
 // ============================================================================
 // Piece Values
@@ -1352,6 +1360,345 @@ export function evaluateForColor(board: BoardState, color: Color): number {
 }
 
 // ============================================================================
+// Static Exchange Evaluation (SEE)
+// ============================================================================
+
+/**
+ * Static Exchange Evaluation (SEE) determines if a capture is winning material
+ * by simulating the sequence of recaptures on a square.
+ * 
+ * This is more accurate than MVV-LVA because it considers the full exchange:
+ * - PxQ might look good (MVV-LVA score = +900), but if the pawn is recaptured
+ *   by another pawn, the net is +900 - 100 = +800
+ * - QxP protected by Q results in: +100 - 900 = -800 (bad trade)
+ * 
+ * Benefits:
+ * - Better capture ordering in quiescence search
+ * - Can prune losing captures in quiescence
+ * - Helps with move ordering in main search
+ * 
+ * Signed-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
+ */
+
+/**
+ * Piece value array ordered by value (for SEE attacker selection).
+ * We want to use the least valuable attacker first.
+ */
+const SEE_PIECE_ORDER: PieceType[] = ['pawn', 'knight', 'lance', 'chariot', 'queen', 'king'];
+
+/**
+ * Get the opposite direction.
+ */
+function seeGetOppositeDirection(dir: Direction): Direction {
+  const opposites: Record<Direction, Direction> = {
+    N: 'S', S: 'N',
+    NE: 'SW', SW: 'NE',
+    NW: 'SE', SE: 'NW',
+  };
+  return opposites[dir];
+}
+
+/**
+ * Attacker info for SEE calculation.
+ */
+interface AttackerInfo {
+  piece: Piece;
+  position: HexCoord;
+  value: number;
+}
+
+/**
+ * Get all attackers of a square by a given color, sorted by piece value (ascending).
+ * Returns attackers in order from least valuable to most valuable.
+ * 
+ * @param board The board state
+ * @param target The square being attacked
+ * @param byColor The attacking color
+ * @returns Array of attackers sorted by value (least valuable first)
+ */
+export function getAttackers(
+  board: BoardState,
+  target: HexCoord,
+  byColor: Color
+): AttackerInfo[] {
+  const attackers: AttackerInfo[] = [];
+  
+  // Check for pawn attackers
+  const pawnCaptureDirections = getPawnCaptureDirections(byColor);
+  for (const dir of pawnCaptureDirections) {
+    // Check in reverse direction from target to find attacking pawn
+    const reverseDir = seeGetOppositeDirection(dir);
+    const attackerPos = getNeighbor(target, reverseDir);
+    if (attackerPos) {
+      const piece = getPieceAt(board, attackerPos);
+      if (piece?.type === 'pawn' && piece.color === byColor) {
+        attackers.push({
+          piece,
+          position: attackerPos,
+          value: PIECE_VALUES['pawn'],
+        });
+      }
+    }
+  }
+  
+  // Check for knight attackers
+  for (const attackerPos of getKnightTargets(target)) {
+    const piece = getPieceAt(board, attackerPos);
+    if (piece?.type === 'knight' && piece.color === byColor) {
+      attackers.push({
+        piece,
+        position: attackerPos,
+        value: PIECE_VALUES['knight'],
+      });
+    }
+  }
+  
+  // Check for king attackers (adjacent squares)
+  for (const dir of ALL_DIRECTIONS) {
+    const attackerPos = getNeighbor(target, dir);
+    if (attackerPos) {
+      const piece = getPieceAt(board, attackerPos);
+      if (piece?.type === 'king' && piece.color === byColor) {
+        attackers.push({
+          piece,
+          position: attackerPos,
+          value: PIECE_VALUES['king'] || 20000, // King has infinite value for SEE
+        });
+      }
+    }
+  }
+  
+  // Check for slider attackers (queen, lance, chariot)
+  for (const dir of ALL_DIRECTIONS) {
+    const ray = getRay(target, dir);
+    for (const pos of ray) {
+      const piece = getPieceAt(board, pos);
+      if (!piece) continue;
+      if (piece.color !== byColor) break; // Blocked by enemy piece
+      
+      // Check if this piece can attack along this direction
+      const pieceDirections = getPieceDirections(piece);
+      const reverseDir = seeGetOppositeDirection(dir);
+      if ((pieceDirections as readonly Direction[]).includes(reverseDir) && isSlider(piece.type)) {
+        attackers.push({
+          piece,
+          position: pos,
+          value: PIECE_VALUES[piece.type],
+        });
+      }
+      break; // Blocked by this piece
+    }
+  }
+  
+  // Sort by value (least valuable first)
+  attackers.sort((a, b) => a.value - b.value);
+  
+  return attackers;
+}
+
+/**
+ * Calculate the Static Exchange Evaluation for a capture move.
+ * Returns the material gain/loss from the perspective of the side making the capture.
+ * 
+ * Standard SEE Algorithm:
+ * 1. gain[d] = value of piece captured by side-to-move at depth d
+ * 2. Negamax: gain[d] = max(0, gain[d] - gain[d+1])
+ *    Meaning: "I capture and get gain[d], but opponent gets gain[d+1], so net is gain[d] - gain[d+1]"
+ *    The max(0, ...) means I can choose not to capture if it would lose material.
+ * 3. For the initial capture (d=0), we don't have the option not to capture
+ *    (that's the move we're evaluating), so the final result is gain[0] - gain[1]
+ * 
+ * Example: White QxP defended by Black Q
+ * - gain[0] = 100 (pawn captured by white queen)
+ * - gain[1] = 900 (white queen captured by black queen)
+ * - gain[2] = (no more white attackers, so 0)
+ * - Negamax: gain[1] = max(0, 900 - 0) = 900
+ * - Result: gain[0] - gain[1] = 100 - 900 = -800
+ * 
+ * @param board The board state before the capture
+ * @param move The capture move to evaluate
+ * @returns Material gain (positive = good for attacker, negative = bad)
+ */
+export function staticExchangeEvaluation(board: BoardState, move: Move): number {
+  if (!move.captured) {
+    return 0; // Not a capture
+  }
+  
+  const target = move.to;
+  const attackerColor = move.piece.color;
+  const defenderColor = oppositeColor(attackerColor);
+  
+  // gain[d] = value of piece captured at depth d
+  const gain: number[] = [];
+  gain.push(PIECE_VALUES[move.captured.type]); // Depth 0: initial target
+  
+  // Track removed pieces (for x-ray attacks)
+  const removedPieces = new Set<string>();
+  removedPieces.add(coordToString(move.from)); // Initial attacker leaves its square
+  
+  // Track the piece currently on target (will be captured next)
+  let pieceOnTarget = move.piece;
+  let currentColor = defenderColor;
+  
+  const MAX_SEE_DEPTH = 32;
+  
+  // Build the gain array
+  for (let depth = 1; depth < MAX_SEE_DEPTH; depth++) {
+    // Find attackers for current side
+    const attackers = getAttackersWithExclusions(board, target, currentColor, removedPieces);
+    
+    if (attackers.length === 0) {
+      break; // No more attackers
+    }
+    
+    // Select least valuable attacker
+    const attacker = attackers[0]!;
+    
+    // The gain at this depth is the value of the piece being captured
+    gain.push(PIECE_VALUES[pieceOnTarget.type]);
+    
+    // Remove this attacker (it moves to target)
+    removedPieces.add(coordToString(attacker.position));
+    
+    // Update piece on target
+    pieceOnTarget = attacker.piece;
+    
+    // Switch sides
+    currentColor = oppositeColor(currentColor);
+  }
+  
+  // Negamax from the end
+  // At each depth (from end to beginning), the side can choose whether to capture
+  // gain[d] after negamax = the best result for the side-to-move at depth d
+  for (let d = gain.length - 2; d >= 0; d--) {
+    // At depth d, if we capture, we get gain[d] but opponent then gets gain[d+1]
+    // Net result: gain[d] - gain[d+1]
+    // We choose max(0, ...) because we can always choose not to capture
+    // EXCEPT at depth 0 - the initial capture is mandatory (that's the move being evaluated)
+    if (d > 0) {
+      gain[d] = Math.max(0, gain[d]! - (gain[d + 1] ?? 0));
+    } else {
+      // At depth 0, we must make the capture
+      gain[d] = gain[d]! - (gain[d + 1] ?? 0);
+    }
+  }
+  
+  return gain[0] ?? 0;
+}
+
+/**
+ * Get attackers excluding pieces that have been removed during SEE simulation.
+ */
+function getAttackersWithExclusions(
+  board: BoardState,
+  target: HexCoord,
+  byColor: Color,
+  excludedPositions: Set<string>
+): AttackerInfo[] {
+  const attackers: AttackerInfo[] = [];
+  
+  // Check for pawn attackers
+  const pawnCaptureDirections = getPawnCaptureDirections(byColor);
+  for (const dir of pawnCaptureDirections) {
+    const reverseDir = seeGetOppositeDirection(dir);
+    const attackerPos = getNeighbor(target, reverseDir);
+    if (attackerPos && !excludedPositions.has(coordToString(attackerPos))) {
+      const piece = getPieceAt(board, attackerPos);
+      if (piece?.type === 'pawn' && piece.color === byColor) {
+        attackers.push({
+          piece,
+          position: attackerPos,
+          value: PIECE_VALUES['pawn'],
+        });
+      }
+    }
+  }
+  
+  // Check for knight attackers
+  for (const attackerPos of getKnightTargets(target)) {
+    if (!excludedPositions.has(coordToString(attackerPos))) {
+      const piece = getPieceAt(board, attackerPos);
+      if (piece?.type === 'knight' && piece.color === byColor) {
+        attackers.push({
+          piece,
+          position: attackerPos,
+          value: PIECE_VALUES['knight'],
+        });
+      }
+    }
+  }
+  
+  // Check for king attackers
+  for (const dir of ALL_DIRECTIONS) {
+    const attackerPos = getNeighbor(target, dir);
+    if (attackerPos && !excludedPositions.has(coordToString(attackerPos))) {
+      const piece = getPieceAt(board, attackerPos);
+      if (piece?.type === 'king' && piece.color === byColor) {
+        attackers.push({
+          piece,
+          position: attackerPos,
+          value: 20000, // King has very high value for SEE
+        });
+      }
+    }
+  }
+  
+  // Check for slider attackers, considering X-ray attacks through excluded pieces
+  for (const dir of ALL_DIRECTIONS) {
+    const ray = getRay(target, dir);
+    for (const pos of ray) {
+      // Skip excluded positions (they've been "removed" in simulation)
+      if (excludedPositions.has(coordToString(pos))) continue;
+      
+      const piece = getPieceAt(board, pos);
+      if (!piece) continue;
+      if (piece.color !== byColor) break; // Blocked by enemy piece
+      
+      // Check if this piece can attack along this direction
+      const pieceDirections = getPieceDirections(piece);
+      const reverseDir = seeGetOppositeDirection(dir);
+      if ((pieceDirections as readonly Direction[]).includes(reverseDir) && isSlider(piece.type)) {
+        attackers.push({
+          piece,
+          position: pos,
+          value: PIECE_VALUES[piece.type],
+        });
+      }
+      break; // Blocked by this piece (even if it's a slider that could attack)
+    }
+  }
+  
+  // Sort by value (least valuable first)
+  attackers.sort((a, b) => a.value - b.value);
+  
+  return attackers;
+}
+
+/**
+ * Check if a capture is a winning capture according to SEE.
+ * A winning capture has SEE >= 0.
+ * 
+ * @param board The board state
+ * @param move The capture move to check
+ * @returns True if SEE >= 0 (capture wins or breaks even)
+ */
+export function isWinningCapture(board: BoardState, move: Move): boolean {
+  return staticExchangeEvaluation(board, move) >= 0;
+}
+
+/**
+ * Check if a capture is a losing capture according to SEE.
+ * A losing capture has SEE < 0.
+ * 
+ * @param board The board state
+ * @param move The capture move to check
+ * @returns True if SEE < 0 (capture loses material)
+ */
+export function isLosingCapture(board: BoardState, move: Move): boolean {
+  return staticExchangeEvaluation(board, move) < 0;
+}
+
+// ============================================================================
 // Move Ordering
 // ============================================================================
 
@@ -1392,6 +1739,61 @@ export function estimateMoveValue(move: Move, ply: number = 0): number {
   score += getCentralityBonus(move.to);
   
   return score;
+}
+
+/**
+ * Estimate move value using SEE for captures (more accurate but slower).
+ * Uses SEE to properly evaluate capture sequences instead of simple MVV-LVA.
+ * 
+ * @param board The current board state (needed for SEE calculation)
+ * @param move The move to evaluate
+ * @param ply Current ply depth (for killer move lookup)
+ */
+export function estimateMoveValueWithSEE(board: BoardState, move: Move, ply: number = 0): number {
+  let score = 0;
+  
+  // Captures: Use SEE for accurate capture evaluation
+  if (move.captured) {
+    const seeValue = staticExchangeEvaluation(board, move);
+    // Winning captures (SEE >= 0) get high priority
+    // Losing captures (SEE < 0) get lower priority than quiet moves
+    if (seeValue >= 0) {
+      score += 10000 + seeValue; // Winning captures ordered by SEE value
+    } else {
+      score += seeValue; // Losing captures (negative score)
+    }
+  }
+  
+  // Promotions are very valuable
+  if (move.promotion) {
+    score += 9000 + PIECE_VALUES[move.promotion] - PIECE_VALUES['pawn'];
+  }
+  
+  // Killer moves (quiet moves that caused cutoffs at this ply)
+  score += killerScore(move, ply);
+  
+  // History heuristic for quiet moves
+  const history = historyScore(move);
+  score += Math.min(history / 100, 1000);
+  
+  // Centrality bonus for destination (small tie-breaker)
+  score += getCentralityBonus(move.to);
+  
+  return score;
+}
+
+/**
+ * Sort moves by estimated value using SEE for captures (best first).
+ * More accurate than orderMoves but requires board state.
+ * 
+ * @param board The current board state
+ * @param moves Array of moves to sort
+ * @param ply Current ply depth (for killer move lookup)
+ */
+export function orderMovesWithSEE(board: BoardState, moves: Move[], ply: number = 0): Move[] {
+  return [...moves].sort((a, b) => 
+    estimateMoveValueWithSEE(board, b, ply) - estimateMoveValueWithSEE(board, a, ply)
+  );
 }
 
 /**
@@ -1480,11 +1882,18 @@ function quiescenceSearch(
     return standPat;
   }
   
-  // Order moves (captures of valuable pieces first)
-  const orderedMoves = orderMoves(tacticalMoves);
+  // Order moves using SEE (more accurate than MVV-LVA)
+  const orderedMoves = orderMovesWithSEE(board, tacticalMoves, 0);
   
   if (maximizing) {
     for (const move of orderedMoves) {
+      // SEE pruning: skip losing captures in quiescence
+      // This is safe because we already have stand-pat as a baseline
+      if (move.captured && staticExchangeEvaluation(board, move) < 0) {
+        stats.seePrunes++;
+        continue;
+      }
+      
       const newBoard = applyMove(board, move);
       const score = quiescenceSearch(newBoard, alpha, beta, false, stats, qDepth + 1);
       
@@ -1497,6 +1906,12 @@ function quiescenceSearch(
     return alpha;
   } else {
     for (const move of orderedMoves) {
+      // SEE pruning: skip losing captures in quiescence
+      if (move.captured && staticExchangeEvaluation(board, move) < 0) {
+        stats.seePrunes++;
+        continue;
+      }
+      
       const newBoard = applyMove(board, move);
       const score = quiescenceSearch(newBoard, alpha, beta, true, stats, qDepth + 1);
       
@@ -1530,6 +1945,7 @@ export interface SearchStats {
   pvsResearches: number;
   aspirationResearches: number;
   futilityPrunes: number;
+  seePrunes: number; // Captures pruned by SEE in quiescence search
 }
 
 /**
@@ -1920,6 +2336,7 @@ export function findBestMove(
     pvsResearches: 0,
     aspirationResearches: 0,
     futilityPrunes: 0,
+    seePrunes: 0,
   };
   
   // Clear killer moves at start of new search
@@ -2030,6 +2447,7 @@ export function findBestMoveIterative(
       pvsResearches: 0,
       aspirationResearches: 0,
       futilityPrunes: 0,
+      seePrunes: 0,
     } 
   };
   
@@ -2045,6 +2463,7 @@ export function findBestMoveIterative(
   let totalPVSResearches = 0;
   let totalAspirationResearches = 0;
   let totalFutilityPrunes = 0;
+  let totalSEEPrunes = 0;
   
   // Helper to accumulate stats from a search result
   const accumulateStats = (result: SearchResult) => {
@@ -2059,6 +2478,7 @@ export function findBestMoveIterative(
     totalPVSResearches += result.stats.pvsResearches;
     totalAspirationResearches += result.stats.aspirationResearches;
     totalFutilityPrunes += result.stats.futilityPrunes;
+    totalSEEPrunes += result.stats.seePrunes;
   };
   
   // Get initial moves quickly at depth 1
@@ -2155,6 +2575,7 @@ export function findBestMoveIterative(
   bestResult.stats.pvsResearches = totalPVSResearches;
   bestResult.stats.aspirationResearches = totalAspirationResearches;
   bestResult.stats.futilityPrunes = totalFutilityPrunes;
+  bestResult.stats.seePrunes = totalSEEPrunes;
   
   return bestResult;
 }
@@ -2212,6 +2633,7 @@ export function getAIMove(
         pvsResearches: 0,
         aspirationResearches: 0,
         futilityPrunes: 0,
+        seePrunes: 0,
       } 
     };
   }

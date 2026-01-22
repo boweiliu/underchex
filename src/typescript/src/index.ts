@@ -111,7 +111,9 @@ export {
   evaluatePosition,
   evaluateForColor,
   estimateMoveValue,
+  estimateMoveValueWithSEE,
   orderMoves,
+  orderMovesWithSEE,
   SearchStats,
   SearchResult,
   findBestMove,
@@ -167,6 +169,11 @@ export {
   FUTILITY_MAX_DEPTH,
   FUTILITY_MARGINS,
   canFutilityPrune,
+  // Static Exchange Evaluation exports (added by agent #13)
+  getAttackers,
+  staticExchangeEvaluation,
+  isWinningCapture,
+  isLosingCapture,
 } from './ai';
 
 // Re-export self-play

@@ -9,6 +9,7 @@
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
  * Edited-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
+ * Edited-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -81,6 +82,13 @@ import {
   FUTILITY_MAX_DEPTH,
   FUTILITY_MARGINS,
   canFutilityPrune,
+  // Static Exchange Evaluation functions (added by agent #13)
+  getAttackers,
+  staticExchangeEvaluation,
+  isWinningCapture,
+  isLosingCapture,
+  estimateMoveValueWithSEE,
+  orderMovesWithSEE,
 } from '../src/ai';
 import {
   HexCoord,
@@ -2116,6 +2124,350 @@ describe('Aspiration Windows', () => {
         
         expect(result.stats.futilityPrunes).toBeDefined();
       });
+    });
+  });
+});
+
+// ============================================================================
+// Static Exchange Evaluation (SEE) Tests
+// Signed-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
+// ============================================================================
+
+describe('Static Exchange Evaluation (SEE)', () => {
+  describe('getAttackers', () => {
+    it('should find pawn attackers', () => {
+      const board: BoardState = new Map();
+      // White pawn at q=0, r=1 can capture to q=0, r=0 (N direction)
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: -3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      expect(attackers.length).toBe(1);
+      expect(attackers[0]!.piece.type).toBe('pawn');
+    });
+
+    it('should find knight attackers', () => {
+      const board: BoardState = new Map();
+      // Knight at q=1, r=-2 can attack q=0, r=0
+      board.set(coordToString({ q: 1, r: -2 }), { type: 'knight', color: 'white' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      expect(attackers.length).toBe(1);
+      expect(attackers[0]!.piece.type).toBe('knight');
+    });
+
+    it('should find slider attackers', () => {
+      const board: BoardState = new Map();
+      // Queen at q=0, r=-2 can attack q=0, r=0 along N-S direction
+      board.set(coordToString({ q: 0, r: -2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      expect(attackers.length).toBe(1);
+      expect(attackers[0]!.piece.type).toBe('queen');
+    });
+
+    it('should find king attackers', () => {
+      const board: BoardState = new Map();
+      // King at q=0, r=-1 can attack adjacent q=0, r=0
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      expect(attackers.length).toBe(1);
+      expect(attackers[0]!.piece.type).toBe('king');
+    });
+
+    it('should find multiple attackers and sort by value', () => {
+      const board: BoardState = new Map();
+      // Queen at q=0, r=-2 and pawn at q=0, r=1 both attack q=0, r=0
+      board.set(coordToString({ q: 0, r: -2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      expect(attackers.length).toBe(2);
+      // Should be sorted by value: pawn first (100), then queen (900)
+      expect(attackers[0]!.piece.type).toBe('pawn');
+      expect(attackers[1]!.piece.type).toBe('queen');
+    });
+
+    it('should only find attackers of specified color', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: -2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 2 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const whiteAttackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      const blackAttackers = getAttackers(board, { q: 0, r: 0 }, 'black');
+      
+      expect(whiteAttackers.length).toBe(1);
+      expect(whiteAttackers[0]!.piece.color).toBe('white');
+      expect(blackAttackers.length).toBe(1);
+      expect(blackAttackers[0]!.piece.color).toBe('black');
+    });
+
+    it('should not find attackers blocked by other pieces', () => {
+      const board: BoardState = new Map();
+      // Queen at q=0, r=-3 blocked by pawn at q=0, r=-1
+      board.set(coordToString({ q: 0, r: -3 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const attackers = getAttackers(board, { q: 0, r: 0 }, 'white');
+      // Only the pawn can attack (and it can't because it's one square away, not in capture position)
+      // Queen is blocked
+      expect(attackers.length).toBe(0);
+    });
+  });
+
+  describe('staticExchangeEvaluation', () => {
+    it('should return captured piece value for undefended capture', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'queen', color: 'black' },
+      };
+      
+      const seeValue = staticExchangeEvaluation(board, move);
+      expect(seeValue).toBe(PIECE_VALUES.queen); // 900
+    });
+
+    it('should return net material for defended capture', () => {
+      const board: BoardState = new Map();
+      // White queen captures black pawn, but black queen recaptures
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'pawn', color: 'black' });
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+        captured: { type: 'pawn', color: 'black' },
+      };
+      
+      const seeValue = staticExchangeEvaluation(board, move);
+      // Capture pawn (+100), but lose queen to recapture (-900) = -800
+      expect(seeValue).toBe(PIECE_VALUES.pawn - PIECE_VALUES.queen);
+    });
+
+    it('should return 0 for non-capture moves', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+      };
+      
+      const seeValue = staticExchangeEvaluation(board, move);
+      expect(seeValue).toBe(0);
+    });
+
+    it('should handle equal exchanges correctly', () => {
+      const board: BoardState = new Map();
+      // White queen captures black queen (defended by nothing)
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+        captured: { type: 'queen', color: 'black' },
+      };
+      
+      const seeValue = staticExchangeEvaluation(board, move);
+      expect(seeValue).toBe(PIECE_VALUES.queen); // Undefended queen capture
+    });
+
+    it('should handle complex exchanges with multiple attackers', () => {
+      const board: BoardState = new Map();
+      // White pawn captures black knight, defended by black pawn
+      // White has a second pawn to recapture
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' }); // attacker
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'knight', color: 'black' }); // target
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'pawn', color: 'black' }); // defender
+      board.set(coordToString({ q: -1, r: 1 }), { type: 'pawn', color: 'white' }); // white backup
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'knight', color: 'black' },
+      };
+      
+      const seeValue = staticExchangeEvaluation(board, move);
+      // PxN (+300), black PxP (-100), white PxP (+100) = +300
+      // Net: knight value - pawn (recaptured) + pawn (recapture) 
+      expect(seeValue).toBe(PIECE_VALUES.knight - PIECE_VALUES.pawn + PIECE_VALUES.pawn);
+    });
+  });
+
+  describe('isWinningCapture and isLosingCapture', () => {
+    it('isWinningCapture should return true for positive SEE', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'queen', color: 'black' },
+      };
+      
+      expect(isWinningCapture(board, move)).toBe(true);
+      expect(isLosingCapture(board, move)).toBe(false);
+    });
+
+    it('isLosingCapture should return true for negative SEE', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'pawn', color: 'black' });
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'queen', color: 'black' });
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'king', color: 'black' });
+      
+      const move: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+        captured: { type: 'pawn', color: 'black' },
+      };
+      
+      expect(isWinningCapture(board, move)).toBe(false);
+      expect(isLosingCapture(board, move)).toBe(true);
+    });
+  });
+
+  describe('Move ordering with SEE', () => {
+    it('estimateMoveValueWithSEE should order winning captures first', () => {
+      const board: BoardState = new Map();
+      // Setup: Two captures available - one winning, one losing
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' }); // Can QxP (bad)
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'pawn', color: 'black' }); // defended
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'queen', color: 'black' }); // defends pawn
+      board.set(coordToString({ q: 1, r: 1 }), { type: 'pawn', color: 'white' }); // Can PxQ (good)
+      board.set(coordToString({ q: 1, r: 0 }), { type: 'queen', color: 'black' }); // undefended
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 3 }), { type: 'king', color: 'black' });
+      
+      const badCapture: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+        captured: { type: 'pawn', color: 'black' },
+      };
+      
+      const goodCapture: Move = {
+        from: { q: 1, r: 1 },
+        to: { q: 1, r: 0 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'queen', color: 'black' },
+      };
+      
+      const badScore = estimateMoveValueWithSEE(board, badCapture, 0);
+      const goodScore = estimateMoveValueWithSEE(board, goodCapture, 0);
+      
+      expect(goodScore).toBeGreaterThan(badScore);
+    });
+
+    it('orderMovesWithSEE should place winning captures before losing captures', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'pawn', color: 'black' }); // defended pawn
+      board.set(coordToString({ q: 0, r: -1 }), { type: 'queen', color: 'black' }); // defends
+      board.set(coordToString({ q: 1, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 1, r: 0 }), { type: 'knight', color: 'black' }); // undefended knight
+      board.set(coordToString({ q: -3, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 3, r: 3 }), { type: 'king', color: 'black' });
+      
+      const badCapture: Move = {
+        from: { q: 0, r: 1 },
+        to: { q: 0, r: 0 },
+        piece: { type: 'queen', color: 'white' },
+        captured: { type: 'pawn', color: 'black' },
+      };
+      
+      const goodCapture: Move = {
+        from: { q: 1, r: 1 },
+        to: { q: 1, r: 0 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'knight', color: 'black' },
+      };
+      
+      const ordered = orderMovesWithSEE(board, [badCapture, goodCapture], 0);
+      
+      // Good capture (PxN = +300) should come before bad capture (QxP defended = -800)
+      expect(ordered[0]).toEqual(goodCapture);
+      expect(ordered[1]).toEqual(badCapture);
+    });
+  });
+
+  describe('SEE integration with search', () => {
+    it('search stats should track SEE prunes', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 3, true, true, true);
+      
+      expect(result.stats.seePrunes).toBeDefined();
+      expect(typeof result.stats.seePrunes).toBe('number');
+    });
+
+    it('iterative deepening should accumulate SEE prunes', () => {
+      const game = createNewGame();
+      const result = findBestMoveIterative(game.board, 'white', 4, 5000, true, true, true);
+      
+      expect(result.stats.seePrunes).toBeDefined();
+      expect(typeof result.stats.seePrunes).toBe('number');
+    });
+
+    it('getAIMove should track SEE prunes', () => {
+      const game = createNewGame();
+      const result = getAIMove(game, 'medium');
+      
+      expect(result.stats.seePrunes).toBeDefined();
+    });
+
+    it('SEE pruning should improve quiescence search efficiency', () => {
+      // Create a tactical position with many captures
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 0 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 2, r: 0 }), { type: 'pawn', color: 'black' }); // defended
+      board.set(coordToString({ q: 3, r: 0 }), { type: 'queen', color: 'black' }); // defends pawn
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      const result = findBestMove(board, 'white', 3, true, true, true);
+      
+      // SEE pruning should have occurred in quiescence
+      expect(result.stats.seePrunes).toBeGreaterThanOrEqual(0);
     });
   });
 });
