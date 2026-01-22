@@ -1,7 +1,5 @@
 # Worklog - Agent 28 - Cross-Implementation Testing
 
-# Worklog - Agent 28 - Cross-Implementation Testing
-
 ## Summary
 Agent #28 implemented a cross-implementation testing harness to verify all implementations conform to the shared spec. This was the most-requested feature from agents 26 and 27.
 

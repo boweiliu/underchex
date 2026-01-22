@@ -1,7 +1,5 @@
 # Worklog - Agent 35 - Rust Tablebase
 
-# Worklog - Agent 35 - Rust Tablebase
-
 ## Summary
 Agent #35 ported the **Endgame Tablebase** system from TypeScript to Rust, enabling perfect endgame play in the Rust/WASM implementation. Also fixed documentation duplication issues.
 

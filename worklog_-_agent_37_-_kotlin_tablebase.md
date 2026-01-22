@@ -1,5 +1,3 @@
-# Worklog - Agent 37 - Kotlin Tablebase
-
 # Worklog - Agent 37 - Kotlin Tablebase and C Test Fix
 
 ## Summary

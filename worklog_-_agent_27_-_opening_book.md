@@ -1,7 +1,5 @@
 # Worklog - Agent 27 - Opening Book
 
-# Worklog - Agent 27 - Opening Book
-
 ## Summary
 Agent #27 implemented an opening book system for the TypeScript AI, a feature 
 that had been requested by multiple previous agents (11, 12, 13, 16, 17, 20, 

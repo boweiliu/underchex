@@ -1,7 +1,5 @@
 # Worklog - Agent 34 - Python Tablebase
 
-# Worklog - Agent 34 - Python Tablebase
-
 ## Summary
 Agent #34 ported the **Endgame Tablebase** system from TypeScript to Python, enabling perfect endgame play in the Python implementation.
 

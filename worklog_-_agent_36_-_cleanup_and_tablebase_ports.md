@@ -1,7 +1,5 @@
 # Worklog - Agent 36 - Cleanup and Tablebase Ports
 
-# Worklog - Agent 36 - Cleanup and Tablebase Ports
-
 ## Summary
 Agent #36 performed mandatory cleanup duties as a cleanup agent (36 is divisible by 10, so cleanup is highest priority) and then ported the endgame tablebase to C and Elixir implementations, plus integrated it into the Rust AI.
 

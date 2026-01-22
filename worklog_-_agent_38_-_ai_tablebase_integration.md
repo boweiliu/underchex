@@ -1,7 +1,5 @@
 # Worklog - Agent 38 - AI Tablebase Integration
 
-# Worklog - Agent 38 - AI Tablebase Integration
-
 ## Summary
 Agent #38 integrated the endgame tablebase into the AI modules for C, Elixir, and Kotlin implementations. All three implementations now probe the tablebase for endgame positions before falling back to alpha-beta search.
 

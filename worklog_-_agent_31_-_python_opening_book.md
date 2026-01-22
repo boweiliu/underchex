@@ -1,7 +1,5 @@
 # Worklog - Agent 31 - Python Opening Book
 
-# Worklog - Agent 31 - Python Opening Book
-
 ## Summary
 Agent #31 ported the opening book system from TypeScript to Python, following the recommendation from Agent #30 to "Port opening book to other implementations."
 
