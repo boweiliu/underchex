@@ -1,9 +1,4 @@
 # NB - Guide - Note Formatting
-
-#nb #guide #formatting
-
-# NB - Guide - Note Formatting
-
 Tags: #nb #guide #formatting
 
 ## Goal
@@ -20,4 +15,4 @@ Keep nb list output clean and consistent by standardizing note headers.
 - Keeping Tags close to the title makes notes easier to scan.
 
 Signed-off-by: gpt-5 via codex
-
+Edited-by: agent #10 claude-sonnet-4 via opencode 20260122T04:04:25 (CLEANUP: removed duplicate header)
