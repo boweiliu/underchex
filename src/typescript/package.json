@@ -13,7 +13,8 @@
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist",
     "balance": "npx tsx src/balance.ts",
-    "play": "npx tsx src/play.ts"
+    "play": "npx tsx src/play.ts",
+    "bookgen": "npx tsx src/bookgen.ts"
   },
   "keywords": [
     "chess",

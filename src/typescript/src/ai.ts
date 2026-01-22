@@ -19,6 +19,7 @@
  * - Aspiration Windows for faster iterative deepening (added by agent #11)
  * - Futility Pruning for faster search at shallow depths (added by agent #12)
  * - Static Exchange Evaluation (SEE) for accurate capture ordering (added by agent #13)
+ * - Opening Book for faster and more varied opening play (added by agent #27)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
@@ -28,6 +29,7 @@
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
  * Edited-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
+ * Edited-by: agent #27 claude-sonnet-4 via opencode 20260122T07:49:00
  */
 
 import {
@@ -56,6 +58,8 @@ import {
 } from './moves';
 
 import { isValidCell, hexDistance, getNeighbor, getRay, getKnightTargets } from './board';
+
+import { lookupBookMove } from './openingbook';
 
 // ============================================================================
 // Piece Values
@@ -2604,46 +2608,81 @@ export function getDifficultyParams(difficulty: AIDifficulty): { depth: number; 
 }
 
 /**
+ * Options for getAIMove.
+ */
+export interface AIOptions {
+  /** AI difficulty level (default: 'medium') */
+  difficulty?: AIDifficulty;
+  /** Whether to clear transposition, history, and killer tables (default: false, set true for new games) */
+  clearTables?: boolean;
+  /** Whether to use opening book (default: true) */
+  useOpeningBook?: boolean;
+  /** Opening book lookup options */
+  bookOptions?: {
+    minPlayCount?: number;
+    temperature?: number;
+    useWinRateWeight?: boolean;
+  };
+}
+
+/**
  * Get AI move for current game state.
  * 
+ * First checks the opening book (if enabled), then falls back to search.
+ * 
  * @param state Current game state
- * @param difficulty AI difficulty level
- * @param clearTables Whether to clear transposition, history, and killer tables (default false, set true for new games)
+ * @param difficulty AI difficulty level (deprecated, use options.difficulty instead)
+ * @param clearTables Whether to clear tables (deprecated, use options.clearTables instead)
+ * @param options AI options including book settings
  * @returns Best move or null if game is over
  */
 export function getAIMove(
   state: GameState,
   difficulty: AIDifficulty = 'medium',
-  clearTables: boolean = false
+  clearTables: boolean = false,
+  options?: AIOptions
 ): SearchResult {
+  // Merge options with legacy parameters
+  const useBook = options?.useOpeningBook ?? true;
+  const actualDifficulty = options?.difficulty ?? difficulty;
+  const actualClearTables = options?.clearTables ?? clearTables;
+  
+  const emptyStats: SearchStats = { 
+    nodesSearched: 0, 
+    cutoffs: 0, 
+    maxDepthReached: 0, 
+    ttHits: 0, 
+    quiescenceNodes: 0,
+    nullMoveCutoffs: 0,
+    nullMoveAttempts: 0,
+    lmrReductions: 0,
+    lmrResearches: 0,
+    pvsResearches: 0,
+    aspirationResearches: 0,
+    futilityPrunes: 0,
+    seePrunes: 0,
+  };
+  
   if (state.status.type !== 'ongoing') {
-    return { 
-      move: null, 
-      score: 0, 
-      stats: { 
-        nodesSearched: 0, 
-        cutoffs: 0, 
-        maxDepthReached: 0, 
-        ttHits: 0, 
-        quiescenceNodes: 0,
-        nullMoveCutoffs: 0,
-        nullMoveAttempts: 0,
-        lmrReductions: 0,
-        lmrResearches: 0,
-        pvsResearches: 0,
-        aspirationResearches: 0,
-        futilityPrunes: 0,
-        seePrunes: 0,
-      } 
-    };
+    return { move: null, score: 0, stats: emptyStats };
   }
   
-  if (clearTables) {
+  if (actualClearTables) {
     ttClear();
     historyClear();
     killerClear();
   }
   
-  const params = getDifficultyParams(difficulty);
+  // Try opening book first (if enabled and available)
+  if (useBook) {
+    const bookResult = lookupBookMove(state.board, state.turn, options?.bookOptions);
+    if (bookResult.move) {
+      // Return book move with zero search stats (instant move)
+      return { move: bookResult.move, score: 0, stats: emptyStats };
+    }
+  }
+  
+  // Fall back to search
+  const params = getDifficultyParams(actualDifficulty);
   return findBestMoveIterative(state.board, state.turn, params.depth, params.timeLimit);
 }

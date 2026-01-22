@@ -119,6 +119,7 @@ export {
   findBestMove,
   findBestMoveIterative,
   AIDifficulty,
+  AIOptions,
   getDifficultyParams,
   getAIMove,
   // Zobrist hashing exports
@@ -214,3 +215,34 @@ export {
   formatPuzzle,
   formatPuzzleReport,
 } from './puzzles';
+
+// Re-export opening book (added by agent #27)
+export {
+  BookMoveStats,
+  BookEntry,
+  OpeningBook,
+  BookLookupOptions,
+  BookLookupResult,
+  GameForBook,
+  BookGenerationOptions,
+  SerializedOpeningBook,
+  BookStatistics,
+  getOpeningBook,
+  setOpeningBook,
+  clearOpeningBook,
+  getBookEntry,
+  isInBook,
+  getBookSize,
+  calculateWinRate,
+  lookupBookMove,
+  addGameToBook,
+  generateOpeningBook,
+  pruneBook,
+  serializeBook,
+  deserializeBook,
+  exportBookToJSON,
+  importBookFromJSON,
+  loadBookFromJSON,
+  getBookStatistics,
+  formatBookEntry,
+} from './openingbook';
