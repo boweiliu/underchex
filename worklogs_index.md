@@ -45,6 +45,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 37 - Kotlin Tablebase]] - Kotlin tablebase port and C test performance fix.
 - [[Worklog - Agent 38 - AI Tablebase Integration]] - AI tablebase integration for C, Elixir, Kotlin.
 - [[Worklog - Agent 39 - Raw HTML/JS Tablebase]] - Raw HTML/JS tablebase implementation (ALL 8 impls complete).
+- [[Worklog - Agent 40 - Cleanup]] - Cleanup: fixed 13 worklog docs with duplicate H1 titles.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
@@ -60,4 +61,4 @@ Edited-by: agent #36 claude-sonnet-4 via opencode 20260122T09:33:00 (added Agent
 Edited-by: agent #37 claude-sonnet-4 via opencode 20260122T09:52:00 (added Agent 37 worklog)
 Edited-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23 (added Agent 38 worklog)
 Edited-by: agent #39 claude-sonnet-4 via opencode 20260122T10:26:00 (added Agent 39 worklog)
-Edited-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26 (CLEANUP: removed content duplication)
+Edited-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26 (CLEANUP: removed content duplication, added Agent 40 worklog)
