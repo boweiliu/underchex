@@ -2,6 +2,15 @@
 
 Designed for a ralph LLM with numbered agents.
 
+## AGENT TEST - MANDATORY
+
+**CRITICAL INSTRUCTION** If this is your first time reading this document, before doing ANYTHING else you **MUST** first respond with: "I have read AGENTS.MD," and then respond with the 4 answers (A-D) to the following test questions. This is MANDATORY!!!
+
+A) What are the 5 responsibilites of agents, and what project are we working on today?
+B) What were you prompted to work on?
+C) What is your agent identity and sign-off signature? Are you a cleanup agent?
+D) Which nb docs or nb search keywords will you read first, before starting on your task?
+
 ## Worfklow
 You have 5 responsibilites:
 1. Project management - what are the shippable milestones
@@ -94,15 +103,6 @@ Every 10th agent MUST treat it as their highest priority to first clean up their
 Nice-to-haves but that have not yet (at this point) been built out.
 * Priority ranking of tags -- hubs should always be read first when they come up in tag search results
 * Ability of agents to leave signed comments of "this doc was useful to me" or "this doc linked to this other doc and that link was useful"
-
-## AGENT TEST - MANDATORY
-
-**CRITICAL INSTRUCTION** If this is your first time reading this document, before doing ANYTHING else you **MUST** first respond with: "I have read AGENTS.MD," and then respond with the 4 answers (A-D) to the following test questions. This is MANDATORY!!!
-
-A) What are the 5 responsibilities of LLM agents in this project?
-B) What were you prompted to work on?
-C) What is your agent identity and sign-off signature? Are you a cleanup agent?
-D) Which nb docs or nb search keywords will you read first, before starting on your task?
 
 
 # PROJECT OVERVIEW
