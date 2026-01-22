@@ -4,6 +4,7 @@
   Standalone HTML + JS implementation (no dependencies)
   
   Signed-by: agent #2 claude-sonnet-4 via opencode 20260122T02:28:36
+  Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:42:41 (added AI vs AI mode)
 -->
 <html lang="en">
 <head>
@@ -261,6 +262,7 @@
       
       <button id="new-game-btn">New Game (2 Player)</button>
       <button id="ai-game-btn">Play vs AI</button>
+      <button id="ai-vs-ai-btn">AI vs AI</button>
       <button id="undo-btn">Undo Move</button>
       
       <div id="ai-controls" style="display: none; margin-top: 10px;">
@@ -272,6 +274,46 @@
         </select>
         <div id="ai-thinking" style="display: none; margin-top: 10px; color: #e94560; text-align: center;">
           AI is thinking...
+        </div>
+      </div>
+      
+      <div id="ai-vs-ai-controls" style="display: none; margin-top: 10px;">
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px; color: #888; font-size: 0.9em;">White AI:</label>
+            <select id="white-ai-difficulty" style="width: 100%; padding: 6px; border-radius: 5px; background: #0f0f23; color: #eee; border: 1px solid #444;">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label style="display: block; margin-bottom: 5px; color: #888; font-size: 0.9em;">Black AI:</label>
+            <select id="black-ai-difficulty" style="width: 100%; padding: 6px; border-radius: 5px; background: #0f0f23; color: #eee; border: 1px solid #444;">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <button id="ai-start-btn" style="flex: 1; background: #4CAF50;">Start</button>
+          <button id="ai-pause-btn" style="flex: 1; background: #ff9800;">Pause</button>
+          <button id="ai-step-btn" style="flex: 1; background: #2196F3;">Step</button>
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <label style="display: flex; align-items: center; gap: 5px; color: #888; font-size: 0.9em;">
+            <input type="range" id="ai-speed" min="50" max="2000" value="500" style="width: 100px;">
+            <span id="speed-display">500ms</span>
+          </label>
+        </div>
+        <div id="ai-vs-ai-thinking" style="display: none; margin-top: 10px; color: #e94560; text-align: center;">
+          <span id="thinking-color">White</span> AI thinking...
+        </div>
+        <div id="ai-vs-ai-stats" style="margin-top: 10px; padding: 10px; background: #0f0f23; border-radius: 5px; font-size: 0.85em;">
+          <div>Move: <span id="stats-move">0</span></div>
+          <div>Eval: <span id="stats-eval">0</span></div>
+          <div>Nodes: <span id="stats-nodes">0</span></div>
         </div>
       </div>
       
@@ -1275,7 +1317,14 @@
       selectedCell = null;
       legalMovesForSelected = [];
       aiEnabled = false;
+      aiVsAiEnabled = false;
+      aiVsAiRunning = false;
+      if (aiVsAiTimeoutId) {
+        clearTimeout(aiVsAiTimeoutId);
+        aiVsAiTimeoutId = null;
+      }
       document.getElementById('ai-controls').style.display = 'none';
+      document.getElementById('ai-vs-ai-controls').style.display = 'none';
       updateUI();
     });
     
@@ -1284,9 +1333,169 @@
       selectedCell = null;
       legalMovesForSelected = [];
       aiEnabled = true;
+      aiVsAiEnabled = false;
       aiColor = 'black';
       document.getElementById('ai-controls').style.display = 'block';
+      document.getElementById('ai-vs-ai-controls').style.display = 'none';
       updateUI();
+    });
+    
+    // =========================================================================
+    // AI VS AI MODE
+    // Signed-by: agent #4 claude-sonnet-4 via opencode 20260122T02:42:41
+    // =========================================================================
+    
+    let aiVsAiEnabled = false;
+    let aiVsAiRunning = false;
+    let aiVsAiTimeoutId = null;
+    let totalNodesSearched = 0;
+    
+    function updateAiVsAiStats(moveNum, evalScore, nodes) {
+      document.getElementById('stats-move').textContent = moveNum;
+      document.getElementById('stats-eval').textContent = evalScore > 0 ? `+${evalScore}` : evalScore;
+      document.getElementById('stats-nodes').textContent = nodes.toLocaleString();
+    }
+    
+    function makeAiVsAiMove() {
+      if (!aiVsAiEnabled || !aiVsAiRunning || gameState.status.type !== 'ongoing') {
+        return;
+      }
+      
+      // Show thinking indicator
+      document.getElementById('ai-vs-ai-thinking').style.display = 'block';
+      document.getElementById('thinking-color').textContent = gameState.turn.charAt(0).toUpperCase() + gameState.turn.slice(1);
+      
+      // Use setTimeout to allow UI to update
+      setTimeout(() => {
+        const whiteDiff = document.getElementById('white-ai-difficulty').value;
+        const blackDiff = document.getElementById('black-ai-difficulty').value;
+        const difficulty = gameState.turn === 'white' ? whiteDiff : blackDiff;
+        const depth = getDifficultyDepth(difficulty);
+        
+        const result = findBestMove(gameState.board, gameState.turn, depth);
+        
+        if (result.move) {
+          const move = result.move;
+          const newState = makeMove(gameState, move.from, move.to, move.promotion);
+          if (newState) {
+            gameState = newState;
+            totalNodesSearched += result.stats.nodesSearched;
+            updateAiVsAiStats(
+              gameState.history.length,
+              result.score,
+              totalNodesSearched
+            );
+          }
+        }
+        
+        document.getElementById('ai-vs-ai-thinking').style.display = 'none';
+        selectedCell = null;
+        legalMovesForSelected = [];
+        updateUI();
+        
+        // Schedule next move if game is ongoing
+        if (aiVsAiRunning && gameState.status.type === 'ongoing') {
+          const speed = parseInt(document.getElementById('ai-speed').value);
+          aiVsAiTimeoutId = setTimeout(makeAiVsAiMove, speed);
+        } else if (gameState.status.type !== 'ongoing') {
+          aiVsAiRunning = false;
+          document.getElementById('ai-start-btn').textContent = 'Restart';
+        }
+      }, 50);
+    }
+    
+    document.getElementById('ai-vs-ai-btn').addEventListener('click', () => {
+      gameState = createNewGame();
+      selectedCell = null;
+      legalMovesForSelected = [];
+      aiEnabled = false;
+      aiVsAiEnabled = true;
+      aiVsAiRunning = false;
+      totalNodesSearched = 0;
+      
+      if (aiVsAiTimeoutId) {
+        clearTimeout(aiVsAiTimeoutId);
+        aiVsAiTimeoutId = null;
+      }
+      
+      document.getElementById('ai-controls').style.display = 'none';
+      document.getElementById('ai-vs-ai-controls').style.display = 'block';
+      document.getElementById('ai-start-btn').textContent = 'Start';
+      updateAiVsAiStats(0, 0, 0);
+      updateUI();
+    });
+    
+    document.getElementById('ai-start-btn').addEventListener('click', () => {
+      if (gameState.status.type !== 'ongoing') {
+        // Restart game
+        gameState = createNewGame();
+        selectedCell = null;
+        legalMovesForSelected = [];
+        totalNodesSearched = 0;
+        updateAiVsAiStats(0, 0, 0);
+        updateUI();
+      }
+      
+      aiVsAiRunning = true;
+      document.getElementById('ai-start-btn').textContent = 'Running...';
+      makeAiVsAiMove();
+    });
+    
+    document.getElementById('ai-pause-btn').addEventListener('click', () => {
+      aiVsAiRunning = false;
+      if (aiVsAiTimeoutId) {
+        clearTimeout(aiVsAiTimeoutId);
+        aiVsAiTimeoutId = null;
+      }
+      document.getElementById('ai-vs-ai-thinking').style.display = 'none';
+      document.getElementById('ai-start-btn').textContent = gameState.status.type === 'ongoing' ? 'Resume' : 'Restart';
+    });
+    
+    document.getElementById('ai-step-btn').addEventListener('click', () => {
+      if (gameState.status.type !== 'ongoing') return;
+      
+      aiVsAiRunning = false;
+      if (aiVsAiTimeoutId) {
+        clearTimeout(aiVsAiTimeoutId);
+        aiVsAiTimeoutId = null;
+      }
+      
+      // Make a single move
+      document.getElementById('ai-vs-ai-thinking').style.display = 'block';
+      document.getElementById('thinking-color').textContent = gameState.turn.charAt(0).toUpperCase() + gameState.turn.slice(1);
+      
+      setTimeout(() => {
+        const whiteDiff = document.getElementById('white-ai-difficulty').value;
+        const blackDiff = document.getElementById('black-ai-difficulty').value;
+        const difficulty = gameState.turn === 'white' ? whiteDiff : blackDiff;
+        const depth = getDifficultyDepth(difficulty);
+        
+        const result = findBestMove(gameState.board, gameState.turn, depth);
+        
+        if (result.move) {
+          const move = result.move;
+          const newState = makeMove(gameState, move.from, move.to, move.promotion);
+          if (newState) {
+            gameState = newState;
+            totalNodesSearched += result.stats.nodesSearched;
+            updateAiVsAiStats(
+              gameState.history.length,
+              result.score,
+              totalNodesSearched
+            );
+          }
+        }
+        
+        document.getElementById('ai-vs-ai-thinking').style.display = 'none';
+        document.getElementById('ai-start-btn').textContent = gameState.status.type === 'ongoing' ? 'Resume' : 'Restart';
+        selectedCell = null;
+        legalMovesForSelected = [];
+        updateUI();
+      }, 50);
+    });
+    
+    document.getElementById('ai-speed').addEventListener('input', (e) => {
+      document.getElementById('speed-display').textContent = `${e.target.value}ms`;
     });
     
     document.getElementById('undo-btn').addEventListener('click', () => {

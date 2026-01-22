@@ -107,3 +107,18 @@ export {
   getDifficultyParams,
   getAIMove,
 } from './ai';
+
+// Re-export self-play
+export {
+  GameResult,
+  SelfPlayStats,
+  SelfPlayConfig,
+  DEFAULT_SELFPLAY_CONFIG,
+  playSingleGame,
+  runSelfPlay,
+  formatSelfPlayReport,
+  moveToNotation,
+  exportGameHistory,
+  analyzeCaptureFrequency,
+  analyzeGamePhases,
+} from './selfplay';
