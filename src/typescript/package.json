@@ -12,7 +12,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "eslint src --ext .ts",
     "clean": "rm -rf dist",
-    "balance": "npx tsx src/balance.ts"
+    "balance": "npx tsx src/balance.ts",
+    "play": "npx tsx src/play.ts"
   },
   "keywords": [
     "chess",
