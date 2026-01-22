@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Underchex Board Configuration",
+  "version": "0.1.0",
+  
+  "board": {
+    "type": "hexagonal",
+    "radius": 4,
+    "totalCells": 61,
+    "coordinateSystem": "axial",
+    "description": "Hexagonal board where cell (q,r) is valid iff max(|q|, |r|, |q+r|) <= radius"
+  },
+  
+  "directions": {
+    "N":  { "dq":  0, "dr": -1, "description": "North" },
+    "S":  { "dq":  0, "dr":  1, "description": "South" },
+    "NE": { "dq":  1, "dr": -1, "description": "Northeast" },
+    "SW": { "dq": -1, "dr":  1, "description": "Southwest" },
+    "NW": { "dq": -1, "dr":  0, "description": "Northwest" },
+    "SE": { "dq":  1, "dr":  0, "description": "Southeast" }
+  },
+  
+  "directionGroups": {
+    "all": ["N", "S", "NE", "SW", "NW", "SE"],
+    "diagonal": ["NE", "NW", "SE", "SW"],
+    "vertical": ["N", "S"],
+    "lanceTypeA": ["N", "S", "NW", "SE"],
+    "lanceTypeB": ["N", "S", "NE", "SW"]
+  },
+  
+  "playerOrientation": {
+    "white": {
+      "forward": "N",
+      "homeRows": [3, 4],
+      "promotionRow": -4
+    },
+    "black": {
+      "forward": "S", 
+      "homeRows": [-3, -4],
+      "promotionRow": 4
+    }
+  },
+  
+  "_meta": {
+    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57"
+  }
+}

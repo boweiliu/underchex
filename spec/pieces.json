@@ -1,0 +1,121 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Underchex Piece Definitions",
+  "version": "0.1.0",
+  
+  "pieces": {
+    "pawn": {
+      "symbol": "P",
+      "movement": {
+        "type": "step",
+        "directions": ["forward"],
+        "range": 1
+      },
+      "capture": {
+        "type": "step",
+        "directions": ["forward", "forwardLeft", "forwardRight"],
+        "range": 1
+      },
+      "special": ["promotion"],
+      "count": 6,
+      "notes": "Can capture forward (Chinese chess inspired). Promotes on back rank."
+    },
+    
+    "king": {
+      "symbol": "K",
+      "movement": {
+        "type": "step",
+        "directions": ["all"],
+        "range": 1
+      },
+      "capture": "sameAsMovement",
+      "special": ["royal", "noMoveIntoCheck"],
+      "count": 1,
+      "notes": "Standard king movement. Castling TBD."
+    },
+    
+    "queen": {
+      "symbol": "Q",
+      "movement": {
+        "type": "rider",
+        "directions": ["all"],
+        "range": "unlimited"
+      },
+      "capture": "sameAsMovement",
+      "special": [],
+      "count": 1,
+      "notes": "King-rider - slides in any of 6 directions."
+    },
+    
+    "knight": {
+      "symbol": "N",
+      "movement": {
+        "type": "leaper",
+        "pattern": "bentPath",
+        "description": "Move 1 step in direction D1, then 1 step in adjacent direction D2 (not opposite)"
+      },
+      "capture": "sameAsMovement",
+      "special": ["colorBound"],
+      "count": 2,
+      "leapTargets": [
+        {"d1": "N",  "d2": "NE", "offset": {"dq": 1, "dr": -2}},
+        {"d1": "N",  "d2": "NW", "offset": {"dq": -1, "dr": -1}},
+        {"d1": "NE", "d2": "N",  "offset": {"dq": 1, "dr": -2}},
+        {"d1": "NE", "d2": "SE", "offset": {"dq": 2, "dr": -1}},
+        {"d1": "SE", "d2": "NE", "offset": {"dq": 2, "dr": -1}},
+        {"d1": "SE", "d2": "S",  "offset": {"dq": 1, "dr": 1}},
+        {"d1": "S",  "d2": "SE", "offset": {"dq": 1, "dr": 1}},
+        {"d1": "S",  "d2": "SW", "offset": {"dq": -1, "dr": 2}},
+        {"d1": "SW", "d2": "S",  "offset": {"dq": -1, "dr": 2}},
+        {"d1": "SW", "d2": "NW", "offset": {"dq": -2, "dr": 1}},
+        {"d1": "NW", "d2": "SW", "offset": {"dq": -2, "dr": 1}},
+        {"d1": "NW", "d2": "N",  "offset": {"dq": -1, "dr": -1}}
+      ],
+      "notes": "Elephant-like leaper. Color-bound (3 colors on hex board)."
+    },
+    
+    "lance": {
+      "symbol": "L",
+      "movement": {
+        "type": "rider",
+        "directions": ["lanceDirections"],
+        "range": "unlimited"
+      },
+      "capture": "sameAsMovement",
+      "special": ["colorBound"],
+      "count": 2,
+      "variants": {
+        "lanceA": {"directions": ["N", "S", "NW", "SE"]},
+        "lanceB": {"directions": ["N", "S", "NE", "SW"]}
+      },
+      "notes": "4-way rider. Two types with different diagonal axes. Each type is color-bound."
+    },
+    
+    "chariot": {
+      "symbol": "C",
+      "movement": {
+        "type": "rider",
+        "directions": ["diagonal"],
+        "range": "unlimited"
+      },
+      "capture": "sameAsMovement",
+      "special": [],
+      "count": 2,
+      "notes": "4-way diagonal rider (NE, NW, SE, SW only)."
+    }
+  },
+  
+  "pieceValues": {
+    "_note": "Preliminary values for AI evaluation, subject to tuning",
+    "pawn": 1,
+    "knight": 3,
+    "lance": 4,
+    "chariot": 4,
+    "queen": 9,
+    "king": 1000
+  },
+  
+  "_meta": {
+    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57"
+  }
+}

@@ -1,0 +1,244 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Underchex Move Validation Test Cases",
+  "version": "0.1.0",
+  
+  "description": "Cross-implementation test suite for move validation",
+  
+  "testCases": [
+    {
+      "id": "board_001",
+      "description": "Center cell is valid",
+      "type": "boardValidation",
+      "input": {"q": 0, "r": 0},
+      "expected": {"valid": true}
+    },
+    {
+      "id": "board_002", 
+      "description": "Corner cell at max radius is valid",
+      "type": "boardValidation",
+      "input": {"q": 4, "r": 0},
+      "expected": {"valid": true}
+    },
+    {
+      "id": "board_003",
+      "description": "Cell outside board is invalid",
+      "type": "boardValidation",
+      "input": {"q": 5, "r": 0},
+      "expected": {"valid": false}
+    },
+    {
+      "id": "board_004",
+      "description": "Cell violating q+r constraint is invalid",
+      "type": "boardValidation",
+      "input": {"q": 3, "r": 3},
+      "expected": {"valid": false}
+    },
+    
+    {
+      "id": "king_001",
+      "description": "King can move to adjacent empty cell",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "king", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 0}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "king_002",
+      "description": "King cannot move 2 squares",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "king", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 2, "r": 0}},
+      "expected": {"legal": false}
+    },
+    {
+      "id": "king_003",
+      "description": "King can capture enemy piece",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "black", "q": 1, "r": 0}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 0}},
+      "expected": {"legal": true, "capture": true}
+    },
+    
+    {
+      "id": "queen_001",
+      "description": "Queen can slide multiple squares",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "queen", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "queen_002",
+      "description": "Queen cannot jump over pieces",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "queen", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "white", "q": 0, "r": -1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -3}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "pawn_001",
+      "description": "White pawn moves north",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "white", "q": 0, "r": 2}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 0, "r": 1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "pawn_002",
+      "description": "White pawn cannot move south",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "white", "q": 0, "r": 2}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 0, "r": 3}},
+      "expected": {"legal": false}
+    },
+    {
+      "id": "pawn_003",
+      "description": "White pawn captures forward (north)",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "pawn", "color": "white", "q": 0, "r": 2},
+          {"piece": "pawn", "color": "black", "q": 0, "r": 1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 0, "r": 1}},
+      "expected": {"legal": true, "capture": true}
+    },
+    {
+      "id": "pawn_004",
+      "description": "White pawn captures diagonally NE",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "pawn", "color": "white", "q": 0, "r": 2},
+          {"piece": "pawn", "color": "black", "q": 1, "r": 1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 1, "r": 1}},
+      "expected": {"legal": true, "capture": true}
+    },
+    
+    {
+      "id": "knight_001",
+      "description": "Knight leaps to valid target",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": -2}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_002",
+      "description": "Knight can jump over pieces",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "knight", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "white", "q": 0, "r": -1},
+          {"piece": "pawn", "color": "black", "q": 1, "r": -1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": -2}},
+      "expected": {"legal": true}
+    },
+    
+    {
+      "id": "lance_001",
+      "description": "Lance A slides north",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 2, "variant": "A"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 0, "r": -2}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_002",
+      "description": "Lance A cannot move NE (not in its directions)",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 2, "variant": "A"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 2, "r": 0}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "chariot_001",
+      "description": "Chariot slides NE",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "chariot", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 3, "r": -3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "chariot_002",
+      "description": "Chariot cannot move north (not diagonal)",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "chariot", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -2}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "check_001",
+      "description": "King cannot move into check",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "black", "q": 1, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 0}},
+      "expected": {"legal": false, "reason": "movesIntoCheck"}
+    }
+  ],
+  
+  "_meta": {
+    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57"
+  }
+}

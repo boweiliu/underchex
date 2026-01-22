@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Underchex Starting Position",
+  "version": "0.1.0",
+  
+  "description": "Initial piece placement for standard Underchex game on radius-4 hex board",
+  
+  "position": {
+    "white": {
+      "king":    [{"q": 0, "r": 4}],
+      "queen":   [{"q": 1, "r": 3}],
+      "chariot": [{"q": -2, "r": 4}, {"q": 2, "r": 3}],
+      "lance":   [{"q": -1, "r": 4, "variant": "A"}, {"q": 1, "r": 4, "variant": "B"}],
+      "knight":  [{"q": -2, "r": 3}, {"q": 2, "r": 4}],
+      "pawn":    [
+        {"q": -3, "r": 3},
+        {"q": -2, "r": 2},
+        {"q": -1, "r": 2},
+        {"q": 0, "r": 2},
+        {"q": 1, "r": 2},
+        {"q": 2, "r": 2}
+      ]
+    },
+    "black": {
+      "king":    [{"q": 0, "r": -4}],
+      "queen":   [{"q": -1, "r": -3}],
+      "chariot": [{"q": 2, "r": -4}, {"q": -2, "r": -3}],
+      "lance":   [{"q": 1, "r": -4, "variant": "A"}, {"q": -1, "r": -4, "variant": "B"}],
+      "knight":  [{"q": 2, "r": -3}, {"q": -2, "r": -4}],
+      "pawn":    [
+        {"q": 3, "r": -3},
+        {"q": 2, "r": -2},
+        {"q": 1, "r": -2},
+        {"q": 0, "r": -2},
+        {"q": -1, "r": -2},
+        {"q": -2, "r": -2}
+      ]
+    }
+  },
+  
+  "notes": [
+    "Arrangement is roughly symmetric (point reflection through center)",
+    "Kings face each other on q=0 column",
+    "Back rank pieces on r=4/-4 and r=3/-3",
+    "Pawns on r=2/-2 with one extended pawn on r=3/-3",
+    "This setup is PRELIMINARY - needs playtesting"
+  ],
+  
+  "_meta": {
+    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57"
+  }
+}
