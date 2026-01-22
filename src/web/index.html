@@ -5,6 +5,7 @@
   
   Signed-by: agent #2 claude-sonnet-4 via opencode 20260122T02:28:36
   Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:42:41 (added AI vs AI mode)
+  Edited-by: agent #15 claude-sonnet-4 via opencode 20260122T05:23:06 (added puzzle mode)
 -->
 <html lang="en">
 <head>
@@ -241,6 +242,109 @@
       background: #333;
       color: #f0f0f0;
     }
+    
+    /* Puzzle Mode Styles */
+    .puzzle-panel {
+      display: none;
+      margin-top: 10px;
+    }
+    
+    .puzzle-panel.active {
+      display: block;
+    }
+    
+    .puzzle-info {
+      background: #0f0f23;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .puzzle-info .difficulty {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 0.8em;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+    
+    .puzzle-info .difficulty.beginner { background: #4CAF50; color: white; }
+    .puzzle-info .difficulty.intermediate { background: #2196F3; color: white; }
+    .puzzle-info .difficulty.advanced { background: #ff9800; color: white; }
+    .puzzle-info .difficulty.expert { background: #e94560; color: white; }
+    
+    .puzzle-themes {
+      font-size: 0.85em;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    .puzzle-progress {
+      margin-top: 8px;
+      font-size: 0.9em;
+    }
+    
+    .puzzle-message {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    .puzzle-message.correct {
+      background: #4CAF50;
+      color: white;
+    }
+    
+    .puzzle-message.incorrect {
+      background: #e94560;
+      color: white;
+    }
+    
+    .puzzle-message.solved {
+      background: #ffd93d;
+      color: #333;
+    }
+    
+    .puzzle-buttons {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    
+    .puzzle-buttons button {
+      flex: 1;
+      padding: 8px;
+      font-size: 0.9em;
+    }
+    
+    .hint-btn {
+      background: #2196F3 !important;
+    }
+    
+    .hint-btn:hover {
+      background: #42a5f5 !important;
+    }
+    
+    .next-btn {
+      background: #4CAF50 !important;
+    }
+    
+    .next-btn:hover {
+      background: #66bb6a !important;
+    }
+    
+    .puzzle-selector {
+      width: 100%;
+      padding: 8px;
+      border-radius: 5px;
+      background: #0f0f23;
+      color: #eee;
+      border: 1px solid #444;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
@@ -263,6 +367,7 @@
       <button id="new-game-btn">New Game (2 Player)</button>
       <button id="ai-game-btn">Play vs AI</button>
       <button id="ai-vs-ai-btn">AI vs AI</button>
+      <button id="puzzle-btn">Puzzles</button>
       <button id="undo-btn">Undo Move</button>
       
       <div id="ai-controls" style="display: none; margin-top: 10px;">
@@ -314,6 +419,37 @@
           <div>Move: <span id="stats-move">0</span></div>
           <div>Eval: <span id="stats-eval">0</span></div>
           <div>Nodes: <span id="stats-nodes">0</span></div>
+        </div>
+      </div>
+      
+      <!-- Puzzle Mode Panel -->
+      <div id="puzzle-panel" class="puzzle-panel">
+        <select id="puzzle-selector" class="puzzle-selector">
+          <option value="">Select a puzzle...</option>
+        </select>
+        
+        <div id="puzzle-info" class="puzzle-info" style="display: none;">
+          <div>
+            <strong>Puzzle <span id="puzzle-number">1</span></strong>
+            <span id="puzzle-difficulty" class="difficulty beginner">Beginner</span>
+          </div>
+          <div class="puzzle-themes">Theme: <span id="puzzle-theme">Checkmate</span></div>
+          <div class="puzzle-progress">
+            <span id="puzzle-to-move">White</span> to move
+            <br>Move <span id="puzzle-current-move">1</span> of <span id="puzzle-total-moves">1</span>
+          </div>
+        </div>
+        
+        <div id="puzzle-message" class="puzzle-message" style="display: none;"></div>
+        
+        <div class="puzzle-buttons">
+          <button id="puzzle-hint-btn" class="hint-btn">Hint</button>
+          <button id="puzzle-retry-btn">Retry</button>
+          <button id="puzzle-next-btn" class="next-btn">Next</button>
+        </div>
+        
+        <div style="font-size: 0.85em; color: #888; text-align: center;">
+          Solved: <span id="puzzles-solved">0</span> / <span id="puzzles-total">0</span>
         </div>
       </div>
       
@@ -1323,6 +1459,13 @@
         clearTimeout(aiVsAiTimeoutId);
         aiVsAiTimeoutId = null;
       }
+      // Exit puzzle mode if active
+      if (typeof puzzleMode !== 'undefined' && puzzleMode) {
+        puzzleMode = false;
+        currentPuzzle = null;
+        puzzleBoard = null;
+        document.getElementById('puzzle-panel').classList.remove('active');
+      }
       document.getElementById('ai-controls').style.display = 'none';
       document.getElementById('ai-vs-ai-controls').style.display = 'none';
       updateUI();
@@ -1500,6 +1643,7 @@
     
     document.getElementById('undo-btn').addEventListener('click', () => {
       if (aiThinking) return; // Don't undo while AI is thinking
+      if (puzzleMode) return; // No undo in puzzle mode
       
       if (gameState.history.length > 0) {
         // In AI mode, undo both AI and player moves
@@ -1533,6 +1677,607 @@
         legalMovesForSelected = [];
         updateUI();
       }
+    });
+    
+    // =========================================================================
+    // PUZZLE MODE
+    // Signed-by: agent #15 claude-sonnet-4 via opencode 20260122T05:23:06
+    // =========================================================================
+    
+    let puzzleMode = false;
+    let currentPuzzle = null;
+    let currentPuzzleMoveIndex = 0;
+    let puzzleBoard = null;
+    let puzzleSolved = false;
+    let puzzlesSolvedCount = 0;
+    let hintLevel = 0; // 0 = no hint, 1 = piece, 2 = from square, 3 = full move
+    
+    // Pre-defined puzzles for the standalone web UI
+    // Each puzzle has: position (pieces), toMove, solution (moves), themes, difficulty
+    const PUZZLES = [
+      // Puzzle 1: Mate in 1 - Queen captures to deliver mate
+      {
+        id: 'puzzle_1',
+        name: 'Mate in 1',
+        difficulty: 'beginner',
+        themes: ['checkmate'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '1,-4', piece: { type: 'pawn', color: 'black' } },
+          { pos: '-1,-3', piece: { type: 'pawn', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '2,-2', piece: { type: 'queen', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:2,r:-2}, to: {q:0,r:-2}, pieceType: 'queen' }
+        ]
+      },
+      // Puzzle 2: Fork - Knight attacks king and queen
+      {
+        id: 'puzzle_2',
+        name: 'Knight Fork',
+        difficulty: 'beginner',
+        themes: ['fork', 'winning_capture'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '3,-3', piece: { type: 'queen', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '0,0', piece: { type: 'knight', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:0,r:0}, to: {q:1,r:-2}, pieceType: 'knight' }
+        ]
+      },
+      // Puzzle 3: Back rank mate with chariot
+      {
+        id: 'puzzle_3',
+        name: 'Back Rank Mate',
+        difficulty: 'beginner',
+        themes: ['checkmate'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '-1,-3', piece: { type: 'pawn', color: 'black' } },
+          { pos: '0,-3', piece: { type: 'pawn', color: 'black' } },
+          { pos: '1,-4', piece: { type: 'pawn', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '3,1', piece: { type: 'chariot', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:3,r:1}, to: {q:2,r:-3}, pieceType: 'chariot' }
+        ]
+      },
+      // Puzzle 4: Win the queen with discovered attack
+      {
+        id: 'puzzle_4',
+        name: 'Discovered Attack',
+        difficulty: 'intermediate',
+        themes: ['winning_capture', 'tactical'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '-2,0', piece: { type: 'queen', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '0,0', piece: { type: 'lance', color: 'white', variant: 'A' } },
+          { pos: '-1,0', piece: { type: 'knight', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:-1,r:0}, to: {q:0,r:-2}, pieceType: 'knight' }, // Check with knight, lance attacks queen
+          { from: {q:0,r:-4}, to: {q:-1,r:-3}, pieceType: 'king' }, // King moves
+          { from: {q:0,r:0}, to: {q:-2,r:0}, pieceType: 'lance' }, // Win the queen
+        ]
+      },
+      // Puzzle 5: Promotion threat
+      {
+        id: 'puzzle_5',
+        name: 'Pawn Promotion',
+        difficulty: 'intermediate',
+        themes: ['promotion'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '2,-3', piece: { type: 'pawn', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:2,r:-3}, to: {q:2,r:-4}, pieceType: 'pawn', promotion: 'queen' }
+        ]
+      },
+      // Puzzle 6: Mate in 2 with queen and lance
+      {
+        id: 'puzzle_6',
+        name: 'Mate in 2',
+        difficulty: 'intermediate',
+        themes: ['checkmate'],
+        toMove: 'white',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '0,-3', piece: { type: 'pawn', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '3,-1', piece: { type: 'queen', color: 'white' } },
+          { pos: '-2,-2', piece: { type: 'lance', color: 'white', variant: 'A' } },
+        ],
+        solution: [
+          { from: {q:3,r:-1}, to: {q:1,r:-3}, pieceType: 'queen' }, // Check
+          { from: {q:0,r:-4}, to: {q:-1,r:-4}, pieceType: 'king' }, // Only move
+          { from: {q:-2,r:-2}, to: {q:-2,r:-4}, pieceType: 'lance' } // Mate!
+        ]
+      },
+      // Puzzle 7: Defensive - only move to avoid mate
+      {
+        id: 'puzzle_7',
+        name: 'Find the Defense',
+        difficulty: 'intermediate',
+        themes: ['defensive'],
+        toMove: 'black',
+        position: [
+          { pos: '0,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '2,-2', piece: { type: 'lance', color: 'black', variant: 'B' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '0,-2', piece: { type: 'queen', color: 'white' } },
+        ],
+        solution: [
+          { from: {q:2,r:-2}, to: {q:0,r:-2}, pieceType: 'lance' } // Block the queen
+        ]
+      },
+      // Puzzle 8: Complex mate in 2
+      {
+        id: 'puzzle_8',
+        name: 'Queen Sacrifice',
+        difficulty: 'advanced',
+        themes: ['checkmate', 'tactical'],
+        toMove: 'white',
+        position: [
+          { pos: '1,-4', piece: { type: 'king', color: 'black' } },
+          { pos: '2,-4', piece: { type: 'chariot', color: 'black' } },
+          { pos: '0,4', piece: { type: 'king', color: 'white' } },
+          { pos: '0,-2', piece: { type: 'queen', color: 'white' } },
+          { pos: '-2,-2', piece: { type: 'lance', color: 'white', variant: 'A' } },
+        ],
+        solution: [
+          { from: {q:0,r:-2}, to: {q:2,r:-4}, pieceType: 'queen' }, // Sacrifice queen
+          { from: {q:1,r:-4}, to: {q:2,r:-4}, pieceType: 'king' }, // King takes
+          { from: {q:-2,r:-2}, to: {q:-2,r:-4}, pieceType: 'lance' } // Lance mates
+        ]
+      },
+    ];
+    
+    // Load puzzle position into board
+    function loadPuzzlePosition(puzzle) {
+      const board = new Map();
+      for (const { pos, piece } of puzzle.position) {
+        board.set(pos, piece);
+      }
+      return board;
+    }
+    
+    // Check if a move matches the expected puzzle solution move
+    function checkPuzzleMove(from, to, promotionChoice) {
+      if (!currentPuzzle || puzzleSolved) return false;
+      
+      const expectedMove = currentPuzzle.solution[currentPuzzleMoveIndex];
+      if (!expectedMove) return false;
+      
+      const isCorrect = 
+        from.q === expectedMove.from.q &&
+        from.r === expectedMove.from.r &&
+        to.q === expectedMove.to.q &&
+        to.r === expectedMove.to.r;
+      
+      // Also check promotion if expected
+      if (expectedMove.promotion && promotionChoice !== expectedMove.promotion) {
+        return false;
+      }
+      
+      return isCorrect;
+    }
+    
+    // Apply puzzle move and handle opponent response
+    function applyPuzzleMove(from, to, promotionChoice) {
+      const piece = getPieceAt(puzzleBoard, from);
+      if (!piece) return;
+      
+      // Check if this is correct
+      if (!checkPuzzleMove(from, to, promotionChoice)) {
+        showPuzzleMessage('Incorrect. Try again!', 'incorrect');
+        hintLevel = 0;
+        return;
+      }
+      
+      // Apply the move
+      puzzleBoard = applyMove(puzzleBoard, {
+        piece,
+        from,
+        to,
+        captured: getPieceAt(puzzleBoard, to),
+        promotion: promotionChoice
+      });
+      
+      currentPuzzleMoveIndex++;
+      hintLevel = 0;
+      
+      // Check if puzzle is solved
+      if (currentPuzzleMoveIndex >= currentPuzzle.solution.length) {
+        puzzleSolved = true;
+        puzzlesSolvedCount++;
+        showPuzzleMessage('Puzzle solved!', 'solved');
+        updatePuzzleUI();
+        return;
+      }
+      
+      showPuzzleMessage('Correct!', 'correct');
+      
+      // Opponent's response (if any)
+      setTimeout(() => {
+        if (currentPuzzleMoveIndex < currentPuzzle.solution.length) {
+          const opponentMove = currentPuzzle.solution[currentPuzzleMoveIndex];
+          const opponentPiece = getPieceAt(puzzleBoard, opponentMove.from);
+          
+          if (opponentPiece) {
+            puzzleBoard = applyMove(puzzleBoard, {
+              piece: opponentPiece,
+              from: opponentMove.from,
+              to: opponentMove.to,
+              captured: getPieceAt(puzzleBoard, opponentMove.to),
+              promotion: opponentMove.promotion
+            });
+            currentPuzzleMoveIndex++;
+          }
+          
+          // Check if puzzle is now solved (after opponent move)
+          if (currentPuzzleMoveIndex >= currentPuzzle.solution.length) {
+            puzzleSolved = true;
+            puzzlesSolvedCount++;
+            showPuzzleMessage('Puzzle solved!', 'solved');
+          } else {
+            hidePuzzleMessage();
+          }
+        }
+        updatePuzzleUI();
+        drawBoardForPuzzle();
+      }, 500);
+    }
+    
+    // Show puzzle message
+    function showPuzzleMessage(text, type) {
+      const msgEl = document.getElementById('puzzle-message');
+      msgEl.textContent = text;
+      msgEl.className = `puzzle-message ${type}`;
+      msgEl.style.display = 'block';
+    }
+    
+    function hidePuzzleMessage() {
+      document.getElementById('puzzle-message').style.display = 'none';
+    }
+    
+    // Update puzzle UI
+    function updatePuzzleUI() {
+      if (!currentPuzzle) return;
+      
+      document.getElementById('puzzle-number').textContent = currentPuzzle.id.replace('puzzle_', '');
+      document.getElementById('puzzle-difficulty').textContent = currentPuzzle.difficulty.charAt(0).toUpperCase() + currentPuzzle.difficulty.slice(1);
+      document.getElementById('puzzle-difficulty').className = `difficulty ${currentPuzzle.difficulty}`;
+      document.getElementById('puzzle-theme').textContent = currentPuzzle.themes.join(', ');
+      document.getElementById('puzzle-to-move').textContent = currentPuzzle.toMove.charAt(0).toUpperCase() + currentPuzzle.toMove.slice(1);
+      document.getElementById('puzzle-current-move').textContent = Math.floor(currentPuzzleMoveIndex / 2) + 1;
+      document.getElementById('puzzle-total-moves').textContent = Math.ceil(currentPuzzle.solution.length / 2);
+      document.getElementById('puzzles-solved').textContent = puzzlesSolvedCount;
+      document.getElementById('puzzles-total').textContent = PUZZLES.length;
+      document.getElementById('puzzle-info').style.display = 'block';
+    }
+    
+    // Draw board for puzzle mode
+    function drawBoardForPuzzle() {
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      const cells = getAllCells();
+      
+      for (const cell of cells) {
+        const { x, y } = axialToPixel(cell.q, cell.r);
+        let fillColor = getCellColor(cell.q, cell.r);
+        
+        if (selectedCell && coordsEqual(cell, selectedCell)) {
+          fillColor = '#ffcc00';
+        } else if (legalMovesForSelected.some(m => coordsEqual(m.to, cell))) {
+          const isCapture = getPieceAt(puzzleBoard, cell);
+          fillColor = isCapture ? '#ff6b6b' : '#6bff6b';
+        } else if (hoveredCell && coordsEqual(cell, hoveredCell)) {
+          fillColor = '#5a8a3a';
+        }
+        
+        drawHex(x, y, HEX_SIZE, fillColor, '#1a1a2e');
+      }
+      
+      // Draw pieces
+      for (const cell of cells) {
+        const piece = getPieceAt(puzzleBoard, cell);
+        if (piece) {
+          const { x, y } = axialToPixel(cell.q, cell.r);
+          
+          ctx.beginPath();
+          ctx.arc(x, y, HEX_SIZE * 0.6, 0, Math.PI * 2);
+          ctx.fillStyle = piece.color === 'white' ? '#f0f0f0' : '#333';
+          ctx.fill();
+          ctx.strokeStyle = piece.color === 'white' ? '#ccc' : '#555';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          
+          ctx.fillStyle = piece.color === 'white' ? '#333' : '#f0f0f0';
+          ctx.font = `bold ${HEX_SIZE * 0.8}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(getPieceSymbol(piece), x, y);
+        }
+      }
+      
+      // Draw check indicator
+      const toMove = currentPuzzle ? currentPuzzle.toMove : 'white';
+      const currentTurn = currentPuzzleMoveIndex % 2 === 0 ? toMove : (toMove === 'white' ? 'black' : 'white');
+      if (isInCheck(puzzleBoard, currentTurn)) {
+        const kingPos = findKing(puzzleBoard, currentTurn);
+        if (kingPos) {
+          const { x, y } = axialToPixel(kingPos.q, kingPos.r);
+          ctx.beginPath();
+          ctx.arc(x, y, HEX_SIZE * 0.8, 0, Math.PI * 2);
+          ctx.strokeStyle = '#ff0000';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+    }
+    
+    // Load a specific puzzle
+    function loadPuzzle(puzzleIndex) {
+      if (puzzleIndex < 0 || puzzleIndex >= PUZZLES.length) return;
+      
+      currentPuzzle = PUZZLES[puzzleIndex];
+      currentPuzzleMoveIndex = 0;
+      puzzleSolved = false;
+      hintLevel = 0;
+      puzzleBoard = loadPuzzlePosition(currentPuzzle);
+      selectedCell = null;
+      legalMovesForSelected = [];
+      
+      hidePuzzleMessage();
+      updatePuzzleUI();
+      drawBoardForPuzzle();
+      
+      // Update turn indicator for puzzle mode
+      const turnIndicator = document.getElementById('turn-indicator');
+      turnIndicator.className = `turn-indicator ${currentPuzzle.toMove}`;
+      turnIndicator.textContent = `${currentPuzzle.toMove.charAt(0).toUpperCase() + currentPuzzle.toMove.slice(1)} to Move`;
+    }
+    
+    // Initialize puzzle selector
+    function initPuzzleSelector() {
+      const selector = document.getElementById('puzzle-selector');
+      selector.innerHTML = '<option value="">Select a puzzle...</option>';
+      
+      PUZZLES.forEach((puzzle, i) => {
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${i + 1}. ${puzzle.name} (${puzzle.difficulty})`;
+        selector.appendChild(option);
+      });
+    }
+    
+    // Puzzle button click handler
+    document.getElementById('puzzle-btn').addEventListener('click', () => {
+      // Enter puzzle mode
+      puzzleMode = true;
+      aiEnabled = false;
+      aiVsAiEnabled = false;
+      aiVsAiRunning = false;
+      
+      if (aiVsAiTimeoutId) {
+        clearTimeout(aiVsAiTimeoutId);
+        aiVsAiTimeoutId = null;
+      }
+      
+      document.getElementById('ai-controls').style.display = 'none';
+      document.getElementById('ai-vs-ai-controls').style.display = 'none';
+      document.getElementById('puzzle-panel').classList.add('active');
+      document.getElementById('move-history').innerHTML = '<div style="color:#888;">Puzzle mode - Find the best move!</div>';
+      
+      initPuzzleSelector();
+      document.getElementById('puzzles-total').textContent = PUZZLES.length;
+      
+      // Load first puzzle by default
+      if (PUZZLES.length > 0) {
+        document.getElementById('puzzle-selector').value = '0';
+        loadPuzzle(0);
+      }
+    });
+    
+    // Puzzle selector change
+    document.getElementById('puzzle-selector').addEventListener('change', (e) => {
+      const idx = parseInt(e.target.value);
+      if (!isNaN(idx)) {
+        loadPuzzle(idx);
+      }
+    });
+    
+    // Hint button
+    document.getElementById('puzzle-hint-btn').addEventListener('click', () => {
+      if (!currentPuzzle || puzzleSolved) return;
+      
+      const expectedMove = currentPuzzle.solution[currentPuzzleMoveIndex];
+      if (!expectedMove) return;
+      
+      hintLevel++;
+      let hintText;
+      
+      if (hintLevel === 1) {
+        hintText = `Move your ${expectedMove.pieceType}`;
+      } else if (hintLevel === 2) {
+        hintText = `Move from (${expectedMove.from.q}, ${expectedMove.from.r})`;
+      } else {
+        hintText = `Move ${expectedMove.pieceType} from (${expectedMove.from.q},${expectedMove.from.r}) to (${expectedMove.to.q},${expectedMove.to.r})`;
+        if (expectedMove.promotion) {
+          hintText += ` and promote to ${expectedMove.promotion}`;
+        }
+      }
+      
+      showPuzzleMessage(hintText, 'correct');
+    });
+    
+    // Retry button
+    document.getElementById('puzzle-retry-btn').addEventListener('click', () => {
+      if (!currentPuzzle) return;
+      
+      currentPuzzleMoveIndex = 0;
+      puzzleSolved = false;
+      hintLevel = 0;
+      puzzleBoard = loadPuzzlePosition(currentPuzzle);
+      selectedCell = null;
+      legalMovesForSelected = [];
+      
+      hidePuzzleMessage();
+      updatePuzzleUI();
+      drawBoardForPuzzle();
+    });
+    
+    // Next puzzle button
+    document.getElementById('puzzle-next-btn').addEventListener('click', () => {
+      const selector = document.getElementById('puzzle-selector');
+      const currentIdx = parseInt(selector.value);
+      const nextIdx = (currentIdx + 1) % PUZZLES.length;
+      selector.value = nextIdx;
+      loadPuzzle(nextIdx);
+    });
+    
+    // New game button should exit puzzle mode
+    const originalNewGameHandler = document.getElementById('new-game-btn').onclick;
+    document.getElementById('new-game-btn').addEventListener('click', () => {
+      if (puzzleMode) {
+        puzzleMode = false;
+        currentPuzzle = null;
+        puzzleBoard = null;
+        document.getElementById('puzzle-panel').classList.remove('active');
+      }
+    });
+    
+    // AI game button should exit puzzle mode
+    document.getElementById('ai-game-btn').addEventListener('click', () => {
+      if (puzzleMode) {
+        puzzleMode = false;
+        currentPuzzle = null;
+        puzzleBoard = null;
+        document.getElementById('puzzle-panel').classList.remove('active');
+      }
+    }, true); // Use capture to run before existing handler
+    
+    // AI vs AI button should exit puzzle mode
+    document.getElementById('ai-vs-ai-btn').addEventListener('click', () => {
+      if (puzzleMode) {
+        puzzleMode = false;
+        currentPuzzle = null;
+        puzzleBoard = null;
+        document.getElementById('puzzle-panel').classList.remove('active');
+      }
+    }, true);
+    
+    // Override canvas click for puzzle mode
+    const originalCanvasClickHandler = canvas.onclick;
+    canvas.addEventListener('click', (e) => {
+      if (!puzzleMode || !currentPuzzle || puzzleSolved) return;
+      
+      e.stopImmediatePropagation(); // Prevent other handlers
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cell = pixelToAxial(x, y);
+      
+      if (!isValidCell(cell)) return;
+      
+      // Determine whose turn it is in the puzzle
+      const toMove = currentPuzzle.toMove;
+      const currentTurn = currentPuzzleMoveIndex % 2 === 0 ? toMove : (toMove === 'white' ? 'black' : 'white');
+      
+      // Only allow moving if it's player's turn (even moves for the puzzle solver)
+      if (currentPuzzleMoveIndex % 2 !== 0) return;
+      
+      if (selectedCell) {
+        // Check if this is a promotion move
+        const piece = getPieceAt(puzzleBoard, selectedCell);
+        if (piece && piece.type === 'pawn' && isPromotionZone(cell, piece.color)) {
+          const legalMoves = generateLegalMoves(puzzleBoard, piece, selectedCell);
+          const movesToTarget = legalMoves.filter(m => coordsEqual(m.to, cell));
+          
+          if (movesToTarget.length > 0 && movesToTarget[0].promotion) {
+            // Check what promotion is expected
+            const expectedMove = currentPuzzle.solution[currentPuzzleMoveIndex];
+            if (expectedMove && expectedMove.promotion) {
+              // Auto-select the expected promotion for validation
+              applyPuzzleMove(selectedCell, cell, expectedMove.promotion);
+            } else {
+              // Show promotion dialog
+              showPromotionDialog(selectedCell, cell, piece.color);
+            }
+            selectedCell = null;
+            legalMovesForSelected = [];
+            drawBoardForPuzzle();
+            return;
+          }
+        }
+        
+        // Try to make a move
+        if (piece) {
+          const legalMoves = generateLegalMoves(puzzleBoard, piece, selectedCell);
+          const validMove = legalMoves.find(m => coordsEqual(m.to, cell));
+          
+          if (validMove) {
+            applyPuzzleMove(selectedCell, cell, null);
+            selectedCell = null;
+            legalMovesForSelected = [];
+            drawBoardForPuzzle();
+            return;
+          }
+        }
+        
+        // Deselect or select different piece
+        if (coordsEqual(selectedCell, cell)) {
+          selectedCell = null;
+          legalMovesForSelected = [];
+        } else {
+          const newPiece = getPieceAt(puzzleBoard, cell);
+          if (newPiece && newPiece.color === currentTurn) {
+            selectedCell = cell;
+            legalMovesForSelected = generateLegalMoves(puzzleBoard, newPiece, cell);
+          } else {
+            selectedCell = null;
+            legalMovesForSelected = [];
+          }
+        }
+      } else {
+        // Select a piece
+        const piece = getPieceAt(puzzleBoard, cell);
+        if (piece && piece.color === currentTurn) {
+          selectedCell = cell;
+          legalMovesForSelected = generateLegalMoves(puzzleBoard, piece, cell);
+        }
+      }
+      
+      drawBoardForPuzzle();
+    }, true); // Use capture phase
+    
+    // Handle promotion dialog for puzzle mode
+    const originalPromotionHandler = document.querySelectorAll('.promotion-option');
+    document.querySelectorAll('.promotion-option').forEach(option => {
+      option.addEventListener('click', (e) => {
+        if (!puzzleMode || !pendingPromotion) return;
+        
+        e.stopImmediatePropagation();
+        
+        const pieceType = option.dataset.piece;
+        applyPuzzleMove(pendingPromotion.from, pendingPromotion.to, pieceType);
+        hidePromotionDialog();
+        drawBoardForPuzzle();
+      }, true);
     });
     
     // Initial render
