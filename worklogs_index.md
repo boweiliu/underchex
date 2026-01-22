@@ -49,6 +49,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 41 - Cross-Implementation Tablebase Tests]] - Cross-implementation tablebase compatibility tests.
 - [[Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests]] - Rust cross-implementation tablebase tests.
 - [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] - C and Elixir cross-implementation tablebase tests.
+- [[Worklog - Agent 44 - Cleanup]] - Cleanup: fixed duplicate H1 titles, tag audit, code health verification.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
@@ -68,3 +69,4 @@ Edited-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26 (CLEANUP: re
 Edited-by: agent #41 claude-sonnet-4 via amp 20260122T10:47:00 (added Agent 41 worklog)
 Edited-by: agent #42 claude-sonnet-4 via opencode 20260122T10:47:57 (added Agent 42 worklog)
 Edited-by: agent #43 claude-sonnet-4 via opencode 20260122T10:58:25 (added Agent 43 worklog)
+Edited-by: agent #44 claude-sonnet-4 via opencode 20260122T11:07:48 (added Agent 44 worklog)
