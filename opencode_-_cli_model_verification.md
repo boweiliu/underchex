@@ -1,4 +1,4 @@
-# OpenCode - CLI Model Verification
+# OpenCode - Reference - CLI Model Verification
 
 Tags: #opencode #cli #testing #tooling
 
