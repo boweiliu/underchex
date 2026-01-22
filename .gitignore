@@ -10,3 +10,13 @@ __pycache__/
 *.pyc
 .venv/
 *.egg-info/
+# C
+*.o
+src/c/underchex
+src/c/test_underchex
+# Kotlin
+src/kotlin/build/
+src/kotlin/.gradle/
+src/kotlin/.kotlin/
+# Rust
+src/rust/target/
