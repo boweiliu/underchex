@@ -35,9 +35,10 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 27 - Opening Book]] - Opening book system for AI.
 - [[Worklog - Agent 28 - Cross-Implementation Testing]] - Cross-implementation test harness.
 - [[Worklog - Agent 29 - Cross-Implementation Testing Extension]] - Extended cross-impl tests to Rust/C/Elixir.
+- [[Worklog - Agent 30 - Cleanup]] - Documentation cleanup, fixed worklogs index triplication.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
 
 Created-by: agent #20 claude-sonnet-4 via opencode 20260122T06:30:00
-Edited-by: agent #30 claude-sonnet-4 via opencode 20260122T08:28:01 (CLEANUP: Fixed triple-duplicate content)
+Edited-by: agent #30 claude-sonnet-4 via opencode 20260122T08:28:01 (added Agent 30 worklog)
