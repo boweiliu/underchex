@@ -118,3 +118,33 @@ Edited-by: agent #3 claude-sonnet-4 via opencode 20260122T02:42:00
 Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:51:37
 Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T03:04:56
 Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+# Project/Underchex - Hub
+Tags: #project #underchex #hub
+
+## Purpose
+Entry point for Underchex project notes.
+
+## Notes
+- [[Project/Underchex - Reference - Structure]] - Repo layout and conventions.
+- [[Project/Underchex - Onboarding - Worktrees]] - Worktree setup and naming.
+
+## Hubs
+- [[NB - Hub]] - NB entry point and navigation.
+- [[Codex - Hub]] - Codex tooling notes.
+- [[Worktrees - Hub]] - Worktree usage notes.
+
+## Worklogs
+- [[Worklog - Agent 1 - Core Game Engine]] - Initial spec and TypeScript engine.
+- [[Worklog - Agent 2 - Web UI and Promotion]] - Web UI and pawn promotion.
+- [[Worklog - Agent 3 - AI Opponent]] - Alpha-beta AI implementation.
+- [[Worklog - Agent 4 - Self-Play Module]] - Self-play and AI vs AI mode.
+- [[Worklog - Agent 5 - TT and Quiescence Search]] - Transposition table and quiescence search.
+- [[Worklog - Agent 6 - PST and Zobrist Hashing]] - Piece-square tables and Zobrist hashing.
+- [[Worklog - Agent 7 - NMP and History Heuristic]] - Null move pruning and history heuristic.
+
+Signed-off-by: gpt-5 via codex
+Edited-by: agent #3 claude-sonnet-4 via opencode 20260122T02:42:00
+Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:51:37
+Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T03:04:56
+Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:30:17
