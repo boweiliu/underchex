@@ -355,3 +355,76 @@ describe('validateMove', () => {
     expect(validation.reason).toBe('notYourPiece');
   });
 });
+
+describe('Pawn promotion', () => {
+  it('white pawn generates promotion moves at r=-4', () => {
+    const board = createBoard([
+      { piece: { type: 'pawn', color: 'white' }, pos: { q: 0, r: -3 } },
+    ]);
+    
+    const moves = generatePseudoLegalMoves(
+      board,
+      { type: 'pawn', color: 'white' },
+      { q: 0, r: -3 }
+    );
+    
+    // Should generate 4 promotion moves (queen, chariot, lance, knight)
+    const promotionMoves = moves.filter(m => m.to.r === -4 && m.promotion);
+    expect(promotionMoves.length).toBe(4);
+    expect(promotionMoves.some(m => m.promotion === 'queen')).toBe(true);
+    expect(promotionMoves.some(m => m.promotion === 'chariot')).toBe(true);
+    expect(promotionMoves.some(m => m.promotion === 'lance')).toBe(true);
+    expect(promotionMoves.some(m => m.promotion === 'knight')).toBe(true);
+  });
+
+  it('black pawn generates promotion moves at r=4', () => {
+    const board = createBoard([
+      { piece: { type: 'pawn', color: 'black' }, pos: { q: 0, r: 3 } },
+    ]);
+    
+    const moves = generatePseudoLegalMoves(
+      board,
+      { type: 'pawn', color: 'black' },
+      { q: 0, r: 3 }
+    );
+    
+    // Should generate 4 promotion moves
+    const promotionMoves = moves.filter(m => m.to.r === 4 && m.promotion);
+    expect(promotionMoves.length).toBe(4);
+  });
+
+  it('pawn promotion capture also generates multiple moves', () => {
+    const board = createBoard([
+      { piece: { type: 'pawn', color: 'white' }, pos: { q: 0, r: -3 } },
+      { piece: { type: 'knight', color: 'black' }, pos: { q: 1, r: -4 } },
+    ]);
+    
+    const moves = generatePseudoLegalMoves(
+      board,
+      { type: 'pawn', color: 'white' },
+      { q: 0, r: -3 }
+    );
+    
+    // Capture promotion to NE
+    const capturePromotions = moves.filter(m => m.to.q === 1 && m.to.r === -4 && m.promotion);
+    expect(capturePromotions.length).toBe(4);
+    expect(capturePromotions[0].captured?.type).toBe('knight');
+  });
+
+  it('non-promotion move does not have promotion field', () => {
+    const board = createBoard([
+      { piece: { type: 'pawn', color: 'white' }, pos: { q: 0, r: 2 } },
+    ]);
+    
+    const moves = generatePseudoLegalMoves(
+      board,
+      { type: 'pawn', color: 'white' },
+      { q: 0, r: 2 }
+    );
+    
+    // Move to r=1, not promotion zone
+    const regularMove = moves.find(m => m.to.r === 1);
+    expect(regularMove).toBeDefined();
+    expect(regularMove?.promotion).toBeUndefined();
+  });
+});

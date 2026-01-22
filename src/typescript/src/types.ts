@@ -75,6 +75,14 @@ export const BOARD_RADIUS = 4;
 export const TOTAL_CELLS = 61; // For radius 4 hex board
 
 /**
+ * Promotion zone: White promotes at r=-4, Black promotes at r=4
+ */
+export function isPromotionZone(coord: HexCoord, color: Color): boolean {
+  const targetR = color === 'white' ? -BOARD_RADIUS : BOARD_RADIUS;
+  return coord.r === targetR;
+}
+
+/**
  * Board state as a map from position string to piece.
  * Position string format: "q,r"
  */
@@ -108,8 +116,14 @@ export interface Move {
   readonly to: HexCoord;
   readonly piece: Piece;
   readonly captured?: Piece;
-  readonly promotion?: PieceType; // For pawn promotion
+  readonly promotion?: PieceType; // For pawn promotion (queen, chariot, lance, knight)
 }
+
+/**
+ * Valid promotion targets for pawns.
+ * Note: Lance promotion requires a variant to be specified separately.
+ */
+export const PROMOTION_TARGETS: readonly PieceType[] = ['queen', 'chariot', 'lance', 'knight'];
 
 export interface MoveValidation {
   readonly legal: boolean;

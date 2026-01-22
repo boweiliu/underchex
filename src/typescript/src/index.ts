@@ -23,6 +23,8 @@ export {
   PlacedPiece,
   BOARD_RADIUS,
   TOTAL_CELLS,
+  isPromotionZone,
+  PROMOTION_TARGETS,
   BoardState,
   GameState,
   GameStatus,

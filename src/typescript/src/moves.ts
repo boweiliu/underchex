@@ -21,6 +21,8 @@ import {
   coordToString,
   coordsEqual,
   oppositeColor,
+  isPromotionZone,
+  PROMOTION_TARGETS,
 } from './types';
 
 import {
@@ -150,7 +152,14 @@ function generatePawnMoves(
   // Forward move (non-capture)
   const forward = getNeighbor(from, forwardDir);
   if (forward && !isOccupied(board, forward)) {
-    moves.push(createMove(piece, from, forward));
+    if (isPromotionZone(forward, piece.color)) {
+      // Generate promotion moves for each target piece type
+      for (const promotionType of PROMOTION_TARGETS) {
+        moves.push(createMove(piece, from, forward, undefined, promotionType));
+      }
+    } else {
+      moves.push(createMove(piece, from, forward));
+    }
   }
   
   // Captures (including forward capture)
@@ -158,7 +167,14 @@ function generatePawnMoves(
     const target = getNeighbor(from, dir);
     if (target && hasEnemy(board, target, piece.color)) {
       const captured = getPieceAt(board, target)!;
-      moves.push(createMove(piece, from, target, captured));
+      if (isPromotionZone(target, piece.color)) {
+        // Generate promotion captures for each target piece type
+        for (const promotionType of PROMOTION_TARGETS) {
+          moves.push(createMove(piece, from, target, captured, promotionType));
+        }
+      } else {
+        moves.push(createMove(piece, from, target, captured));
+      }
     }
   }
 }
@@ -219,9 +235,10 @@ function createMove(
   piece: Piece,
   from: HexCoord,
   to: HexCoord,
-  captured?: Piece
+  captured?: Piece,
+  promotion?: PieceType
 ): Move {
-  return { piece, from, to, captured };
+  return { piece, from, to, captured, promotion };
 }
 
 // ============================================================================
@@ -329,11 +346,25 @@ export function isInCheck(board: BoardState, color: Color): boolean {
 
 /**
  * Apply a move to a board state (returns new board state).
+ * Handles pawn promotion by replacing the piece.
  */
 export function applyMove(board: BoardState, move: Move): BoardState {
   const newBoard = new Map(board);
   newBoard.delete(coordToString(move.from));
-  newBoard.set(coordToString(move.to), move.piece);
+  
+  // Handle promotion
+  if (move.promotion) {
+    const promotedPiece: Piece = {
+      type: move.promotion,
+      color: move.piece.color,
+      // Default lance variant for promotion (can be specified more precisely in future)
+      ...(move.promotion === 'lance' ? { variant: 'A' as const } : {}),
+    };
+    newBoard.set(coordToString(move.to), promotedPiece);
+  } else {
+    newBoard.set(coordToString(move.to), move.piece);
+  }
+  
   return newBoard;
 }
 
