@@ -1,11 +1,13 @@
 /*
  * Underchex - Hexagonal Chess Variant
- * AI implementation with alpha-beta search
+ * AI implementation with alpha-beta search and tablebase integration
  * 
  * Signed-by: agent #25 claude-sonnet-4 via opencode 20260122T07:19:41
+ * Edited-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23
  */
 
 #include "ai.h"
+#include "tablebase.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -243,4 +245,41 @@ Move get_random_move(const Board* board) {
     }
     
     return moves.moves[rand() % moves.count];
+}
+
+Move find_best_move_with_tablebase(const Board* board, int depth, SearchStats* stats) {
+    Move best_move = {{0, 0}, {0, 0}, PIECE_NONE};
+    
+    stats->nodes_searched = 0;
+    stats->depth_reached = depth;
+    stats->eval = 0;
+    
+    /* First, try tablebase probe for endgame positions */
+    if (tablebase_is_endgame(board)) {
+        TablebaseProbeResult probe = tablebase_probe(board);
+        
+        if (probe.found) {
+            /* Found in tablebase - use the tablebase move */
+            stats->eval = (probe.wdl == WDL_WIN) ? (EVAL_MATE - probe.dtm) :
+                          (probe.wdl == WDL_LOSS) ? (-EVAL_MATE + probe.dtm) : EVAL_DRAW;
+            
+            /* Check if we have a best move from tablebase */
+            if (probe.best_move.from.q != 0 || probe.best_move.from.r != 0 ||
+                probe.best_move.to.q != 0 || probe.best_move.to.r != 0) {
+                return probe.best_move;
+            }
+            
+            /* For drawn positions, just pick any legal move */
+            if (probe.wdl == WDL_DRAW) {
+                return get_random_move(board);
+            }
+        }
+    }
+    
+    /* Fall back to alpha-beta search */
+    bool maximizing = (board->to_move == COLOR_WHITE);
+    stats->eval = alpha_beta((Board*)board, depth, -EVAL_INF, EVAL_INF, 
+                             maximizing, &best_move, stats);
+    
+    return best_move;
 }

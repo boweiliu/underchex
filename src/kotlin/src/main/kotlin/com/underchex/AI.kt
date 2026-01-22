@@ -1,9 +1,10 @@
 /**
  * Underchex - AI Module
  *
- * Simple alpha-beta search AI with basic evaluation.
+ * Alpha-beta search AI with tablebase integration.
  *
  * Signed-by: agent #23 claude-sonnet-4 via opencode 20260122T06:57:00
+ * Edited-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23
  */
 package com.underchex
 
@@ -213,10 +214,53 @@ fun findBestMove(
 }
 
 /**
- * Get AI move for a game state.
+ * Get AI move for a game state with tablebase integration.
+ * First probes tablebase for endgame positions, then falls back to alpha-beta search.
  */
 fun getAIMove(state: GameState, difficulty: AIDifficulty): AIResult {
-    return findBestMove(state.board, state.turn, difficulty)
+    return getAIMoveWithTablebase(state.board, state.turn, difficulty)
+}
+
+/**
+ * Get AI move with tablebase integration.
+ * First probes tablebase for endgame positions, then falls back to alpha-beta search.
+ */
+fun getAIMoveWithTablebase(board: Map<String, Piece>, color: Color, difficulty: AIDifficulty): AIResult {
+    // First, try tablebase probe for endgame positions
+    if (isTablebaseEndgame(board)) {
+        val result = probeTablebase(board, color)
+        
+        if (result.found && result.entry != null) {
+            val entry = result.entry
+            
+            when (entry.wdl) {
+                WDLOutcome.WIN -> {
+                    // Get the tablebase move
+                    val move = getTablebaseMove(board, color)
+                    if (move != null) {
+                        val score = getTablebaseScore(board, color) ?: 0
+                        return AIResult(move, score, 0)
+                    }
+                }
+                WDLOutcome.DRAW -> {
+                    // For drawn positions, just pick any legal move
+                    val moves = getAllLegalMoves(board, color)
+                    if (moves.isNotEmpty()) {
+                        val move = moves.random()
+                        return AIResult(move, 0, 0)
+                    }
+                }
+                WDLOutcome.LOSS -> {
+                    // For losing positions, let regular search try to delay the loss
+                    // Fall through to regular search
+                }
+                else -> { /* Unknown, fall through */ }
+            }
+        }
+    }
+    
+    // Fall back to regular alpha-beta search
+    return findBestMove(board, color, difficulty)
 }
 
 /**

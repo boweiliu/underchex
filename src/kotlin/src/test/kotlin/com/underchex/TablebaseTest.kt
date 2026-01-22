@@ -297,3 +297,70 @@ class TablebaseGlobalStorageTest {
         assertNull(tablebase)
     }
 }
+
+/**
+ * Tests for AI tablebase integration.
+ * Signed-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23
+ */
+class AITablebaseIntegrationTest {
+    @BeforeEach
+    fun setup() {
+        clearTablebases()
+        // Generate KvK tablebase for tests
+        val config = TablebaseConfig(
+            strongerSide = emptyList(),
+            weakerSide = emptyList(),
+            name = "KvK"
+        )
+        val tablebase = generateTablebase(config)
+        setTablebase(tablebase)
+    }
+    
+    @Test
+    fun `test AI uses tablebase for KvK endgame`() {
+        val board = mapOf(
+            "0,0" to Piece(PieceType.KING, Color.WHITE),
+            "0,-3" to Piece(PieceType.KING, Color.BLACK)
+        )
+        
+        val result = getAIMoveWithTablebase(board, Color.WHITE, AIDifficulty.MEDIUM)
+        
+        // Should find a legal move
+        assertNotNull(result.bestMove)
+        // Score should be 0 for draw
+        assertEquals(0, result.score)
+    }
+    
+    @Test
+    fun `test AI falls back to search for non-endgame`() {
+        val state = createNewGame()
+        
+        val result = getAIMoveWithTablebase(state.board, Color.WHITE, AIDifficulty.EASY)
+        
+        // Should find a legal move using regular search
+        assertNotNull(result.bestMove)
+        // Should have searched some nodes
+        assertTrue(result.nodesSearched > 0)
+    }
+    
+    @Test
+    fun `test getAIMove integrates tablebase`() {
+        val board = mapOf(
+            "0,0" to Piece(PieceType.KING, Color.WHITE),
+            "0,-3" to Piece(PieceType.KING, Color.BLACK)
+        )
+        
+        val state = GameState(
+            board = board,
+            turn = Color.WHITE,
+            status = GameStatus.ONGOING,
+            moveHistory = emptyList()
+        )
+        
+        val result = getAIMove(state, AIDifficulty.MEDIUM)
+        
+        // Should find a legal move from tablebase
+        assertNotNull(result.bestMove)
+        assertEquals(0, result.score)
+    }
+}

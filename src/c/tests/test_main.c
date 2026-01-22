@@ -475,6 +475,35 @@ TEST(tablebase_stats) {
     ASSERT(stats.total_entries > 0);
 }
 
+TEST(ai_tablebase_integration) {
+    /*
+     * Test AI with tablebase integration for KvK endgame.
+     * Signed-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23
+     */
+    tablebase_init();
+    tablebase_generate(TB_CONFIG_KvK);
+    
+    Board board;
+    board_clear(&board);
+    
+    /* Set up KvK position */
+    Piece wk = {PIECE_KING, COLOR_WHITE, 0};
+    Piece bk = {PIECE_KING, COLOR_BLACK, 0};
+    board_set(&board, cell_make(0, 0), wk);
+    board_set(&board, cell_make(0, -4), bk);
+    board.white_king = cell_make(0, 0);
+    board.black_king = cell_make(0, -4);
+    board.to_move = COLOR_WHITE;
+    
+    SearchStats stats;
+    Move best = find_best_move_with_tablebase(&board, 3, &stats);
+    
+    /* Should find some legal move */
+    ASSERT(is_move_legal(&board, best));
+    /* For drawn KvK position, eval should be 0 */
+    ASSERT_EQ(stats.eval, EVAL_DRAW);
+}
+
 /* ============ Main ============ */
 
 int main(void) {
@@ -508,6 +537,7 @@ int main(void) {
     RUN_TEST(tablebase_kvk_always_draw);
     RUN_TEST(tablebase_kqvk_detect);
     RUN_TEST(tablebase_stats);
+    RUN_TEST(ai_tablebase_integration);
     
     /* Cleanup tablebase memory */
     tablebase_cleanup();

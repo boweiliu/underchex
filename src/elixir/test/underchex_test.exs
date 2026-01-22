@@ -338,4 +338,76 @@ defmodule UnderchexTest do
       assert stats[:kvk].draws > 0
     end
   end
+
+  describe "AI Tablebase Integration" do
+    # Signed-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23
+
+    test "AI uses tablebase for KvK endgame" do
+      Tablebase.clear()
+      Tablebase.generate(:kvk)
+
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      # AI should return a move using tablebase
+      move = AI.get_move(board, :white, :medium)
+
+      assert move != nil
+      assert is_map(move)
+      assert Map.has_key?(move, :from)
+      assert Map.has_key?(move, :to)
+    end
+
+    test "AI tablebase integration returns drawn score for KvK" do
+      Tablebase.clear()
+      Tablebase.generate(:kvk)
+
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      {move, score} = AI.get_move_with_tablebase(board, :white, 3)
+
+      assert move != nil
+      # Score should be 0 for draw
+      assert score == 0
+    end
+
+    test "AI falls back to search for non-endgame positions" do
+      board = Game.new_game().board
+
+      # This should use regular search, not tablebase
+      move = AI.get_move(board, :white, :easy)
+
+      assert move != nil
+      assert is_map(move)
+    end
+
+    test "try_tablebase_move returns :not_found for non-endgame" do
+      board = Game.new_game().board
+
+      result = AI.try_tablebase_move(board, :white)
+
+      assert result == :not_found
+    end
+
+    test "try_tablebase_move returns move for KvK endgame" do
+      Tablebase.clear()
+      Tablebase.generate(:kvk)
+
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      result = AI.try_tablebase_move(board, :white)
+
+      # For drawn position, should return a legal move
+      assert {:ok, move} = result
+      assert is_map(move)
+    end
+  end
 end
