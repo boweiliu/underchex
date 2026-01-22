@@ -15,6 +15,8 @@
  * - History Heuristic for improved move ordering (added by agent #7)
  * - Killer Move Heuristic for improved move ordering at each ply (added by agent #8)
  * - Late Move Reductions (LMR) for faster search with adaptive reduction (added by agent #9)
+ * - Principal Variation Search (PVS) for faster search (added by agent #11)
+ * - Aspiration Windows for faster iterative deepening (added by agent #11)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
@@ -22,6 +24,7 @@
  * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
+ * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
  */
 
 import {
@@ -72,6 +75,42 @@ export const CHECKMATE_VALUE = 100000;
  * Value for stalemate (draw).
  */
 export const STALEMATE_VALUE = 0;
+
+// ============================================================================
+// Aspiration Window Constants
+// ============================================================================
+
+/**
+ * Aspiration windows narrow the alpha-beta search window based on the 
+ * previous depth's score. If the search fails outside the window, we
+ * re-search with a wider window.
+ * 
+ * Benefits:
+ * - Significantly more cutoffs when the score is accurate
+ * - Faster search in stable positions
+ * - Minimal overhead in tactical positions (re-search is needed anyway)
+ * 
+ * Signed-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
+ */
+
+/**
+ * Initial aspiration window size in centipawns.
+ * A value around 50 is common - large enough to avoid frequent re-searches,
+ * small enough to provide good pruning.
+ */
+export const ASPIRATION_WINDOW = 50;
+
+/**
+ * Multiplier for expanding the window when a search fails outside bounds.
+ * Each failure widens the window exponentially.
+ */
+export const ASPIRATION_WINDOW_EXPANSION = 4;
+
+/**
+ * Minimum depth before applying aspiration windows.
+ * At shallow depths, the score isn't stable enough to benefit.
+ */
+export const ASPIRATION_MIN_DEPTH = 3;
 
 // ============================================================================
 // Zobrist Hashing
@@ -1380,6 +1419,8 @@ export interface SearchStats {
   nullMoveAttempts: number;
   lmrReductions: number;
   lmrResearches: number;
+  pvsResearches: number;
+  aspirationResearches: number;
 }
 
 /**
@@ -1537,44 +1578,56 @@ function alphaBeta(
       
       let evalScore: number;
       
-      // Late Move Reductions (LMR)
-      // Search late moves with reduced depth first
-      if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
-        const baseReduction = lmrReduction(depth, moveIndex);
-        const isKiller = isKillerMove(move, ply);
-        const histScore = historyScore(move);
-        const reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+      // Principal Variation Search (PVS) with Late Move Reductions (LMR)
+      // First move: search with full window
+      // Later moves: search with null window, re-search if needed
+      if (moveIndex === 0) {
+        // First move - search with full window
+        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      } else {
+        // Late Move Reductions (LMR)
+        // Search late moves with reduced depth first
+        let reduction = 0;
+        if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
+          const baseReduction = lmrReduction(depth, moveIndex);
+          const isKiller = isKillerMove(move, ply);
+          const histScore = historyScore(move);
+          reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+        }
+        
+        // PVS: Use null window search (with optional LMR reduction)
+        const searchDepth = reduction > 0 
+          ? Math.max(1, depth - 1 - reduction) 
+          : depth - 1;
         
         if (reduction > 0) {
           stats.lmrReductions++;
-          // Reduced depth search with null window
-          const reducedDepth = depth - 1 - reduction;
-          evalScore = alphaBeta(
-            newBoard, 
-            Math.max(1, reducedDepth), // At least depth 1
-            alpha, 
-            alpha + 1, // Null window
-            false, 
-            stats, 
-            ply + 1, 
-            useTT, 
-            useQuiescence, 
-            useNullMove, 
-            false
-          );
-          
-          // If reduced search fails high, re-search at full depth
-          if (evalScore > alpha) {
+        }
+        
+        // Null window search
+        evalScore = alphaBeta(
+          newBoard, 
+          searchDepth,
+          alpha, 
+          alpha + 1, // Null window
+          false, 
+          stats, 
+          ply + 1, 
+          useTT, 
+          useQuiescence, 
+          useNullMove, 
+          false
+        );
+        
+        // If null window search fails high, re-search with full window
+        if (evalScore > alpha && evalScore < beta) {
+          if (reduction > 0) {
             stats.lmrResearches++;
-            evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+          } else {
+            stats.pvsResearches++;
           }
-        } else {
-          // No reduction (LMR conditions not met or reduction is 0)
           evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
         }
-      } else {
-        // No LMR - search at full depth
-        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
       }
       
       if (evalScore > maxEval) {
@@ -1612,44 +1665,56 @@ function alphaBeta(
       
       let evalScore: number;
       
-      // Late Move Reductions (LMR)
-      // Search late moves with reduced depth first
-      if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
-        const baseReduction = lmrReduction(depth, moveIndex);
-        const isKiller = isKillerMove(move, ply);
-        const histScore = historyScore(move);
-        const reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+      // Principal Variation Search (PVS) with Late Move Reductions (LMR)
+      // First move: search with full window
+      // Later moves: search with null window, re-search if needed
+      if (moveIndex === 0) {
+        // First move - search with full window
+        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+      } else {
+        // Late Move Reductions (LMR)
+        // Search late moves with reduced depth first
+        let reduction = 0;
+        if (shouldApplyLMR(move, depth, moveIndex, inCheck)) {
+          const baseReduction = lmrReduction(depth, moveIndex);
+          const isKiller = isKillerMove(move, ply);
+          const histScore = historyScore(move);
+          reduction = adjustLMRReduction(baseReduction, move, isKiller, histScore);
+        }
+        
+        // PVS: Use null window search (with optional LMR reduction)
+        const searchDepth = reduction > 0 
+          ? Math.max(1, depth - 1 - reduction) 
+          : depth - 1;
         
         if (reduction > 0) {
           stats.lmrReductions++;
-          // Reduced depth search with null window
-          const reducedDepth = depth - 1 - reduction;
-          evalScore = alphaBeta(
-            newBoard, 
-            Math.max(1, reducedDepth), // At least depth 1
-            beta - 1, // Null window
-            beta, 
-            true, 
-            stats, 
-            ply + 1, 
-            useTT, 
-            useQuiescence, 
-            useNullMove, 
-            false
-          );
-          
-          // If reduced search fails low, re-search at full depth
-          if (evalScore < beta) {
+        }
+        
+        // Null window search
+        evalScore = alphaBeta(
+          newBoard, 
+          searchDepth,
+          beta - 1, // Null window
+          beta, 
+          true, 
+          stats, 
+          ply + 1, 
+          useTT, 
+          useQuiescence, 
+          useNullMove, 
+          false
+        );
+        
+        // If null window search fails low, re-search with full window
+        if (evalScore < beta && evalScore > alpha) {
+          if (reduction > 0) {
             stats.lmrResearches++;
-            evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
+          } else {
+            stats.pvsResearches++;
           }
-        } else {
-          // No reduction (LMR conditions not met or reduction is 0)
           evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
         }
-      } else {
-        // No LMR - search at full depth
-        evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, ply + 1, useTT, useQuiescence, useNullMove, false);
       }
       
       if (evalScore < minEval) {
@@ -1691,6 +1756,8 @@ function alphaBeta(
  * @param useQuiescence Whether to use quiescence search
  * @param useNullMove Whether to use null move pruning
  * @param clearKillers Whether to clear killer table at start (default true for new searches)
+ * @param initialAlpha Initial alpha bound for aspiration windows (default -Infinity)
+ * @param initialBeta Initial beta bound for aspiration windows (default +Infinity)
  * @returns Best move and evaluation
  */
 export function findBestMove(
@@ -1700,7 +1767,9 @@ export function findBestMove(
   useTT: boolean = true,
   useQuiescence: boolean = true,
   useNullMove: boolean = true,
-  clearKillers: boolean = true
+  clearKillers: boolean = true,
+  initialAlpha: number = -Infinity,
+  initialBeta: number = Infinity
 ): SearchResult {
   const stats: SearchStats = {
     nodesSearched: 0,
@@ -1712,6 +1781,8 @@ export function findBestMove(
     nullMoveAttempts: 0,
     lmrReductions: 0,
     lmrResearches: 0,
+    pvsResearches: 0,
+    aspirationResearches: 0,
   };
   
   // Clear killer moves at start of new search
@@ -1749,8 +1820,8 @@ export function findBestMove(
   
   let bestMove = orderedMoves[0]!;
   let bestScore = maximizing ? -Infinity : Infinity;
-  let alpha = -Infinity;
-  let beta = Infinity;
+  let alpha = initialAlpha;
+  let beta = initialBeta;
   
   for (const move of orderedMoves) {
     const newBoard = applyMove(board, move);
@@ -1819,6 +1890,8 @@ export function findBestMoveIterative(
       nullMoveAttempts: 0,
       lmrReductions: 0,
       lmrResearches: 0,
+      pvsResearches: 0,
+      aspirationResearches: 0,
     } 
   };
   
@@ -1831,19 +1904,31 @@ export function findBestMoveIterative(
   let totalNullAttempts = 0;
   let totalLMRReductions = 0;
   let totalLMRResearches = 0;
+  let totalPVSResearches = 0;
+  let totalAspirationResearches = 0;
+  
+  // Helper to accumulate stats from a search result
+  const accumulateStats = (result: SearchResult) => {
+    totalNodes += result.stats.nodesSearched;
+    totalCutoffs += result.stats.cutoffs;
+    totalTTHits += result.stats.ttHits;
+    totalQNodes += result.stats.quiescenceNodes;
+    totalNullCutoffs += result.stats.nullMoveCutoffs;
+    totalNullAttempts += result.stats.nullMoveAttempts;
+    totalLMRReductions += result.stats.lmrReductions;
+    totalLMRResearches += result.stats.lmrResearches;
+    totalPVSResearches += result.stats.pvsResearches;
+    totalAspirationResearches += result.stats.aspirationResearches;
+  };
   
   // Get initial moves quickly at depth 1
   // clearKillers=true for first iteration
   const initialResult = findBestMove(board, color, 1, useTT, useQuiescence, useNullMove, true);
   bestResult = initialResult;
-  totalNodes += initialResult.stats.nodesSearched;
-  totalCutoffs += initialResult.stats.cutoffs;
-  totalTTHits += initialResult.stats.ttHits;
-  totalQNodes += initialResult.stats.quiescenceNodes;
-  totalNullCutoffs += initialResult.stats.nullMoveCutoffs;
-  totalNullAttempts += initialResult.stats.nullMoveAttempts;
-  totalLMRReductions += initialResult.stats.lmrReductions;
-  totalLMRResearches += initialResult.stats.lmrResearches;
+  accumulateStats(initialResult);
+  
+  // Track previous score for aspiration windows
+  let previousScore = initialResult.score;
   
   for (let depth = 2; depth <= maxDepth; depth++) {
     const elapsed = Date.now() - startTime;
@@ -1860,17 +1945,57 @@ export function findBestMoveIterative(
     // Age history between iterations to prevent stale data from dominating
     historyAge();
     
-    // Don't clear killers between iterations - they're still useful
-    const result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove, false);
+    let result: SearchResult;
+    
+    // Use aspiration windows for deeper searches
+    if (depth >= ASPIRATION_MIN_DEPTH && Math.abs(previousScore) < CHECKMATE_VALUE - 1000) {
+      // Start with a narrow window around the previous score
+      let windowSize = ASPIRATION_WINDOW;
+      let alpha = previousScore - windowSize;
+      let beta = previousScore + windowSize;
+      
+      // Search with aspiration window, widening if needed
+      while (true) {
+        result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove, false, alpha, beta);
+        accumulateStats(result);
+        
+        // Check if search failed outside window
+        if (result.score <= alpha) {
+          // Failed low - widen alpha
+          totalAspirationResearches++;
+          windowSize *= ASPIRATION_WINDOW_EXPANSION;
+          alpha = Math.max(result.score - windowSize, -Infinity);
+        } else if (result.score >= beta) {
+          // Failed high - widen beta
+          totalAspirationResearches++;
+          windowSize *= ASPIRATION_WINDOW_EXPANSION;
+          beta = Math.min(result.score + windowSize, Infinity);
+        } else {
+          // Search succeeded within window
+          break;
+        }
+        
+        // Safety check: if window is huge, just do full search
+        if (windowSize > CHECKMATE_VALUE) {
+          result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove, false);
+          accumulateStats(result);
+          break;
+        }
+        
+        // Check time limit during re-searches
+        const reElapsed = Date.now() - startTime;
+        if (reElapsed > timeLimitMs) {
+          break;
+        }
+      }
+    } else {
+      // Full window search for shallow depths or near-mate positions
+      result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove, false);
+      accumulateStats(result);
+    }
+    
     bestResult = result;
-    totalNodes += result.stats.nodesSearched;
-    totalCutoffs += result.stats.cutoffs;
-    totalTTHits += result.stats.ttHits;
-    totalQNodes += result.stats.quiescenceNodes;
-    totalNullCutoffs += result.stats.nullMoveCutoffs;
-    totalNullAttempts += result.stats.nullMoveAttempts;
-    totalLMRReductions += result.stats.lmrReductions;
-    totalLMRResearches += result.stats.lmrResearches;
+    previousScore = result.score;
     
     // If we found a winning move, stop searching
     if (Math.abs(result.score) > CHECKMATE_VALUE - 1000) {
@@ -1887,6 +2012,8 @@ export function findBestMoveIterative(
   bestResult.stats.nullMoveAttempts = totalNullAttempts;
   bestResult.stats.lmrReductions = totalLMRReductions;
   bestResult.stats.lmrResearches = totalLMRResearches;
+  bestResult.stats.pvsResearches = totalPVSResearches;
+  bestResult.stats.aspirationResearches = totalAspirationResearches;
   
   return bestResult;
 }
@@ -1941,6 +2068,8 @@ export function getAIMove(
         nullMoveAttempts: 0,
         lmrReductions: 0,
         lmrResearches: 0,
+        pvsResearches: 0,
+        aspirationResearches: 0,
       } 
     };
   }

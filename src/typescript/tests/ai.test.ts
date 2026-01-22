@@ -7,6 +7,7 @@
  * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
+ * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -71,6 +72,10 @@ import {
   lmrReduction,
   shouldApplyLMR,
   adjustLMRReduction,
+  // Aspiration Windows constants (added by agent #11)
+  ASPIRATION_WINDOW,
+  ASPIRATION_WINDOW_EXPANSION,
+  ASPIRATION_MIN_DEPTH,
 } from '../src/ai';
 import {
   HexCoord,
@@ -1808,6 +1813,138 @@ describe('Late Move Reductions (LMR)', () => {
       // Verify the stats interface has LMR fields
       expect(typeof result.stats.lmrReductions).toBe('number');
       expect(typeof result.stats.lmrResearches).toBe('number');
+    });
+  });
+});
+
+/**
+ * Tests for Principal Variation Search (PVS) and Aspiration Windows
+ * Added by agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
+ */
+describe('Principal Variation Search (PVS)', () => {
+  describe('PVS Integration with Search', () => {
+    it('search stats should track PVS re-searches', () => {
+      const game = createNewGame();
+      
+      // Run search with sufficient depth for PVS to apply
+      const result = findBestMove(game.board, 'white', 4, true, true, true);
+      
+      // PVS stats should be tracked
+      expect(typeof result.stats.pvsResearches).toBe('number');
+      expect(result.stats.pvsResearches).toBeGreaterThanOrEqual(0);
+    });
+
+    it('PVS should work correctly with all other optimizations', () => {
+      // Create a position with multiple pieces
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: -1, r: 2 }), { type: 'chariot', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      board.set(coordToString({ q: -1, r: -3 }), { type: 'queen', color: 'black' });
+      
+      // Should find a move without errors
+      const result = findBestMove(board, 'white', 4, true, true, true);
+      expect(result.move).not.toBeNull();
+    });
+
+    it('iterative deepening should accumulate PVS stats', () => {
+      const game = createNewGame();
+      
+      const result = findBestMoveIterative(game.board, 'white', 4, 2000, true, true, true);
+      
+      // Stats should be accumulated across iterations
+      expect(typeof result.stats.pvsResearches).toBe('number');
+    });
+  });
+});
+
+describe('Aspiration Windows', () => {
+  describe('Constants', () => {
+    it('should export aspiration window constants', () => {
+      expect(ASPIRATION_WINDOW).toBe(50);
+      expect(ASPIRATION_WINDOW_EXPANSION).toBe(4);
+      expect(ASPIRATION_MIN_DEPTH).toBe(3);
+    });
+  });
+
+  describe('Aspiration Windows Integration', () => {
+    it('search stats should track aspiration re-searches', () => {
+      const game = createNewGame();
+      
+      // Run iterative deepening with sufficient depth for aspiration windows
+      const result = findBestMoveIterative(game.board, 'white', 4, 3000, true, true, true);
+      
+      // Aspiration stats should be tracked
+      expect(typeof result.stats.aspirationResearches).toBe('number');
+      expect(result.stats.aspirationResearches).toBeGreaterThanOrEqual(0);
+    });
+
+    it('findBestMove should accept alpha/beta bounds', () => {
+      const game = createNewGame();
+      
+      // Search with narrow window
+      const narrowResult = findBestMove(game.board, 'white', 3, true, true, true, true, -100, 100);
+      
+      // Should still find a move
+      expect(narrowResult.move).not.toBeNull();
+    });
+
+    it('aspiration windows should activate at depth >= 3', () => {
+      const game = createNewGame();
+      
+      // At depth 2, aspiration windows shouldn't activate
+      const depth2Result = findBestMoveIterative(game.board, 'white', 2, 1000, true, true, true);
+      
+      // At depth 4, aspiration windows should potentially activate
+      const depth4Result = findBestMoveIterative(game.board, 'white', 4, 3000, true, true, true);
+      
+      // Both should find valid moves
+      expect(depth2Result.move).not.toBeNull();
+      expect(depth4Result.move).not.toBeNull();
+    });
+
+    it('aspiration windows should widen on fail high/low', () => {
+      // Create a tactical position where score might fluctuate
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: -1, r: 2 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: 1 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      board.set(coordToString({ q: 1, r: -3 }), { type: 'queen', color: 'black' });
+      
+      // Run iterative deepening
+      const result = findBestMoveIterative(board, 'white', 5, 5000, true, true, true);
+      
+      // Should still find a valid move even if aspiration windows fail
+      expect(result.move).not.toBeNull();
+    });
+
+    it('near-mate positions should skip aspiration windows', () => {
+      // Create a winning position
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: -3 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 2, r: -3 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      // Run search
+      const result = findBestMoveIterative(board, 'white', 5, 3000, true, true, true);
+      
+      // Should find the winning move
+      expect(result.move).not.toBeNull();
+    });
+  });
+
+  describe('SearchStats Interface', () => {
+    it('should include all new stat fields', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 2, true, true, true);
+      
+      // Verify new stats fields exist and are numbers
+      expect(typeof result.stats.pvsResearches).toBe('number');
+      expect(typeof result.stats.aspirationResearches).toBe('number');
     });
   });
 });

@@ -159,6 +159,10 @@ export {
   lmrReduction,
   shouldApplyLMR,
   adjustLMRReduction,
+  // Aspiration Windows exports (added by agent #11)
+  ASPIRATION_WINDOW,
+  ASPIRATION_WINDOW_EXPANSION,
+  ASPIRATION_MIN_DEPTH,
 } from './ai';
 
 // Re-export self-play
