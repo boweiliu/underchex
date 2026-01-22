@@ -13,6 +13,7 @@ use std::collections::HashMap;
 
 use crate::board::hex_distance;
 use crate::moves::{apply_move, generate_all_legal_moves, is_in_check};
+use crate::tablebase::{detect_configuration, get_tablebase_score, probe_tablebase};
 use crate::types::BOARD_RADIUS;
 use crate::types::{BoardState, Color, HexCoord, Move, Piece, PieceType};
 
@@ -754,12 +755,50 @@ pub enum AIDifficulty {
 }
 
 /// Get AI move based on difficulty level.
+/// First probes tablebase for endgame positions, then falls back to search.
 pub fn get_ai_move(
     board: &BoardState,
     color: Color,
     difficulty: AIDifficulty,
     tt: &mut TranspositionTable,
 ) -> SearchResult {
+    // Try tablebase probe first for endgame positions
+    if detect_configuration(board).is_some() {
+        let probe_result = probe_tablebase(board, color);
+        if probe_result.found {
+            if let Some(entry) = &probe_result.entry {
+                if let Some(best_move) = &entry.best_move {
+                    // Get the piece at the source coordinate
+                    let from_coord = HexCoord::new(best_move.from_q, best_move.from_r);
+                    let to_coord = HexCoord::new(best_move.to_q, best_move.to_r);
+                    let from_key = format!("{},{}", from_coord.q, from_coord.r);
+
+                    if let Some(piece) = board.get(&from_key) {
+                        let to_key = format!("{},{}", to_coord.q, to_coord.r);
+                        let captured = board.get(&to_key).cloned();
+
+                        let mv = Move {
+                            from: from_coord,
+                            to: to_coord,
+                            piece: piece.clone(),
+                            captured,
+                            promotion: best_move.promotion,
+                        };
+
+                        let score = get_tablebase_score(board, color).unwrap_or(0);
+
+                        return SearchResult {
+                            best_move: Some(mv),
+                            score,
+                            stats: SearchStats::default(),
+                        };
+                    }
+                }
+            }
+        }
+    }
+
+    // Fall back to regular search
     match difficulty {
         AIDifficulty::Easy => find_best_move(board, color, 2, tt, false),
         AIDifficulty::Medium => find_best_move(board, color, 4, tt, true),

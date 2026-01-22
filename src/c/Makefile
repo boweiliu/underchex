@@ -14,17 +14,17 @@ ifeq ($(UNAME_S),Darwin)
 endif
 
 # Source files
-SRCS = main.c board.c moves.c ai.c display.c
+SRCS = main.c board.c moves.c ai.c display.c tablebase.c
 OBJS = $(SRCS:.c=.o)
 TARGET = underchex
 
 # Test files
-TEST_SRCS = tests/test_main.c board.c moves.c ai.c
+TEST_SRCS = tests/test_main.c board.c moves.c ai.c tablebase.c
 TEST_OBJS = $(TEST_SRCS:.c=.o)
 TEST_TARGET = test_underchex
 
 # Cross-implementation test files
-CROSSIMPL_SRCS = tests/test_crossimpl.c board.c moves.c ai.c
+CROSSIMPL_SRCS = tests/test_crossimpl.c board.c moves.c ai.c tablebase.c
 CROSSIMPL_OBJS = $(CROSSIMPL_SRCS:.c=.o)
 CROSSIMPL_TARGET = test_crossimpl
 
@@ -67,5 +67,6 @@ clean:
 board.o: board.c board.h
 moves.o: moves.c moves.h board.h
 ai.o: ai.c ai.h board.h moves.h
+tablebase.o: tablebase.c tablebase.h board.h moves.h ai.h
 display.o: display.c display.h board.h moves.h
-main.o: main.c board.h moves.h ai.h display.h
+main.o: main.c board.h moves.h ai.h display.h tablebase.h

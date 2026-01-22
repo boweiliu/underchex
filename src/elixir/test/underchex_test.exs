@@ -1,7 +1,7 @@
 defmodule UnderchexTest do
   use ExUnit.Case
 
-  alias Underchex.{Types, Board, Moves, Game, AI, Display}
+  alias Underchex.{Types, Board, Moves, Game, AI, Display, Tablebase}
 
   # ==========================================================================
   # Types Tests
@@ -271,6 +271,71 @@ defmodule UnderchexTest do
       assert Display.piece_char(Types.new_piece(:king, :black)) == "k"
       assert Display.piece_char(Types.new_piece(:queen, :white)) == "Q"
       assert Display.piece_char(Types.new_piece(:pawn, :black)) == "p"
+    end
+  end
+
+  # ==========================================================================
+  # Tablebase Tests
+  # ==========================================================================
+
+  describe "Tablebase" do
+    test "detect_config returns :kvk for kings only" do
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      assert Tablebase.detect_config(board) == :kvk
+    end
+
+    test "detect_config returns :kqvk for king + queen vs king" do
+      board = %{
+        {0, 4} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black),
+        {0, 0} => Types.new_piece(:queen, :white)
+      }
+
+      assert Tablebase.detect_config(board) == :kqvk
+    end
+
+    test "is_endgame? returns true for supported configs" do
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      assert Tablebase.is_endgame?(board)
+    end
+
+    test "is_endgame? returns false for too many pieces" do
+      board = Game.new_game().board
+      refute Tablebase.is_endgame?(board)
+    end
+
+    test "generate and probe KvK" do
+      Tablebase.clear()
+      Tablebase.generate(:kvk)
+
+      board = %{
+        {0, 0} => Types.new_piece(:king, :white),
+        {0, -4} => Types.new_piece(:king, :black)
+      }
+
+      result = Tablebase.probe(board, :white)
+
+      assert {:ok, entry} = result
+      assert entry.wdl == :draw
+    end
+
+    test "get_stats returns stats" do
+      Tablebase.clear()
+      Tablebase.generate(:kvk)
+
+      stats = Tablebase.get_stats()
+
+      assert Map.has_key?(stats, :kvk)
+      assert stats[:kvk].entries > 0
+      assert stats[:kvk].draws > 0
     end
   end
 end

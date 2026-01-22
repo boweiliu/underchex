@@ -13,6 +13,7 @@
 #include "../board.h"
 #include "../moves.h"
 #include "../ai.h"
+#include "../tablebase.h"
 
 /* Test counters */
 static int tests_run = 0;
@@ -381,6 +382,98 @@ TEST(move_parsing) {
     ASSERT(move.promotion == PIECE_QUEEN);
 }
 
+/* ============ Tablebase Tests ============ */
+
+TEST(tablebase_detect_kvk) {
+    Board board;
+    board_clear(&board);
+    
+    /* Just kings - KvK */
+    Piece wk = {PIECE_KING, COLOR_WHITE, 0};
+    Piece bk = {PIECE_KING, COLOR_BLACK, 0};
+    board_set(&board, cell_make(0, 0), wk);
+    board_set(&board, cell_make(0, -4), bk);
+    board.white_king = cell_make(0, 0);
+    board.black_king = cell_make(0, -4);
+    
+    ASSERT_EQ(tablebase_detect_config(&board), TB_CONFIG_KvK);
+}
+
+TEST(tablebase_detect_kqvk) {
+    Board board;
+    board_clear(&board);
+    
+    /* King + Queen vs King */
+    Piece wk = {PIECE_KING, COLOR_WHITE, 0};
+    Piece bk = {PIECE_KING, COLOR_BLACK, 0};
+    Piece wq = {PIECE_QUEEN, COLOR_WHITE, 0};
+    board_set(&board, cell_make(0, 4), wk);
+    board_set(&board, cell_make(0, -4), bk);
+    board_set(&board, cell_make(0, 0), wq);
+    board.white_king = cell_make(0, 4);
+    board.black_king = cell_make(0, -4);
+    
+    ASSERT_EQ(tablebase_detect_config(&board), TB_CONFIG_KQvK);
+}
+
+TEST(tablebase_kvk_always_draw) {
+    tablebase_init();
+    tablebase_generate(TB_CONFIG_KvK);
+    
+    Board board;
+    board_clear(&board);
+    
+    Piece wk = {PIECE_KING, COLOR_WHITE, 0};
+    Piece bk = {PIECE_KING, COLOR_BLACK, 0};
+    board_set(&board, cell_make(0, 0), wk);
+    board_set(&board, cell_make(0, -4), bk);
+    board.white_king = cell_make(0, 0);
+    board.black_king = cell_make(0, -4);
+    board.to_move = COLOR_WHITE;
+    
+    TablebaseProbeResult result = tablebase_probe(&board);
+    
+    ASSERT(result.found);
+    ASSERT_EQ(result.wdl, WDL_DRAW);
+}
+
+TEST(tablebase_kqvk_probe) {
+    tablebase_init();
+    tablebase_generate(TB_CONFIG_KQvK);
+    
+    /* Verify tablebase was generated with some entries */
+    TablebaseStats stats = tablebase_get_stats();
+    ASSERT(stats.total_entries > 0);
+    
+    /* Test that detection works */
+    Board board;
+    board_clear(&board);
+    
+    Piece wk = {PIECE_KING, COLOR_WHITE, 0};
+    Piece bk = {PIECE_KING, COLOR_BLACK, 0};
+    Piece wq = {PIECE_QUEEN, COLOR_WHITE, 0};
+    board_set(&board, cell_make(0, 4), wk);
+    board_set(&board, cell_make(0, -4), bk);
+    board_set(&board, cell_make(0, 0), wq);
+    board.white_king = cell_make(0, 4);
+    board.black_king = cell_make(0, -4);
+    board.to_move = COLOR_WHITE;
+    
+    /* Verify config detection works */
+    ASSERT_EQ(tablebase_detect_config(&board), TB_CONFIG_KQvK);
+    ASSERT(tablebase_is_endgame(&board));
+}
+
+TEST(tablebase_stats) {
+    tablebase_init();
+    tablebase_generate(TB_CONFIG_KvK);
+    
+    TablebaseStats stats = tablebase_get_stats();
+    
+    ASSERT(stats.tablebases_loaded >= 1);
+    ASSERT(stats.total_entries > 0);
+}
+
 /* ============ Main ============ */
 
 int main(void) {
@@ -407,6 +500,16 @@ int main(void) {
     RUN_TEST(evaluation_material);
     RUN_TEST(find_best_move_initial);
     RUN_TEST(move_parsing);
+    
+    printf("\nTablebase tests:\n");
+    RUN_TEST(tablebase_detect_kvk);
+    RUN_TEST(tablebase_detect_kqvk);
+    RUN_TEST(tablebase_kvk_always_draw);
+    RUN_TEST(tablebase_kqvk_probe);
+    RUN_TEST(tablebase_stats);
+    
+    /* Cleanup tablebase memory */
+    tablebase_cleanup();
     
     printf("\n========================================\n");
     printf("Tests: %d/%d passed\n", tests_passed, tests_run);

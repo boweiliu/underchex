@@ -10,7 +10,7 @@ defmodule CrossImplTest do
 
   use ExUnit.Case
 
-  alias Underchex.{Types, Board, Moves}
+  alias Underchex.{Types, Moves}
 
   # ============================================================================
   # Test Suite Loading
