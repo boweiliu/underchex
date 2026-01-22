@@ -14,41 +14,7 @@ Entry point for Underchex project notes.
 - [[Worktrees - Hub]] - Worktree usage notes.
 
 ## Worklogs
-- [[Worklog - Agent 1 - Core Game Engine]] - Initial spec and TypeScript engine.
-- [[Worklog - Agent 2 - Web UI and Promotion]] - Web UI and pawn promotion.
-- [[Worklog - Agent 3 - AI Opponent]] - Alpha-beta AI implementation.
-- [[Worklog - Agent 4 - Self-Play Module]] - Self-play and AI vs AI mode.
-- [[Worklog - Agent 5 - TT and Quiescence Search]] - Transposition table and quiescence search.
-- [[Worklog - Agent 6 - PST and Zobrist Hashing]] - Piece-square tables and Zobrist hashing.
-- [[Worklog - Agent 7 - NMP and History Heuristic]] - Null move pruning and history heuristic.
-- [[Worklog - Agent 8 - Killer Move Heuristic]] - Killer move heuristic for move ordering.
-- [[Worklog - Agent 9 - Late Move Reductions]] - Late move reductions for faster search.
-- [[Worklog - Agent 10 - Cleanup]] - Documentation cleanup and code health verification.
-- [[Worklog - Agent 11 - PVS and Aspiration Windows]] - PVS and aspiration windows for faster search.
-- [[Worklog - Agent 12 - Futility Pruning]] - Futility pruning for faster search at shallow depths.
-- [[Worklog - Agent 13 - Static Exchange Evaluation]] - SEE for accurate capture ordering.
-- [[Worklog - Agent 14 - Puzzle Generation]] - Puzzle generator for tactical training.
-- [[Worklog - Agent 15 - Puzzle Mode Web UI]] - Puzzle mode integration in Web UI.
-- [[Worklog - Agent 16 - Terminal Play CLI]] - Terminal CLI for human vs AI play.
-- [[Worklog - Agent 17 - Python Implementation]] - Python implementation with terminal CLI.
-- [[Worklog - Agent 18 - Cleanup]] - Documentation cleanup and project status summary.
-- [[Worklog - Agent 19 - Cleanup]] - Documentation cleanup and Python 3.9 compatibility fix.
+See [[Worklogs Index]] for full list of agent worklogs (agents 1-19).
 
 Signed-off-by: gpt-5 via codex
-Edited-by: agent #3 claude-sonnet-4 via opencode 20260122T02:42:00
-Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:51:37
-Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T03:04:56
-Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
-Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:30:17
-Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
-Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
-Edited-by: agent #10 claude-sonnet-4 via opencode 20260122T04:04:25 (CLEANUP + added worklog link)
-Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
-Edited-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
-Edited-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
-Edited-by: agent #14 claude-sonnet-4 via opencode 20260122T05:08:42
-Edited-by: agent #15 claude-sonnet-4 via opencode 20260122T05:30:00
-Edited-by: agent #16 claude-sonnet-4 via opencode 20260122T05:46:00
-Edited-by: agent #18 claude-sonnet-4 via opencode 20260122T06:02:43 (CLEANUP: added Agent 17 worklog)
-Edited-by: agent #18 claude-sonnet-4 via opencode 20260122T06:15:00 (Added Agent 18 worklog)
-Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (CLEANUP: added Agent 19 worklog)
+Edited-by: agent #20 claude-sonnet-4 via opencode 20260122T06:25:00 (CLEANUP: moved worklogs to separate index doc)
