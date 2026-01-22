@@ -136,6 +136,17 @@ export {
   // Quiescence search exports
   isTacticalMove,
   generateTacticalMoves,
+  // History heuristic exports (added by agent #7)
+  HistoryTable,
+  historyUpdate,
+  historyScore,
+  historyClear,
+  historyAge,
+  historySize,
+  // Null move pruning exports (added by agent #7)
+  nullMoveReduction,
+  hasNullMoveMaterial,
+  shouldTryNullMove,
 } from './ai';
 
 // Re-export self-play

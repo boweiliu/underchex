@@ -4,6 +4,7 @@
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+ * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -47,6 +48,16 @@ import {
   getZobristTable,
   computeZobristHash,
   zobristUpdate,
+  // History heuristic functions (added by agent #7)
+  historyUpdate,
+  historyScore,
+  historyClear,
+  historyAge,
+  historySize,
+  // Null move pruning functions (added by agent #7)
+  nullMoveReduction,
+  hasNullMoveMaterial,
+  shouldTryNullMove,
 } from '../src/ai';
 import {
   HexCoord,
@@ -908,5 +919,333 @@ describe('PST Integration with Evaluation', () => {
     // The PST should influence the choice toward more central squares
     // We can't guarantee exact square, but the search should complete
     expect(result.stats.nodesSearched).toBeGreaterThan(0);
+  });
+});
+
+// ============================================================================
+// History Heuristic Tests (added by agent #7)
+// ============================================================================
+
+describe('History Heuristic', () => {
+  beforeEach(() => {
+    historyClear();
+    ttClear();
+  });
+
+  it('should start with empty history table', () => {
+    historyClear();
+    expect(historySize()).toBe(0);
+  });
+
+  it('should store and retrieve history scores', () => {
+    const move: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: 1, r: 0 },
+    };
+    
+    expect(historyScore(move)).toBe(0); // Initially 0
+    
+    historyUpdate(move, 4); // Update with depth 4 -> score = 16
+    
+    expect(historyScore(move)).toBe(16); // depth^2 = 4*4 = 16
+  });
+
+  it('should accumulate history scores on multiple updates', () => {
+    const move: Move = {
+      piece: { type: 'queen', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 2, r: 0 },
+    };
+    
+    historyUpdate(move, 2); // +4
+    historyUpdate(move, 3); // +9
+    historyUpdate(move, 4); // +16
+    
+    expect(historyScore(move)).toBe(4 + 9 + 16); // 29
+  });
+
+  it('should track history separately for each color', () => {
+    const whiteMove: Move = {
+      piece: { type: 'pawn', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: 0, r: 1 },
+    };
+    const blackMove: Move = {
+      piece: { type: 'pawn', color: 'black' },
+      from: { q: 0, r: 2 }, // Same squares
+      to: { q: 0, r: 1 },
+    };
+    
+    historyUpdate(whiteMove, 5);
+    historyUpdate(blackMove, 3);
+    
+    expect(historyScore(whiteMove)).toBe(25);
+    expect(historyScore(blackMove)).toBe(9);
+  });
+
+  it('historyAge should halve all scores', () => {
+    const move: Move = {
+      piece: { type: 'lance', color: 'white', variant: 'A' },
+      from: { q: -2, r: 3 },
+      to: { q: -2, r: 0 },
+    };
+    
+    historyUpdate(move, 10); // 100
+    expect(historyScore(move)).toBe(100);
+    
+    historyAge();
+    expect(historyScore(move)).toBe(50);
+    
+    historyAge();
+    expect(historyScore(move)).toBe(25);
+  });
+
+  it('should influence move ordering', () => {
+    // Create two quiet moves
+    const move1: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: 1, r: 0 },
+    };
+    const move2: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: -1, r: 0 },
+    };
+    
+    // Give move2 a strong history score
+    historyUpdate(move2, 10); // +100
+    
+    const ordered = orderMoves([move1, move2]);
+    
+    // Move2 should come first due to history
+    expect(estimateMoveValue(move2)).toBeGreaterThan(estimateMoveValue(move1));
+  });
+
+  it('captures should still outrank quiet moves with history', () => {
+    const quietMove: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: 1, r: 0 },
+    };
+    const captureMove: Move = {
+      piece: { type: 'knight', color: 'white' },
+      from: { q: 0, r: 2 },
+      to: { q: -1, r: 0 },
+      captured: { type: 'pawn', color: 'black' },
+    };
+    
+    // Give quiet move huge history score
+    historyUpdate(quietMove, 50); // +2500 -> capped by history scaling
+    
+    // Capture should still be ranked higher
+    expect(estimateMoveValue(captureMove)).toBeGreaterThan(estimateMoveValue(quietMove));
+  });
+
+  it('historyClear should reset all scores', () => {
+    const move: Move = {
+      piece: { type: 'chariot', color: 'black' },
+      from: { q: 1, r: -3 },
+      to: { q: 3, r: -3 },
+    };
+    
+    historyUpdate(move, 8);
+    expect(historyScore(move)).toBeGreaterThan(0);
+    
+    historyClear();
+    expect(historyScore(move)).toBe(0);
+    expect(historySize()).toBe(0);
+  });
+});
+
+// ============================================================================
+// Null Move Pruning Tests (added by agent #7)
+// ============================================================================
+
+describe('Null Move Pruning', () => {
+  beforeEach(() => {
+    ttClear();
+    historyClear();
+  });
+
+  describe('nullMoveReduction', () => {
+    it('should return at least 2 for any depth', () => {
+      expect(nullMoveReduction(3)).toBeGreaterThanOrEqual(2);
+      expect(nullMoveReduction(4)).toBeGreaterThanOrEqual(2);
+      expect(nullMoveReduction(6)).toBeGreaterThanOrEqual(2);
+    });
+
+    it('should increase reduction for deeper searches', () => {
+      const r6 = nullMoveReduction(6);
+      const r12 = nullMoveReduction(12);
+      expect(r12).toBeGreaterThan(r6);
+    });
+
+    it('should compute R = 2 + depth/6', () => {
+      expect(nullMoveReduction(6)).toBe(3);  // 2 + 1 = 3
+      expect(nullMoveReduction(12)).toBe(4); // 2 + 2 = 4
+      expect(nullMoveReduction(3)).toBe(2);  // 2 + 0 = 2
+    });
+  });
+
+  describe('hasNullMoveMaterial', () => {
+    it('should return false for kings-only position', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      expect(hasNullMoveMaterial(board, 'white')).toBe(false);
+      expect(hasNullMoveMaterial(board, 'black')).toBe(false);
+    });
+
+    it('should return false for king + pawns only', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 2 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 2, r: 2 }), { type: 'pawn', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      expect(hasNullMoveMaterial(board, 'white')).toBe(false);
+    });
+
+    it('should return true if side has a piece', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 0 }), { type: 'knight', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      expect(hasNullMoveMaterial(board, 'white')).toBe(true);
+      expect(hasNullMoveMaterial(board, 'black')).toBe(false);
+    });
+
+    it('should return true for starting position', () => {
+      const game = createNewGame();
+      expect(hasNullMoveMaterial(game.board, 'white')).toBe(true);
+      expect(hasNullMoveMaterial(game.board, 'black')).toBe(true);
+    });
+  });
+
+  describe('shouldTryNullMove', () => {
+    it('should return false when depth is too shallow', () => {
+      const game = createNewGame();
+      expect(shouldTryNullMove(game.board, 'white', 2, false, false)).toBe(false);
+    });
+
+    it('should return false when already doing null move', () => {
+      const game = createNewGame();
+      expect(shouldTryNullMove(game.board, 'white', 4, true, false)).toBe(false);
+    });
+
+    it('should return false when in check', () => {
+      const game = createNewGame();
+      expect(shouldTryNullMove(game.board, 'white', 4, false, true)).toBe(false);
+    });
+
+    it('should return false when insufficient material', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      expect(shouldTryNullMove(board, 'white', 4, false, false)).toBe(false);
+    });
+
+    it('should return true when conditions are met', () => {
+      const game = createNewGame();
+      expect(shouldTryNullMove(game.board, 'white', 4, false, false)).toBe(true);
+    });
+  });
+
+  describe('Null Move Integration', () => {
+    it('search stats should track null move attempts and cutoffs', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 4, true, true, true);
+      
+      // With null move enabled, should have some attempts
+      expect(result.stats.nullMoveAttempts).toBeGreaterThanOrEqual(0);
+      expect(result.stats.nullMoveCutoffs).toBeGreaterThanOrEqual(0);
+      expect(result.stats.nullMoveCutoffs).toBeLessThanOrEqual(result.stats.nullMoveAttempts);
+    });
+
+    it('search with null move should find a move', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 3, true, true, true);
+      
+      expect(result.move).not.toBeNull();
+      expect(result.stats.nodesSearched).toBeGreaterThan(0);
+    });
+
+    it('search with null move disabled should still work', () => {
+      const game = createNewGame();
+      const result = findBestMove(game.board, 'white', 3, true, true, false);
+      
+      expect(result.move).not.toBeNull();
+      expect(result.stats.nullMoveAttempts).toBe(0);
+      expect(result.stats.nullMoveCutoffs).toBe(0);
+    });
+
+    it('iterative deepening should accumulate null move stats', () => {
+      const board: BoardState = new Map();
+      board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+      board.set(coordToString({ q: 1, r: 2 }), { type: 'queen', color: 'white' });
+      board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+      
+      const result = findBestMoveIterative(board, 'white', 4, 2000, true, true, true);
+      
+      // Should find a move and track stats
+      expect(result.move).not.toBeNull();
+      expect(typeof result.stats.nullMoveAttempts).toBe('number');
+      expect(typeof result.stats.nullMoveCutoffs).toBe('number');
+    });
+  });
+});
+
+// ============================================================================
+// Combined Features Performance Tests (added by agent #7)
+// ============================================================================
+
+describe('AI Performance with All Features', () => {
+  beforeEach(() => {
+    ttClear();
+    historyClear();
+  });
+
+  it('should complete search in reasonable time with all features enabled', () => {
+    const game = createNewGame();
+    const startTime = Date.now();
+    
+    const result = findBestMoveIterative(game.board, 'white', 4, 3000, true, true, true);
+    
+    const elapsed = Date.now() - startTime;
+    
+    expect(result.move).not.toBeNull();
+    expect(elapsed).toBeLessThan(5000); // Should complete well under time limit
+  });
+
+  it('getAIMove should work with clearTables option', () => {
+    const game = createNewGame();
+    
+    // First call without clearing
+    const result1 = getAIMove(game, 'easy', false);
+    expect(result1.move).not.toBeNull();
+    
+    // Second call with clearing
+    const result2 = getAIMove(game, 'easy', true);
+    expect(result2.move).not.toBeNull();
+    
+    // Both should find valid moves
+    expect(result1.move!.piece.color).toBe('white');
+    expect(result2.move!.piece.color).toBe('white');
+  });
+
+  it('history heuristic should build up during iterative deepening', () => {
+    historyClear();
+    const game = createNewGame();
+    
+    // Run search
+    findBestMoveIterative(game.board, 'white', 4, 2000, true, true, true);
+    
+    // History table should have entries now
+    expect(historySize()).toBeGreaterThan(0);
   });
 });

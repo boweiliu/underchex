@@ -11,10 +11,13 @@
  * - Piece-Square Tables (PST) for nuanced positional evaluation (added by agent #6)
  * - Zobrist hashing for fast transposition table lookups (added by agent #6)
  * - Endgame detection for king PST switching (added by agent #6)
+ * - Null Move Pruning for faster search (added by agent #7)
+ * - History Heuristic for improved move ordering (added by agent #7)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+ * Edited-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
  */
 
 import {
@@ -351,6 +354,170 @@ export function ttClear(): void {
  */
 export function ttSize(): number {
   return transpositionTable.size;
+}
+
+// ============================================================================
+// History Heuristic
+// ============================================================================
+
+/**
+ * History Heuristic tracks how often moves cause beta cutoffs.
+ * Moves that historically cause more cutoffs are tried earlier.
+ * This improves alpha-beta pruning efficiency.
+ * 
+ * Table structure: [color][fromPos][toPos] -> score
+ * 
+ * Signed-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
+ */
+
+/**
+ * History table type - maps from-to string to score for each color.
+ */
+export interface HistoryTable {
+  white: Map<string, number>;
+  black: Map<string, number>;
+}
+
+/**
+ * Global history table.
+ */
+const historyTable: HistoryTable = {
+  white: new Map(),
+  black: new Map(),
+};
+
+/**
+ * Maximum history score (prevents overflow).
+ */
+const MAX_HISTORY_SCORE = 1000000;
+
+/**
+ * Generate key for history table lookup.
+ */
+function historyKey(from: HexCoord, to: HexCoord): string {
+  return `${from.q},${from.r}-${to.q},${to.r}`;
+}
+
+/**
+ * Update history table when a move causes a beta cutoff.
+ * Score is increased by depth^2 (deeper cutoffs are more valuable).
+ */
+export function historyUpdate(move: Move, depth: number): void {
+  const key = historyKey(move.from, move.to);
+  const table = historyTable[move.piece.color];
+  const current = table.get(key) ?? 0;
+  const bonus = depth * depth;
+  const newScore = Math.min(current + bonus, MAX_HISTORY_SCORE);
+  table.set(key, newScore);
+}
+
+/**
+ * Get history score for a move.
+ */
+export function historyScore(move: Move): number {
+  const key = historyKey(move.from, move.to);
+  const table = historyTable[move.piece.color];
+  return table.get(key) ?? 0;
+}
+
+/**
+ * Clear history table (e.g., at start of new game).
+ */
+export function historyClear(): void {
+  historyTable.white.clear();
+  historyTable.black.clear();
+}
+
+/**
+ * Age history scores by halving them.
+ * Called between iterations to prevent old history from dominating.
+ */
+export function historyAge(): void {
+  for (const table of [historyTable.white, historyTable.black]) {
+    for (const [key, value] of table.entries()) {
+      table.set(key, Math.floor(value / 2));
+    }
+  }
+}
+
+/**
+ * Get history table size (for stats).
+ */
+export function historySize(): number {
+  return historyTable.white.size + historyTable.black.size;
+}
+
+// ============================================================================
+// Null Move Pruning
+// ============================================================================
+
+/**
+ * Null Move Pruning (NMP) is an aggressive pruning technique.
+ * 
+ * Idea: If giving the opponent an extra move still results in a position
+ * that beats beta, then the current position is likely very good and
+ * we can prune this branch.
+ * 
+ * Conditions for null move:
+ * - Not in check (can't pass when in check)
+ * - Not already doing a null move (no consecutive null moves)
+ * - Has at least one non-pawn piece (zugzwang risk in endgames)
+ * - Depth is sufficient (null move at shallow depths is wasteful)
+ * 
+ * Signed-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17
+ */
+
+/**
+ * Depth reduction for null move search (R value).
+ * Standard values are 2-3. We use 2 + depth/6 (adaptive).
+ */
+export function nullMoveReduction(depth: number): number {
+  return 2 + Math.floor(depth / 6);
+}
+
+/**
+ * Minimum depth required to try null move pruning.
+ */
+const NULL_MOVE_MIN_DEPTH = 3;
+
+/**
+ * Check if position has sufficient material for null move pruning.
+ * Null move is risky in positions with only pawns (zugzwang risk).
+ */
+export function hasNullMoveMaterial(board: BoardState, color: Color): boolean {
+  let nonPawnPieces = 0;
+  for (const piece of board.values()) {
+    if (piece.color === color && piece.type !== 'pawn' && piece.type !== 'king') {
+      nonPawnPieces++;
+    }
+  }
+  // Need at least one non-pawn/non-king piece
+  return nonPawnPieces >= 1;
+}
+
+/**
+ * Check if null move pruning should be attempted.
+ */
+export function shouldTryNullMove(
+  board: BoardState,
+  color: Color,
+  depth: number,
+  doingNullMove: boolean,
+  inCheck: boolean
+): boolean {
+  // Don't do consecutive null moves
+  if (doingNullMove) return false;
+  
+  // Can't do null move when in check
+  if (inCheck) return false;
+  
+  // Don't do null move at shallow depths
+  if (depth < NULL_MOVE_MIN_DEPTH) return false;
+  
+  // Check for sufficient material (avoid zugzwang)
+  if (!hasNullMoveMaterial(board, color)) return false;
+  
+  return true;
 }
 
 // ============================================================================
@@ -725,23 +892,30 @@ export function evaluateForColor(board: BoardState, color: Color): number {
 /**
  * Estimate move value for ordering (higher is better).
  * Good move ordering improves alpha-beta pruning efficiency.
+ * Uses history heuristic for quiet moves.
  */
 export function estimateMoveValue(move: Move): number {
   let score = 0;
   
   // Captures: MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
+  // Captures get priority over quiet moves via high base score
   if (move.captured) {
     const victimValue = PIECE_VALUES[move.captured.type];
     const attackerValue = PIECE_VALUES[move.piece.type];
-    score += victimValue * 10 - attackerValue; // Prioritize capturing valuable pieces
+    score += 10000 + victimValue * 10 - attackerValue; // Prioritize capturing valuable pieces
   }
   
   // Promotions are very valuable
   if (move.promotion) {
-    score += PIECE_VALUES[move.promotion] - PIECE_VALUES['pawn'];
+    score += 9000 + PIECE_VALUES[move.promotion] - PIECE_VALUES['pawn'];
   }
   
-  // Centrality bonus for destination
+  // History heuristic for quiet moves
+  // Scaled down to not overshadow captures/promotions
+  const history = historyScore(move);
+  score += Math.min(history / 100, 1000);
+  
+  // Centrality bonus for destination (small tie-breaker)
   score += getCentralityBonus(move.to);
   
   return score;
@@ -873,6 +1047,8 @@ export interface SearchStats {
   maxDepthReached: number;
   ttHits: number;
   quiescenceNodes: number;
+  nullMoveCutoffs: number;
+  nullMoveAttempts: number;
 }
 
 /**
@@ -885,7 +1061,8 @@ export interface SearchResult {
 }
 
 /**
- * Alpha-beta search with pruning, transposition table, and quiescence search.
+ * Alpha-beta search with pruning, transposition table, quiescence search,
+ * null move pruning, and history heuristic.
  * 
  * @param board Current board state
  * @param depth Remaining search depth
@@ -895,6 +1072,8 @@ export interface SearchResult {
  * @param stats Statistics object to update
  * @param useTT Whether to use transposition table (default true)
  * @param useQuiescence Whether to use quiescence search (default true)
+ * @param useNullMove Whether to use null move pruning (default true)
+ * @param doingNullMove Whether this is a null move search (to prevent consecutive null moves)
  * @returns Evaluation score
  */
 function alphaBeta(
@@ -905,12 +1084,15 @@ function alphaBeta(
   maximizing: boolean,
   stats: SearchStats,
   useTT: boolean = true,
-  useQuiescence: boolean = true
+  useQuiescence: boolean = true,
+  useNullMove: boolean = true,
+  doingNullMove: boolean = false
 ): number {
   stats.nodesSearched++;
   
   const originalAlpha = alpha;
   const color: Color = maximizing ? 'white' : 'black';
+  const inCheck = isInCheck(board, color);
   
   // Probe transposition table
   if (useTT) {
@@ -935,7 +1117,7 @@ function alphaBeta(
   
   // Terminal node checks
   if (moves.length === 0) {
-    if (isInCheck(board, color)) {
+    if (inCheck) {
       // Checkmate - very bad for the current player
       // Add depth bonus to prefer quicker mates
       return maximizing ? -CHECKMATE_VALUE + depth : CHECKMATE_VALUE - depth;
@@ -951,6 +1133,42 @@ function alphaBeta(
       return quiescenceSearch(board, alpha, beta, maximizing, stats);
     }
     return evaluatePosition(board);
+  }
+  
+  // Null Move Pruning
+  // If giving the opponent an extra move still results in a position >= beta,
+  // we can prune this branch.
+  if (useNullMove && shouldTryNullMove(board, color, depth, doingNullMove, inCheck)) {
+    stats.nullMoveAttempts++;
+    const R = nullMoveReduction(depth);
+    
+    // Do a reduced-depth search with the opponent to move
+    // (simulating passing our turn)
+    const nullScore = alphaBeta(
+      board, // Same board - we "pass"
+      depth - 1 - R, // Reduced depth
+      maximizing ? -beta : -beta, // Inverted bounds for null window
+      maximizing ? -beta + 1 : -beta + 1,
+      !maximizing, // Opponent's turn
+      stats,
+      useTT,
+      useQuiescence,
+      false, // Don't do null move in verification search
+      true // Mark that we're doing a null move
+    );
+    
+    // If null move fails high, we can prune
+    if (maximizing) {
+      if (-nullScore >= beta) {
+        stats.nullMoveCutoffs++;
+        return beta;
+      }
+    } else {
+      if (-nullScore <= alpha) {
+        stats.nullMoveCutoffs++;
+        return alpha;
+      }
+    }
   }
   
   // Order moves for better pruning
@@ -981,7 +1199,7 @@ function alphaBeta(
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, useTT, useQuiescence);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, useTT, useQuiescence, useNullMove, false);
       
       if (evalScore > maxEval) {
         maxEval = evalScore;
@@ -991,6 +1209,10 @@ function alphaBeta(
       
       if (beta <= alpha) {
         stats.cutoffs++;
+        // Update history for the cutoff move (quiet moves only)
+        if (!move.captured && !move.promotion) {
+          historyUpdate(move, depth);
+        }
         break; // Beta cutoff
       }
     }
@@ -1009,7 +1231,7 @@ function alphaBeta(
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, useTT, useQuiescence);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, useTT, useQuiescence, useNullMove, false);
       
       if (evalScore < minEval) {
         minEval = evalScore;
@@ -1019,6 +1241,10 @@ function alphaBeta(
       
       if (beta <= alpha) {
         stats.cutoffs++;
+        // Update history for the cutoff move (quiet moves only)
+        if (!move.captured && !move.promotion) {
+          historyUpdate(move, depth);
+        }
         break; // Alpha cutoff
       }
     }
@@ -1043,6 +1269,7 @@ function alphaBeta(
  * @param depth Search depth (higher = stronger but slower)
  * @param useTT Whether to use transposition table
  * @param useQuiescence Whether to use quiescence search
+ * @param useNullMove Whether to use null move pruning
  * @returns Best move and evaluation
  */
 export function findBestMove(
@@ -1050,7 +1277,8 @@ export function findBestMove(
   color: Color,
   depth: number = 4,
   useTT: boolean = true,
-  useQuiescence: boolean = true
+  useQuiescence: boolean = true,
+  useNullMove: boolean = true
 ): SearchResult {
   const stats: SearchStats = {
     nodesSearched: 0,
@@ -1058,6 +1286,8 @@ export function findBestMove(
     maxDepthReached: depth,
     ttHits: 0,
     quiescenceNodes: 0,
+    nullMoveCutoffs: 0,
+    nullMoveAttempts: 0,
   };
   
   const moves = generateAllLegalMoves(board, color);
@@ -1094,7 +1324,7 @@ export function findBestMove(
   
   for (const move of orderedMoves) {
     const newBoard = applyMove(board, move);
-    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats, useTT, useQuiescence);
+    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats, useTT, useQuiescence, useNullMove, false);
     
     if (maximizing) {
       if (evalScore > bestScore) {
@@ -1123,6 +1353,7 @@ export function findBestMove(
  * Find best move using iterative deepening.
  * Searches at increasing depths until time limit is reached.
  * Transposition table is preserved across depths for better move ordering.
+ * History table is aged between iterations to prevent stale data.
  * 
  * @param board Current board state
  * @param color Color to find best move for
@@ -1130,6 +1361,7 @@ export function findBestMove(
  * @param timeLimitMs Time limit in milliseconds (optional)
  * @param useTT Whether to use transposition table
  * @param useQuiescence Whether to use quiescence search
+ * @param useNullMove Whether to use null move pruning
  * @returns Best move found
  */
 export function findBestMoveIterative(
@@ -1138,13 +1370,22 @@ export function findBestMoveIterative(
   maxDepth: number = 6,
   timeLimitMs: number = 5000,
   useTT: boolean = true,
-  useQuiescence: boolean = true
+  useQuiescence: boolean = true,
+  useNullMove: boolean = true
 ): SearchResult {
   const startTime = Date.now();
   let bestResult: SearchResult = { 
     move: null, 
     score: 0, 
-    stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0, ttHits: 0, quiescenceNodes: 0 } 
+    stats: { 
+      nodesSearched: 0, 
+      cutoffs: 0, 
+      maxDepthReached: 0, 
+      ttHits: 0, 
+      quiescenceNodes: 0,
+      nullMoveCutoffs: 0,
+      nullMoveAttempts: 0,
+    } 
   };
   
   // Accumulate stats across all depths
@@ -1152,14 +1393,18 @@ export function findBestMoveIterative(
   let totalCutoffs = 0;
   let totalTTHits = 0;
   let totalQNodes = 0;
+  let totalNullCutoffs = 0;
+  let totalNullAttempts = 0;
   
   // Get initial moves quickly at depth 1
-  const initialResult = findBestMove(board, color, 1, useTT, useQuiescence);
+  const initialResult = findBestMove(board, color, 1, useTT, useQuiescence, useNullMove);
   bestResult = initialResult;
   totalNodes += initialResult.stats.nodesSearched;
   totalCutoffs += initialResult.stats.cutoffs;
   totalTTHits += initialResult.stats.ttHits;
   totalQNodes += initialResult.stats.quiescenceNodes;
+  totalNullCutoffs += initialResult.stats.nullMoveCutoffs;
+  totalNullAttempts += initialResult.stats.nullMoveAttempts;
   
   for (let depth = 2; depth <= maxDepth; depth++) {
     const elapsed = Date.now() - startTime;
@@ -1173,12 +1418,17 @@ export function findBestMoveIterative(
       break;
     }
     
-    const result = findBestMove(board, color, depth, useTT, useQuiescence);
+    // Age history between iterations to prevent stale data from dominating
+    historyAge();
+    
+    const result = findBestMove(board, color, depth, useTT, useQuiescence, useNullMove);
     bestResult = result;
     totalNodes += result.stats.nodesSearched;
     totalCutoffs += result.stats.cutoffs;
     totalTTHits += result.stats.ttHits;
     totalQNodes += result.stats.quiescenceNodes;
+    totalNullCutoffs += result.stats.nullMoveCutoffs;
+    totalNullAttempts += result.stats.nullMoveAttempts;
     
     // If we found a winning move, stop searching
     if (Math.abs(result.score) > CHECKMATE_VALUE - 1000) {
@@ -1191,6 +1441,8 @@ export function findBestMoveIterative(
   bestResult.stats.cutoffs = totalCutoffs;
   bestResult.stats.ttHits = totalTTHits;
   bestResult.stats.quiescenceNodes = totalQNodes;
+  bestResult.stats.nullMoveCutoffs = totalNullCutoffs;
+  bestResult.stats.nullMoveAttempts = totalNullAttempts;
   
   return bestResult;
 }
@@ -1223,24 +1475,33 @@ export function getDifficultyParams(difficulty: AIDifficulty): { depth: number; 
  * 
  * @param state Current game state
  * @param difficulty AI difficulty level
- * @param clearTT Whether to clear transposition table (default false, set true for new games)
+ * @param clearTables Whether to clear transposition and history tables (default false, set true for new games)
  * @returns Best move or null if game is over
  */
 export function getAIMove(
   state: GameState,
   difficulty: AIDifficulty = 'medium',
-  clearTT: boolean = false
+  clearTables: boolean = false
 ): SearchResult {
   if (state.status.type !== 'ongoing') {
     return { 
       move: null, 
       score: 0, 
-      stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0, ttHits: 0, quiescenceNodes: 0 } 
+      stats: { 
+        nodesSearched: 0, 
+        cutoffs: 0, 
+        maxDepthReached: 0, 
+        ttHits: 0, 
+        quiescenceNodes: 0,
+        nullMoveCutoffs: 0,
+        nullMoveAttempts: 0,
+      } 
     };
   }
   
-  if (clearTT) {
+  if (clearTables) {
     ttClear();
+    historyClear();
   }
   
   const params = getDifficultyParams(difficulty);
