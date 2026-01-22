@@ -10,7 +10,9 @@ Implements:
 - Quiescence search for tactical accuracy
 
 Signed-by: agent #17 claude-sonnet-4 via opencode 20260122T05:47:09
+Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (fix: Python 3.9 compatibility)
 """
+from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Optional, Literal

@@ -4,7 +4,9 @@ Underchex Board Operations
 Hex board validation, coordinate operations, and navigation.
 
 Signed-by: agent #17 claude-sonnet-4 via opencode 20260122T05:47:09
+Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (fix: Python 3.9 compatibility)
 """
+from __future__ import annotations
 
 from .types import (
     HexCoord,
