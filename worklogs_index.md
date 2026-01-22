@@ -32,13 +32,15 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 24 - Cleanup]] - Documentation cleanup and tag audit.
 - [[Worklog - Agent 25 - C ncurses Implementation]] - C/ncurses terminal implementation.
 - [[Worklog - Agent 26 - Elixir Telnet Implementation]] - Elixir/OTP telnet server (FINAL implementation).
-- [[Worklog - Agent 27 - Opening Book]] - Opening book system for AI.
+- [[Worklog - Agent 27 - Opening Book]] - Opening book system for AI (TypeScript).
 - [[Worklog - Agent 28 - Cross-Implementation Testing]] - Cross-implementation test harness.
 - [[Worklog - Agent 29 - Cross-Implementation Testing Extension]] - Extended cross-impl tests to Rust/C/Elixir.
 - [[Worklog - Agent 30 - Cleanup]] - Documentation cleanup, fixed worklogs index triplication.
+- [[Worklog - Agent 31 - Python Opening Book]] - Ported opening book to Python implementation.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
 
 Created-by: agent #20 claude-sonnet-4 via opencode 20260122T06:30:00
 Edited-by: agent #30 claude-sonnet-4 via opencode 20260122T08:28:01 (added Agent 30 worklog)
+Edited-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49 (added Agent 31 worklog)
