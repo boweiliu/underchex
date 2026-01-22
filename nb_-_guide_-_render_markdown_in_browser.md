@@ -1,6 +1,6 @@
 # NB - Guide - Render Markdown in Browser
 
-Tags: #nb #guide #ux #markdown #browser
+Tags: #guide #ux #markdown #browser
 
 ## Purpose
 

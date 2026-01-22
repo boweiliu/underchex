@@ -1,6 +1,6 @@
 # NB - Guide - Multiline Content via Heredoc
 
-Tags: #nb #guide #shell #heredoc
+Tags: #guide #shell #heredoc
 
 ## Problem
 Passing multiline note content inline to `nb edit --content "..."` causes shell errors and truncated updates. Quotes, newlines, and special characters get mangled by shell expansion.

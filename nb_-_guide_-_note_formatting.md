@@ -1,5 +1,5 @@
 # NB - Guide - Note Formatting
-Tags: #nb #guide #formatting
+Tags: #guide #formatting
 
 ## Goal
 Keep nb list output clean and consistent by standardizing note headers.

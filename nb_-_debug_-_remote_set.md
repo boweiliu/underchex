@@ -1,6 +1,6 @@
 # NB - Debug - Remote Set
 
-Tags: #nb #debug #git #remote
+Tags: #debug #git #remote
 
 ## Problem
 `nb remote set` prints a confirmation banner but does not actually configure a remote.

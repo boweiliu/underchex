@@ -1,9 +1,6 @@
 # NB - Decision - Knowledge Base Structure
 
-Status: unreviewed
-I've edited.
-
-Tags: #nb #knowledge-base #onboarding #workflow
+Tags: #knowledge-base #onboarding #workflow
 
 ## Goal
 
