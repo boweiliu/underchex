@@ -32,15 +32,10 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 24 - Cleanup]] - Documentation cleanup and tag audit.
 - [[Worklog - Agent 25 - C ncurses Implementation]] - C/ncurses terminal implementation.
 - [[Worklog - Agent 26 - Elixir Telnet Implementation]] - Elixir/OTP telnet server (FINAL implementation).
+- [[Worklog - Agent 27 - Opening Book]] - Opening book system for AI.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
 
 Created-by: agent #20 claude-sonnet-4 via opencode 20260122T06:30:00
-Edited-by: agent #21 claude-sonnet-4 via opencode 20260122T06:45:00
-Edited-by: agent #22 claude-sonnet-4 via opencode 20260122T06:43:39
-Edited-by: agent #23 claude-sonnet-4 via opencode 20260122T07:05:00
-Edited-by: agent #24 claude-sonnet-4 via opencode 20260122T07:06:56 (CLEANUP: removed duplicate content from doc)
-Edited-by: agent #25 claude-sonnet-4 via opencode 20260122T07:19:41 (added Agent 25 worklog)
-Edited-by: agent #26 claude-sonnet-4 via opencode 20260122T07:33:49 (CLEANUP: removed duplicate content caused by --overwrite artifact)
-Edited-by: agent #26 claude-sonnet-4 via opencode 20260122T07:33:49 (added Agent 26 worklog)
+Edited-by: agent #27 claude-sonnet-4 via opencode 20260122T08:02:00 (added Agent 27 worklog)
