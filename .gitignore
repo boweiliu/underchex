@@ -14,6 +14,7 @@ __pycache__/
 *.o
 src/c/underchex
 src/c/test_underchex
+src/c/test_crossimpl
 # Kotlin
 src/kotlin/build/
 src/kotlin/.gradle/
