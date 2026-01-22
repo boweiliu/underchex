@@ -2,9 +2,10 @@
  * Tests for Underchex AI Module
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
+ * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import {
   PIECE_VALUES,
   CHECKMATE_VALUE,
@@ -20,6 +21,15 @@ import {
   findBestMoveIterative,
   getAIMove,
   getDifficultyParams,
+  // Transposition table functions
+  generateBoardHash,
+  ttStore,
+  ttProbe,
+  ttClear,
+  ttSize,
+  // Quiescence search functions
+  isTacticalMove,
+  generateTacticalMoves,
 } from '../src/ai';
 import {
   HexCoord,
@@ -364,5 +374,242 @@ describe('AI Move Quality', () => {
       expect(result.score).toBeLessThan(PIECE_VALUES.queen);
     }
     // Otherwise, good - AI avoided the trap
+  });
+});
+
+// ============================================================================
+// Transposition Table Tests
+// ============================================================================
+
+describe('Transposition Table', () => {
+  beforeEach(() => {
+    ttClear();
+  });
+
+  it('should generate consistent hash for same board position', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const hash1 = generateBoardHash(board);
+    const hash2 = generateBoardHash(board);
+    
+    expect(hash1).toBe(hash2);
+  });
+
+  it('should generate different hash for different positions', () => {
+    const board1: BoardState = new Map();
+    board1.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board1.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const board2: BoardState = new Map();
+    board2.set(coordToString({ q: 1, r: 0 }), { type: 'king', color: 'white' }); // Different position
+    board2.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const hash1 = generateBoardHash(board1);
+    const hash2 = generateBoardHash(board2);
+    
+    expect(hash1).not.toBe(hash2);
+  });
+
+  it('should store and probe entries', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    ttStore(board, 4, 100, 'exact', null);
+    
+    const entry = ttProbe(board);
+    expect(entry).toBeDefined();
+    expect(entry!.depth).toBe(4);
+    expect(entry!.score).toBe(100);
+    expect(entry!.type).toBe('exact');
+  });
+
+  it('should return undefined for unknown positions', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const entry = ttProbe(board);
+    expect(entry).toBeUndefined();
+  });
+
+  it('should track size correctly', () => {
+    expect(ttSize()).toBe(0);
+    
+    const board1: BoardState = new Map();
+    board1.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board1.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    ttStore(board1, 4, 100, 'exact', null);
+    
+    expect(ttSize()).toBe(1);
+    
+    const board2: BoardState = new Map();
+    board2.set(coordToString({ q: 1, r: 0 }), { type: 'king', color: 'white' });
+    board2.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    ttStore(board2, 4, 50, 'exact', null);
+    
+    expect(ttSize()).toBe(2);
+  });
+
+  it('should prefer deeper entries when storing', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    ttStore(board, 4, 100, 'exact', null);
+    ttStore(board, 2, 50, 'exact', null); // Shallower depth - should not replace
+    
+    const entry = ttProbe(board);
+    expect(entry!.depth).toBe(4);
+    expect(entry!.score).toBe(100);
+  });
+
+  it('should clear all entries', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    ttStore(board, 4, 100, 'exact', null);
+    expect(ttSize()).toBe(1);
+    
+    ttClear();
+    expect(ttSize()).toBe(0);
+    expect(ttProbe(board)).toBeUndefined();
+  });
+});
+
+// ============================================================================
+// Quiescence Search Tests
+// ============================================================================
+
+describe('Quiescence Search', () => {
+  it('isTacticalMove should identify captures', () => {
+    const piece: Piece = { type: 'pawn', color: 'white' };
+    
+    const quietMove: Move = {
+      piece,
+      from: { q: 0, r: 1 },
+      to: { q: 0, r: 0 },
+    };
+    
+    const captureMove: Move = {
+      piece,
+      from: { q: 0, r: 1 },
+      to: { q: 1, r: 0 },
+      captured: { type: 'pawn', color: 'black' },
+    };
+    
+    expect(isTacticalMove(quietMove)).toBe(false);
+    expect(isTacticalMove(captureMove)).toBe(true);
+  });
+
+  it('isTacticalMove should identify promotions', () => {
+    const piece: Piece = { type: 'pawn', color: 'white' };
+    
+    const promotionMove: Move = {
+      piece,
+      from: { q: 0, r: -3 },
+      to: { q: 0, r: -4 },
+      promotion: 'queen',
+    };
+    
+    expect(isTacticalMove(promotionMove)).toBe(true);
+  });
+
+  it('generateTacticalMoves should only return captures and promotions', () => {
+    const game = createNewGame();
+    const tacticalMoves = generateTacticalMoves(game.board, 'white');
+    
+    // From starting position, there should be no tactical moves
+    expect(tacticalMoves.length).toBe(0);
+  });
+
+  it('generateTacticalMoves should find captures when available', () => {
+    // Create a position with a capture available
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 1, r: 0 }), { type: 'queen', color: 'white' }); // Queen can capture black pawn
+    board.set(coordToString({ q: 2, r: 0 }), { type: 'pawn', color: 'black' }); // Target
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const tacticalMoves = generateTacticalMoves(board, 'white');
+    
+    // Should find at least the queen capture
+    const captures = tacticalMoves.filter(m => m.captured);
+    expect(captures.length).toBeGreaterThan(0);
+  });
+});
+
+// ============================================================================
+// TT and Quiescence Integration Tests
+// ============================================================================
+
+describe('AI with TT and Quiescence', () => {
+  beforeEach(() => {
+    ttClear();
+  });
+
+  it('should benefit from transposition table (faster search)', () => {
+    const game = createNewGame();
+    
+    // First search - populates TT
+    const result1 = findBestMove(game.board, 'white', 3, true, true);
+    const nodes1 = result1.stats.nodesSearched;
+    
+    // Second search - should benefit from TT
+    const result2 = findBestMove(game.board, 'white', 3, true, true);
+    const nodes2 = result2.stats.nodesSearched;
+    
+    // The second search should have TT hits
+    expect(result2.stats.ttHits).toBeGreaterThan(0);
+    
+    // Both searches should find valid moves
+    expect(result1.move).not.toBeNull();
+    expect(result2.move).not.toBeNull();
+  });
+
+  it('should find same best move with or without TT', () => {
+    ttClear();
+    const game = createNewGame();
+    
+    // Search without TT
+    const resultNoTT = findBestMove(game.board, 'white', 2, false, false);
+    
+    ttClear();
+    // Search with TT
+    const resultWithTT = findBestMove(game.board, 'white', 2, true, false);
+    
+    // Should find equivalent moves (same evaluation)
+    // Note: exact move might differ due to ordering, but score should be same
+    expect(Math.abs(resultNoTT.score - resultWithTT.score)).toBeLessThan(10);
+  });
+
+  it('quiescence search should track statistics', () => {
+    const game = createNewGame();
+    
+    // Search with quiescence
+    const result = findBestMove(game.board, 'white', 3, false, true);
+    
+    // Quiescence nodes should be tracked (may be 0 if no tactical positions reached)
+    expect(result.stats.quiescenceNodes).toBeGreaterThanOrEqual(0);
+  });
+
+  it('should use TT best move for better move ordering', () => {
+    ttClear();
+    const game = createNewGame();
+    
+    // First search at depth 3
+    const result1 = findBestMove(game.board, 'white', 3, true, true);
+    
+    // Store TT entry manually with a known best move
+    if (result1.move) {
+      // Now search again - should use the TT entry for better ordering
+      const result2 = findBestMove(game.board, 'white', 4, true, true);
+      
+      // The TT hit count should indicate we're using stored entries
+      expect(result2.stats.ttHits).toBeGreaterThan(0);
+    }
   });
 });

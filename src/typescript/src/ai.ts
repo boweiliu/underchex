@@ -6,8 +6,11 @@
  * - Positional bonuses (centrality, mobility)
  * - Alpha-beta pruning with iterative deepening
  * - Move ordering for better pruning
+ * - Transposition table for caching evaluations (added by agent #5)
+ * - Quiescence search for tactical accuracy (added by agent #5)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
+ * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
  */
 
 import {
@@ -58,6 +61,104 @@ export const CHECKMATE_VALUE = 100000;
  * Value for stalemate (draw).
  */
 export const STALEMATE_VALUE = 0;
+
+// ============================================================================
+// Transposition Table
+// ============================================================================
+
+/**
+ * Entry types for transposition table.
+ * - EXACT: The stored score is the exact minimax value
+ * - LOWER: The stored score is a lower bound (beta cutoff)
+ * - UPPER: The stored score is an upper bound (alpha cutoff)
+ */
+export type TTEntryType = 'exact' | 'lower' | 'upper';
+
+/**
+ * Transposition table entry.
+ */
+export interface TTEntry {
+  score: number;
+  depth: number;
+  type: TTEntryType;
+  bestMove: Move | null;
+}
+
+/**
+ * Generate a hash key for a board position.
+ * Simple string-based hash - good enough for moderate table sizes.
+ */
+export function generateBoardHash(board: BoardState): string {
+  const entries: string[] = [];
+  for (const [pos, piece] of board.entries()) {
+    entries.push(`${pos}:${piece.type}${piece.color[0]}${piece.variant ?? ''}`);
+  }
+  // Sort for deterministic ordering
+  entries.sort();
+  return entries.join('|');
+}
+
+/**
+ * Global transposition table.
+ * Using a Map with string keys for simplicity.
+ * In production, you'd use Zobrist hashing with a fixed-size array.
+ */
+const transpositionTable = new Map<string, TTEntry>();
+
+/**
+ * Maximum transposition table size (entries).
+ * Clear oldest entries when exceeded.
+ */
+const MAX_TT_SIZE = 100000;
+
+/**
+ * Store a position in the transposition table.
+ */
+export function ttStore(
+  board: BoardState,
+  depth: number,
+  score: number,
+  type: TTEntryType,
+  bestMove: Move | null
+): void {
+  // Simple size management - clear half the table when full
+  if (transpositionTable.size >= MAX_TT_SIZE) {
+    const keysToDelete = Array.from(transpositionTable.keys()).slice(0, MAX_TT_SIZE / 2);
+    for (const key of keysToDelete) {
+      transpositionTable.delete(key);
+    }
+  }
+  
+  const hash = generateBoardHash(board);
+  const existing = transpositionTable.get(hash);
+  
+  // Only replace if new entry has equal or greater depth
+  if (!existing || existing.depth <= depth) {
+    transpositionTable.set(hash, { score, depth, type, bestMove });
+  }
+}
+
+/**
+ * Probe the transposition table for a position.
+ */
+export function ttProbe(board: BoardState): TTEntry | undefined {
+  const hash = generateBoardHash(board);
+  return transpositionTable.get(hash);
+}
+
+/**
+ * Clear the transposition table.
+ */
+export function ttClear(): void {
+  transpositionTable.clear();
+}
+
+/**
+ * Get transposition table size (for stats).
+ */
+export function ttSize(): number {
+  return transpositionTable.size;
+}
 
 // ============================================================================
 // Position Evaluation
@@ -218,6 +319,112 @@ export function orderMoves(moves: Move[]): Move[] {
 }
 
 // ============================================================================
+// Quiescence Search
+// ============================================================================
+
+/**
+ * Maximum depth for quiescence search.
+ * Prevents explosion in positions with many captures.
+ */
+const MAX_QUIESCENCE_DEPTH = 8;
+
+/**
+ * Check if a move is a capture or promotion (tactical move).
+ */
+export function isTacticalMove(move: Move): boolean {
+  return move.captured !== undefined || move.promotion !== undefined;
+}
+
+/**
+ * Generate only tactical moves (captures and promotions).
+ */
+export function generateTacticalMoves(board: BoardState, color: Color): Move[] {
+  const allMoves = generateAllLegalMoves(board, color);
+  return allMoves.filter(isTacticalMove);
+}
+
+/**
+ * Quiescence search - extends search until position is "quiet".
+ * Prevents horizon effect where the AI misses obvious captures.
+ * 
+ * @param board Current board state
+ * @param alpha Best score for maximizing player
+ * @param beta Best score for minimizing player
+ * @param maximizing True if current player is maximizing (white)
+ * @param stats Statistics object to update
+ * @param qDepth Current quiescence depth
+ * @returns Evaluation score
+ */
+function quiescenceSearch(
+  board: BoardState,
+  alpha: number,
+  beta: number,
+  maximizing: boolean,
+  stats: SearchStats,
+  qDepth: number = 0
+): number {
+  stats.nodesSearched++;
+  stats.quiescenceNodes++;
+  
+  // Stand-pat score (evaluation if we don't make any tactical move)
+  const standPat = evaluatePosition(board);
+  
+  if (maximizing) {
+    if (standPat >= beta) {
+      return beta; // Beta cutoff
+    }
+    alpha = Math.max(alpha, standPat);
+  } else {
+    if (standPat <= alpha) {
+      return alpha; // Alpha cutoff
+    }
+    beta = Math.min(beta, standPat);
+  }
+  
+  // Stop if we've searched too deep in quiescence
+  if (qDepth >= MAX_QUIESCENCE_DEPTH) {
+    return standPat;
+  }
+  
+  const color: Color = maximizing ? 'white' : 'black';
+  const tacticalMoves = generateTacticalMoves(board, color);
+  
+  // No tactical moves - position is quiet
+  if (tacticalMoves.length === 0) {
+    return standPat;
+  }
+  
+  // Order moves (captures of valuable pieces first)
+  const orderedMoves = orderMoves(tacticalMoves);
+  
+  if (maximizing) {
+    for (const move of orderedMoves) {
+      const newBoard = applyMove(board, move);
+      const score = quiescenceSearch(newBoard, alpha, beta, false, stats, qDepth + 1);
+      
+      if (score >= beta) {
+        stats.cutoffs++;
+        return beta;
+      }
+      alpha = Math.max(alpha, score);
+    }
+    return alpha;
+  } else {
+    for (const move of orderedMoves) {
+      const newBoard = applyMove(board, move);
+      const score = quiescenceSearch(newBoard, alpha, beta, true, stats, qDepth + 1);
+      
+      if (score <= alpha) {
+        stats.cutoffs++;
+        return alpha;
+      }
+      beta = Math.min(beta, score);
+    }
+    return beta;
+  }
+}
+
+// ============================================================================
 // Alpha-Beta Search
 // ============================================================================
 
@@ -228,6 +435,8 @@ export interface SearchStats {
   nodesSearched: number;
   cutoffs: number;
   maxDepthReached: number;
+  ttHits: number;
+  quiescenceNodes: number;
 }
 
 /**
@@ -240,7 +449,7 @@ export interface SearchResult {
 }
 
 /**
- * Alpha-beta search with pruning.
+ * Alpha-beta search with pruning, transposition table, and quiescence search.
  * 
  * @param board Current board state
  * @param depth Remaining search depth
@@ -248,6 +457,8 @@ export interface SearchResult {
  * @param beta Best score for minimizing player
  * @param maximizing True if current player is maximizing (white)
  * @param stats Statistics object to update
+ * @param useTT Whether to use transposition table (default true)
+ * @param useQuiescence Whether to use quiescence search (default true)
  * @returns Evaluation score
  */
 function alphaBeta(
@@ -256,40 +467,90 @@ function alphaBeta(
   alpha: number,
   beta: number,
   maximizing: boolean,
-  stats: SearchStats
+  stats: SearchStats,
+  useTT: boolean = true,
+  useQuiescence: boolean = true
 ): number {
   stats.nodesSearched++;
-  stats.maxDepthReached = Math.max(stats.maxDepthReached, stats.nodesSearched);
   
+  const originalAlpha = alpha;
   const color: Color = maximizing ? 'white' : 'black';
+  
+  // Probe transposition table
+  if (useTT) {
+    const ttEntry = ttProbe(board);
+    if (ttEntry && ttEntry.depth >= depth) {
+      stats.ttHits++;
+      if (ttEntry.type === 'exact') {
+        return ttEntry.score;
+      } else if (ttEntry.type === 'lower') {
+        alpha = Math.max(alpha, ttEntry.score);
+      } else if (ttEntry.type === 'upper') {
+        beta = Math.min(beta, ttEntry.score);
+      }
+      
+      if (alpha >= beta) {
+        return ttEntry.score;
+      }
+    }
+  }
+  
   const moves = generateAllLegalMoves(board, color);
   
   // Terminal node checks
   if (moves.length === 0) {
     if (isInCheck(board, color)) {
       // Checkmate - very bad for the current player
-      return maximizing ? -CHECKMATE_VALUE + stats.nodesSearched : CHECKMATE_VALUE - stats.nodesSearched;
+      // Add depth bonus to prefer quicker mates
+      return maximizing ? -CHECKMATE_VALUE + depth : CHECKMATE_VALUE - depth;
     } else {
       // Stalemate
       return STALEMATE_VALUE;
     }
   }
   
-  // Leaf node - evaluate position
+  // Leaf node - use quiescence search or static evaluation
   if (depth === 0) {
+    if (useQuiescence) {
+      return quiescenceSearch(board, alpha, beta, maximizing, stats);
+    }
     return evaluatePosition(board);
   }
   
   // Order moves for better pruning
-  const orderedMoves = orderMoves(moves);
+  // If we have a TT hit with a best move, try that first
+  let orderedMoves: Move[];
+  if (useTT) {
+    const ttEntry = ttProbe(board);
+    if (ttEntry?.bestMove) {
+      // Put TT best move first
+      const otherMoves = moves.filter(m => 
+        m.from.q !== ttEntry.bestMove!.from.q || 
+        m.from.r !== ttEntry.bestMove!.from.r ||
+        m.to.q !== ttEntry.bestMove!.to.q ||
+        m.to.r !== ttEntry.bestMove!.to.r
+      );
+      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves)];
+    } else {
+      orderedMoves = orderMoves(moves);
+    }
+  } else {
+    orderedMoves = orderMoves(moves);
+  }
+  
+  let bestMove: Move | null = null;
   
   if (maximizing) {
     let maxEval = -Infinity;
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats);
-      maxEval = Math.max(maxEval, evalScore);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, false, stats, useTT, useQuiescence);
+      
+      if (evalScore > maxEval) {
+        maxEval = evalScore;
+        bestMove = move;
+      }
       alpha = Math.max(alpha, evalScore);
       
       if (beta <= alpha) {
@@ -298,20 +559,40 @@ function alphaBeta(
       }
     }
     
+    // Store in transposition table
+    if (useTT) {
+      const ttType: TTEntryType = maxEval <= originalAlpha ? 'upper' 
+        : maxEval >= beta ? 'lower' 
+        : 'exact';
+      ttStore(board, depth, maxEval, ttType, bestMove);
+    }
+    
     return maxEval;
   } else {
     let minEval = Infinity;
     
     for (const move of orderedMoves) {
       const newBoard = applyMove(board, move);
-      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats);
-      minEval = Math.min(minEval, evalScore);
+      const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, true, stats, useTT, useQuiescence);
+      
+      if (evalScore < minEval) {
+        minEval = evalScore;
+        bestMove = move;
+      }
       beta = Math.min(beta, evalScore);
       
       if (beta <= alpha) {
         stats.cutoffs++;
         break; // Alpha cutoff
       }
+    }
+    
+    // Store in transposition table
+    if (useTT) {
+      const ttType: TTEntryType = minEval >= beta ? 'lower'
+        : minEval <= originalAlpha ? 'upper'
+        : 'exact';
+      ttStore(board, depth, minEval, ttType, bestMove);
     }
     
     return minEval;
@@ -324,17 +605,23 @@ function alphaBeta(
  * @param board Current board state
  * @param color Color to find best move for
  * @param depth Search depth (higher = stronger but slower)
+ * @param useTT Whether to use transposition table
+ * @param useQuiescence Whether to use quiescence search
  * @returns Best move and evaluation
  */
 export function findBestMove(
   board: BoardState,
   color: Color,
-  depth: number = 4
+  depth: number = 4,
+  useTT: boolean = true,
+  useQuiescence: boolean = true
 ): SearchResult {
   const stats: SearchStats = {
     nodesSearched: 0,
     cutoffs: 0,
-    maxDepthReached: 0,
+    maxDepthReached: depth,
+    ttHits: 0,
+    quiescenceNodes: 0,
   };
   
   const moves = generateAllLegalMoves(board, color);
@@ -344,7 +631,25 @@ export function findBestMove(
   }
   
   const maximizing = color === 'white';
-  const orderedMoves = orderMoves(moves);
+  
+  // Check TT for best move from previous search
+  let orderedMoves: Move[];
+  if (useTT) {
+    const ttEntry = ttProbe(board);
+    if (ttEntry?.bestMove) {
+      const otherMoves = moves.filter(m => 
+        m.from.q !== ttEntry.bestMove!.from.q || 
+        m.from.r !== ttEntry.bestMove!.from.r ||
+        m.to.q !== ttEntry.bestMove!.to.q ||
+        m.to.r !== ttEntry.bestMove!.to.r
+      );
+      orderedMoves = [ttEntry.bestMove, ...orderMoves(otherMoves)];
+    } else {
+      orderedMoves = orderMoves(moves);
+    }
+  } else {
+    orderedMoves = orderMoves(moves);
+  }
   
   let bestMove = orderedMoves[0]!;
   let bestScore = maximizing ? -Infinity : Infinity;
@@ -353,7 +658,7 @@ export function findBestMove(
   
   for (const move of orderedMoves) {
     const newBoard = applyMove(board, move);
-    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats);
+    const evalScore = alphaBeta(newBoard, depth - 1, alpha, beta, !maximizing, stats, useTT, useQuiescence);
     
     if (maximizing) {
       if (evalScore > bestScore) {
@@ -370,32 +675,55 @@ export function findBestMove(
     }
   }
   
+  // Store the best move in TT for the root position
+  if (useTT) {
+    ttStore(board, depth, bestScore, 'exact', bestMove);
+  }
+  
   return { move: bestMove, score: bestScore, stats };
 }
 
 /**
  * Find best move using iterative deepening.
  * Searches at increasing depths until time limit is reached.
+ * Transposition table is preserved across depths for better move ordering.
  * 
  * @param board Current board state
  * @param color Color to find best move for
  * @param maxDepth Maximum search depth
  * @param timeLimitMs Time limit in milliseconds (optional)
+ * @param useTT Whether to use transposition table
+ * @param useQuiescence Whether to use quiescence search
  * @returns Best move found
  */
 export function findBestMoveIterative(
   board: BoardState,
   color: Color,
   maxDepth: number = 6,
-  timeLimitMs: number = 5000
+  timeLimitMs: number = 5000,
+  useTT: boolean = true,
+  useQuiescence: boolean = true
 ): SearchResult {
   const startTime = Date.now();
-  let bestResult: SearchResult = { move: null, score: 0, stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0 } };
+  let bestResult: SearchResult = { 
+    move: null, 
+    score: 0, 
+    stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0, ttHits: 0, quiescenceNodes: 0 } 
+  };
+  
+  // Accumulate stats across all depths
+  let totalNodes = 0;
+  let totalCutoffs = 0;
+  let totalTTHits = 0;
+  let totalQNodes = 0;
   
   // Get initial moves quickly at depth 1
-  const initialResult = findBestMove(board, color, 1);
+  const initialResult = findBestMove(board, color, 1, useTT, useQuiescence);
   bestResult = initialResult;
-  bestResult.stats.maxDepthReached = 1;
+  totalNodes += initialResult.stats.nodesSearched;
+  totalCutoffs += initialResult.stats.cutoffs;
+  totalTTHits += initialResult.stats.ttHits;
+  totalQNodes += initialResult.stats.quiescenceNodes;
   
   for (let depth = 2; depth <= maxDepth; depth++) {
     const elapsed = Date.now() - startTime;
@@ -409,15 +737,24 @@ export function findBestMoveIterative(
       break;
     }
     
-    const result = findBestMove(board, color, depth);
+    const result = findBestMove(board, color, depth, useTT, useQuiescence);
     bestResult = result;
-    bestResult.stats.maxDepthReached = depth;
+    totalNodes += result.stats.nodesSearched;
+    totalCutoffs += result.stats.cutoffs;
+    totalTTHits += result.stats.ttHits;
+    totalQNodes += result.stats.quiescenceNodes;
     
     // If we found a winning move, stop searching
     if (Math.abs(result.score) > CHECKMATE_VALUE - 1000) {
       break;
     }
   }
+  
+  // Update stats with totals
+  bestResult.stats.nodesSearched = totalNodes;
+  bestResult.stats.cutoffs = totalCutoffs;
+  bestResult.stats.ttHits = totalTTHits;
+  bestResult.stats.quiescenceNodes = totalQNodes;
   
   return bestResult;
 }
@@ -450,14 +787,24 @@ export function getDifficultyParams(difficulty: AIDifficulty): { depth: number; 
  * 
  * @param state Current game state
  * @param difficulty AI difficulty level
+ * @param clearTT Whether to clear transposition table (default false, set true for new games)
  * @returns Best move or null if game is over
  */
 export function getAIMove(
   state: GameState,
-  difficulty: AIDifficulty = 'medium'
+  difficulty: AIDifficulty = 'medium',
+  clearTT: boolean = false
 ): SearchResult {
   if (state.status.type !== 'ongoing') {
-    return { move: null, score: 0, stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0 } };
+    return { 
+      move: null, 
+      score: 0, 
+      stats: { nodesSearched: 0, cutoffs: 0, maxDepthReached: 0, ttHits: 0, quiescenceNodes: 0 } 
+    };
+  }
+  
+  if (clearTT) {
+    ttClear();
   }
   
   const params = getDifficultyParams(difficulty);

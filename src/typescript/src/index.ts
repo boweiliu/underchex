@@ -106,6 +106,17 @@ export {
   AIDifficulty,
   getDifficultyParams,
   getAIMove,
+  // Transposition table exports
+  TTEntryType,
+  TTEntry,
+  generateBoardHash,
+  ttStore,
+  ttProbe,
+  ttClear,
+  ttSize,
+  // Quiescence search exports
+  isTacticalMove,
+  generateTacticalMoves,
 } from './ai';
 
 // Re-export self-play
