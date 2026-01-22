@@ -90,6 +90,19 @@ export {
   PIECE_VALUES,
   CHECKMATE_VALUE,
   STALEMATE_VALUE,
+  // Piece-Square Tables (PST) exports
+  PieceSquareTable,
+  PAWN_PST,
+  KNIGHT_PST,
+  LANCE_PST,
+  CHARIOT_PST,
+  QUEEN_PST,
+  KING_MG_PST,
+  KING_EG_PST,
+  PIECE_SQUARE_TABLES,
+  getPSTBonus,
+  isEndgame,
+  // Legacy position evaluation (deprecated but kept for compatibility)
   getCentralityBonus,
   getPawnAdvancementBonus,
   getPiecePositionBonus,
@@ -106,6 +119,12 @@ export {
   AIDifficulty,
   getDifficultyParams,
   getAIMove,
+  // Zobrist hashing exports
+  ZobristTable,
+  initZobristTable,
+  getZobristTable,
+  computeZobristHash,
+  zobristUpdate,
   // Transposition table exports
   TTEntryType,
   TTEntry,

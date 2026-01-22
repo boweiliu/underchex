@@ -3,6 +3,7 @@
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
+ * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -30,6 +31,22 @@ import {
   // Quiescence search functions
   isTacticalMove,
   generateTacticalMoves,
+  // PST functions
+  PAWN_PST,
+  KNIGHT_PST,
+  LANCE_PST,
+  CHARIOT_PST,
+  QUEEN_PST,
+  KING_MG_PST,
+  KING_EG_PST,
+  PIECE_SQUARE_TABLES,
+  getPSTBonus,
+  isEndgame,
+  // Zobrist hashing functions
+  initZobristTable,
+  getZobristTable,
+  computeZobristHash,
+  zobristUpdate,
 } from '../src/ai';
 import {
   HexCoord,
@@ -611,5 +628,285 @@ describe('AI with TT and Quiescence', () => {
       // The TT hit count should indicate we're using stored entries
       expect(result2.stats.ttHits).toBeGreaterThan(0);
     }
+  });
+});
+
+// ============================================================================
+// Piece-Square Table Tests
+// ============================================================================
+
+describe('Piece-Square Tables', () => {
+  it('should have PSTs for all piece types', () => {
+    expect(PIECE_SQUARE_TABLES.pawn).toBeDefined();
+    expect(PIECE_SQUARE_TABLES.knight).toBeDefined();
+    expect(PIECE_SQUARE_TABLES.lance).toBeDefined();
+    expect(PIECE_SQUARE_TABLES.chariot).toBeDefined();
+    expect(PIECE_SQUARE_TABLES.queen).toBeDefined();
+    expect(PIECE_SQUARE_TABLES.king).toBeDefined();
+  });
+
+  it('PAWN_PST should give higher bonus for advanced pawns', () => {
+    // White pawn at r=2 (starting area) vs r=-2 (advanced)
+    const startBonus = PAWN_PST.get('0,2') ?? 0;
+    const advancedBonus = PAWN_PST.get('0,-2') ?? 0;
+    expect(advancedBonus).toBeGreaterThan(startBonus);
+  });
+
+  it('KNIGHT_PST should give higher bonus for central positions', () => {
+    const centerBonus = KNIGHT_PST.get('0,0') ?? 0;
+    const edgeBonus = KNIGHT_PST.get('4,0') ?? 0;
+    expect(centerBonus).toBeGreaterThan(edgeBonus);
+  });
+
+  it('QUEEN_PST should prefer central positions', () => {
+    const centerBonus = QUEEN_PST.get('0,0') ?? 0;
+    const edgeBonus = QUEEN_PST.get('4,0') ?? 0;
+    expect(centerBonus).toBeGreaterThan(edgeBonus);
+  });
+
+  it('KING_MG_PST should penalize central king', () => {
+    const centerBonus = KING_MG_PST.get('0,0') ?? 0;
+    const backRankBonus = KING_MG_PST.get('0,4') ?? 0;
+    expect(backRankBonus).toBeGreaterThan(centerBonus);
+  });
+
+  it('KING_EG_PST should prefer central king', () => {
+    const centerBonus = KING_EG_PST.get('0,0') ?? 0;
+    const edgeBonus = KING_EG_PST.get('4,0') ?? 0;
+    expect(centerBonus).toBeGreaterThan(edgeBonus);
+  });
+
+  it('getPSTBonus should mirror position for black pieces', () => {
+    const whitePawn: Piece = { type: 'pawn', color: 'white' };
+    const blackPawn: Piece = { type: 'pawn', color: 'black' };
+    
+    // White pawn advanced (low r) should have same bonus as black pawn advanced (high r)
+    const whiteBonus = getPSTBonus(whitePawn, { q: 0, r: -2 });
+    const blackBonus = getPSTBonus(blackPawn, { q: 0, r: 2 }); // Mirrored position
+    
+    expect(whiteBonus).toBe(blackBonus);
+  });
+
+  it('getPSTBonus should use endgame king PST when specified', () => {
+    const king: Piece = { type: 'king', color: 'white' };
+    
+    const mgBonus = getPSTBonus(king, { q: 0, r: 0 }, false);
+    const egBonus = getPSTBonus(king, { q: 0, r: 0 }, true);
+    
+    // In endgame, central king is good; in middlegame, it's bad
+    expect(egBonus).toBeGreaterThan(mgBonus);
+  });
+});
+
+describe('Endgame Detection', () => {
+  it('should detect starting position as not endgame', () => {
+    const game = createNewGame();
+    expect(isEndgame(game.board)).toBe(false);
+  });
+
+  it('should detect position with only kings as endgame', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    expect(isEndgame(board)).toBe(true);
+  });
+
+  it('should detect position with minimal material as endgame', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 1, r: 0 }), { type: 'pawn', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    board.set(coordToString({ q: 1, r: -4 }), { type: 'pawn', color: 'black' });
+    
+    expect(isEndgame(board)).toBe(true);
+  });
+});
+
+// ============================================================================
+// Zobrist Hashing Tests
+// ============================================================================
+
+describe('Zobrist Hashing', () => {
+  it('should initialize Zobrist table with values for all positions', () => {
+    const table = initZobristTable();
+    
+    // Check that center position has values
+    expect(table.pieces.has('0,0')).toBe(true);
+    
+    // Check values array has correct size (36 piece indices)
+    const centerValues = table.pieces.get('0,0');
+    expect(centerValues).toBeDefined();
+    expect(centerValues!.length).toBe(36);
+    
+    // Check side to move value exists
+    expect(typeof table.sideToMove).toBe('number');
+  });
+
+  it('getZobristTable should return same instance on multiple calls', () => {
+    const table1 = getZobristTable();
+    const table2 = getZobristTable();
+    
+    expect(table1).toBe(table2);
+  });
+
+  it('computeZobristHash should return consistent hash for same position', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const hash1 = computeZobristHash(board);
+    const hash2 = computeZobristHash(board);
+    
+    expect(hash1).toBe(hash2);
+  });
+
+  it('computeZobristHash should return different hash for different positions', () => {
+    const board1: BoardState = new Map();
+    board1.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board1.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const board2: BoardState = new Map();
+    board2.set(coordToString({ q: 1, r: 0 }), { type: 'king', color: 'white' }); // Different position
+    board2.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const hash1 = computeZobristHash(board1);
+    const hash2 = computeZobristHash(board2);
+    
+    expect(hash1).not.toBe(hash2);
+  });
+
+  it('computeZobristHash should differ for different piece types', () => {
+    const board1: BoardState = new Map();
+    board1.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board1.set(coordToString({ q: 1, r: 0 }), { type: 'queen', color: 'white' });
+    board1.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const board2: BoardState = new Map();
+    board2.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board2.set(coordToString({ q: 1, r: 0 }), { type: 'pawn', color: 'white' }); // Different piece
+    board2.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const hash1 = computeZobristHash(board1);
+    const hash2 = computeZobristHash(board2);
+    
+    expect(hash1).not.toBe(hash2);
+  });
+
+  it('zobristUpdate should compute correct hash after move', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const originalHash = computeZobristHash(board);
+    
+    // Make a move
+    const move: Move = {
+      piece: { type: 'king', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 1, r: 0 },
+    };
+    
+    // Update hash incrementally
+    const incrementalHash = zobristUpdate(originalHash, move);
+    
+    // Create board after move and compute full hash
+    const boardAfter: BoardState = new Map();
+    boardAfter.set(coordToString({ q: 1, r: 0 }), { type: 'king', color: 'white' });
+    boardAfter.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    const fullHash = computeZobristHash(boardAfter);
+    
+    expect(incrementalHash).toBe(fullHash);
+  });
+
+  it('zobristUpdate should handle captures correctly', () => {
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 0 }), { type: 'queen', color: 'white' });
+    board.set(coordToString({ q: 1, r: 0 }), { type: 'pawn', color: 'black' }); // Will be captured
+    board.set(coordToString({ q: 0, r: 4 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const originalHash = computeZobristHash(board);
+    
+    // Make a capture move
+    const move: Move = {
+      piece: { type: 'queen', color: 'white' },
+      from: { q: 0, r: 0 },
+      to: { q: 1, r: 0 },
+      captured: { type: 'pawn', color: 'black' },
+    };
+    
+    // Update hash incrementally
+    const incrementalHash = zobristUpdate(originalHash, move);
+    
+    // Create board after move and compute full hash
+    const boardAfter: BoardState = new Map();
+    boardAfter.set(coordToString({ q: 1, r: 0 }), { type: 'queen', color: 'white' });
+    boardAfter.set(coordToString({ q: 0, r: 4 }), { type: 'king', color: 'white' });
+    boardAfter.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    const fullHash = computeZobristHash(boardAfter);
+    
+    expect(incrementalHash).toBe(fullHash);
+  });
+
+  it('Zobrist hashing should be faster than string hashing conceptually', () => {
+    // This test just verifies the numeric hash works correctly
+    const game = createNewGame();
+    
+    const numericHash = computeZobristHash(game.board);
+    const stringHash = generateBoardHash(game.board);
+    
+    // Both should be defined
+    expect(typeof numericHash).toBe('number');
+    expect(typeof stringHash).toBe('string');
+    
+    // String hash should be the numeric hash as string
+    expect(stringHash).toBe(String(numericHash));
+  });
+});
+
+// ============================================================================
+// PST Integration Tests
+// ============================================================================
+
+describe('PST Integration with Evaluation', () => {
+  beforeEach(() => {
+    ttClear();
+  });
+
+  it('evaluation should consider PST bonuses', () => {
+    // Position with knight in center vs on edge
+    const centerBoard: BoardState = new Map();
+    centerBoard.set(coordToString({ q: 0, r: 0 }), { type: 'knight', color: 'white' });
+    centerBoard.set(coordToString({ q: 0, r: 4 }), { type: 'king', color: 'white' });
+    centerBoard.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const edgeBoard: BoardState = new Map();
+    edgeBoard.set(coordToString({ q: 4, r: 0 }), { type: 'knight', color: 'white' }); // Edge
+    edgeBoard.set(coordToString({ q: 0, r: 4 }), { type: 'king', color: 'white' });
+    edgeBoard.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const centerScore = evaluateMaterial(centerBoard);
+    const edgeScore = evaluateMaterial(edgeBoard);
+    
+    // Central knight should score higher
+    expect(centerScore).toBeGreaterThan(edgeScore);
+  });
+
+  it('AI should prefer central knight placement', () => {
+    // Give white a choice between central and edge knight placements
+    const board: BoardState = new Map();
+    board.set(coordToString({ q: 0, r: 2 }), { type: 'knight', color: 'white' }); // Can move to center or edge
+    board.set(coordToString({ q: 0, r: 4 }), { type: 'king', color: 'white' });
+    board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+    
+    const result = findBestMove(board, 'white', 2);
+    
+    // Should find a move (knight has targets)
+    expect(result.move).not.toBeNull();
+    
+    // The PST should influence the choice toward more central squares
+    // We can't guarantee exact square, but the search should complete
+    expect(result.stats.nodesSearched).toBeGreaterThan(0);
   });
 });

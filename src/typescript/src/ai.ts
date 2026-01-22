@@ -8,9 +8,13 @@
  * - Move ordering for better pruning
  * - Transposition table for caching evaluations (added by agent #5)
  * - Quiescence search for tactical accuracy (added by agent #5)
+ * - Piece-Square Tables (PST) for nuanced positional evaluation (added by agent #6)
+ * - Zobrist hashing for fast transposition table lookups (added by agent #6)
+ * - Endgame detection for king PST switching (added by agent #6)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
+ * Edited-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
  */
 
 import {
@@ -63,6 +67,196 @@ export const CHECKMATE_VALUE = 100000;
 export const STALEMATE_VALUE = 0;
 
 // ============================================================================
+// Zobrist Hashing
+// ============================================================================
+
+/**
+ * Zobrist hashing provides fast, incremental board hashing.
+ * Each piece-position combination has a unique random number.
+ * The hash is computed by XORing all active piece-position values.
+ * 
+ * Benefits over string hashing:
+ * - O(1) incremental updates when making/unmaking moves
+ * - Numeric keys for faster Map operations
+ * - Lower memory overhead
+ * 
+ * Signed-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+ */
+
+/**
+ * All piece types for Zobrist table indexing.
+ */
+const PIECE_TYPES: readonly PieceType[] = ['pawn', 'knight', 'lance', 'chariot', 'queen', 'king'];
+
+/**
+ * Piece colors for Zobrist table indexing.
+ */
+const COLORS: readonly Color[] = ['white', 'black'];
+
+/**
+ * Lance variants for Zobrist table.
+ */
+const LANCE_VARIANTS: readonly (string | undefined)[] = [undefined, 'A', 'B'];
+
+/**
+ * Simple seeded PRNG for reproducible random numbers.
+ * Uses xorshift32 algorithm for speed and simplicity.
+ */
+function createRNG(seed: number): () => number {
+  let state = seed;
+  return () => {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    return state >>> 0; // Convert to unsigned 32-bit
+  };
+}
+
+/**
+ * Zobrist hash table structure.
+ * Maps: position -> pieceType -> color -> variant -> randomValue
+ */
+export interface ZobristTable {
+  /** Piece-position values: [position][pieceIndex] -> hash value */
+  pieces: Map<string, number[]>;
+  /** Side to move value (XOR when black to move) */
+  sideToMove: number;
+}
+
+/**
+ * Get piece index for Zobrist table.
+ * Encodes pieceType + color + variant into a single index.
+ */
+function getPieceIndex(piece: Piece): number {
+  const typeIndex = PIECE_TYPES.indexOf(piece.type);
+  const colorIndex = piece.color === 'white' ? 0 : 1;
+  const variantIndex = piece.type === 'lance' 
+    ? (piece.variant === 'A' ? 1 : piece.variant === 'B' ? 2 : 0)
+    : 0;
+  
+  // 6 piece types * 2 colors * 3 variants = 36 possible indices
+  return typeIndex * 6 + colorIndex * 3 + variantIndex;
+}
+
+/**
+ * Total number of piece indices (for array sizing).
+ */
+const NUM_PIECE_INDICES = 36;
+
+/**
+ * Initialize Zobrist hash table with random values.
+ * Uses a fixed seed for reproducibility across runs.
+ */
+export function initZobristTable(): ZobristTable {
+  const rng = createRNG(0x12345678); // Fixed seed for determinism
+  
+  const pieces = new Map<string, number[]>();
+  
+  // Generate random values for each position-piece combination
+  for (let q = -BOARD_RADIUS; q <= BOARD_RADIUS; q++) {
+    for (let r = -BOARD_RADIUS; r <= BOARD_RADIUS; r++) {
+      const s = -q - r;
+      if (Math.max(Math.abs(q), Math.abs(r), Math.abs(s)) <= BOARD_RADIUS) {
+        const posKey = `${q},${r}`;
+        const values: number[] = [];
+        for (let i = 0; i < NUM_PIECE_INDICES; i++) {
+          values.push(rng());
+        }
+        pieces.set(posKey, values);
+      }
+    }
+  }
+  
+  return {
+    pieces,
+    sideToMove: rng(),
+  };
+}
+
+/**
+ * Global Zobrist table instance (initialized on first use).
+ */
+let zobristTable: ZobristTable | null = null;
+
+/**
+ * Get the Zobrist table, initializing if needed.
+ */
+export function getZobristTable(): ZobristTable {
+  if (!zobristTable) {
+    zobristTable = initZobristTable();
+  }
+  return zobristTable;
+}
+
+/**
+ * Compute full Zobrist hash for a board position.
+ * For incremental updates during search, use zobristUpdate().
+ */
+export function computeZobristHash(board: BoardState): number {
+  const table = getZobristTable();
+  let hash = 0;
+  
+  for (const [posStr, piece] of board.entries()) {
+    const pieceValues = table.pieces.get(posStr);
+    if (pieceValues) {
+      const pieceIndex = getPieceIndex(piece);
+      hash ^= pieceValues[pieceIndex]!;
+    }
+  }
+  
+  return hash;
+}
+
+/**
+ * Update Zobrist hash incrementally for a move.
+ * XOR out the old position, XOR in the new position.
+ * 
+ * @param hash Current hash value
+ * @param move The move being made
+ * @returns Updated hash value
+ */
+export function zobristUpdate(hash: number, move: Move): number {
+  const table = getZobristTable();
+  
+  const fromKey = `${move.from.q},${move.from.r}`;
+  const toKey = `${move.to.q},${move.to.r}`;
+  
+  const fromValues = table.pieces.get(fromKey);
+  const toValues = table.pieces.get(toKey);
+  
+  if (!fromValues || !toValues) {
+    return hash; // Shouldn't happen with valid moves
+  }
+  
+  const pieceIndex = getPieceIndex(move.piece);
+  
+  // Remove piece from 'from' position
+  hash ^= fromValues[pieceIndex]!;
+  
+  // If there's a capture, remove the captured piece
+  if (move.captured) {
+    const capturedIndex = getPieceIndex(move.captured);
+    hash ^= toValues[capturedIndex]!;
+  }
+  
+  // Add piece to 'to' position (with promotion if applicable)
+  if (move.promotion) {
+    const promotedPiece: Piece = { 
+      type: move.promotion, 
+      color: move.piece.color,
+      // For lance promotions, we'd need to handle variant - simplified here
+      variant: move.promotion === 'lance' ? 'A' : undefined,
+    };
+    const promotedIndex = getPieceIndex(promotedPiece);
+    hash ^= toValues[promotedIndex]!;
+  } else {
+    hash ^= toValues[pieceIndex]!;
+  }
+  
+  return hash;
+}
+
+// ============================================================================
 // Transposition Table
 // ============================================================================
 
@@ -86,24 +280,21 @@ export interface TTEntry {
 
 /**
  * Generate a hash key for a board position.
- * Simple string-based hash - good enough for moderate table sizes.
+ * Now uses Zobrist hashing for better performance.
+ * Returns a string for Map compatibility.
+ * 
+ * @deprecated Use computeZobristHash() directly for numeric hash.
  */
 export function generateBoardHash(board: BoardState): string {
-  const entries: string[] = [];
-  for (const [pos, piece] of board.entries()) {
-    entries.push(`${pos}:${piece.type}${piece.color[0]}${piece.variant ?? ''}`);
-  }
-  // Sort for deterministic ordering
-  entries.sort();
-  return entries.join('|');
+  // Use Zobrist hash converted to string for backward compatibility
+  return String(computeZobristHash(board));
 }
 
 /**
  * Global transposition table.
- * Using a Map with string keys for simplicity.
- * In production, you'd use Zobrist hashing with a fixed-size array.
+ * Now uses numeric Zobrist hashes as keys for faster lookups.
  */
-const transpositionTable = new Map<string, TTEntry>();
+const transpositionTable = new Map<number, TTEntry>();
 
 /**
  * Maximum transposition table size (entries).
@@ -113,6 +304,7 @@ const MAX_TT_SIZE = 100000;
 
 /**
  * Store a position in the transposition table.
+ * Uses Zobrist hashing for fast numeric key lookups.
  */
 export function ttStore(
   board: BoardState,
@@ -129,7 +321,7 @@ export function ttStore(
     }
   }
   
-  const hash = generateBoardHash(board);
+  const hash = computeZobristHash(board);
   const existing = transpositionTable.get(hash);
   
   // Only replace if new entry has equal or greater depth
@@ -140,9 +332,10 @@ export function ttStore(
 
 /**
  * Probe the transposition table for a position.
+ * Uses Zobrist hashing for fast numeric key lookups.
  */
 export function ttProbe(board: BoardState): TTEntry | undefined {
-  const hash = generateBoardHash(board);
+  const hash = computeZobristHash(board);
   return transpositionTable.get(hash);
 }
 
@@ -161,24 +354,278 @@ export function ttSize(): number {
 }
 
 // ============================================================================
+// Piece-Square Tables (PST)
+// ============================================================================
+
+/**
+ * Piece-Square Tables give positional bonuses for each piece on each cell.
+ * Tables are from white's perspective - flip for black.
+ * 
+ * Design principles for hex board:
+ * - Pawns: Encourage advancement and central control
+ * - Knights: Prefer central positions with good mobility
+ * - Lances/Chariots: Control key files and diagonals
+ * - Queen: Central control but not too early
+ * - King: Safe positions on the back rank early, more central in endgame
+ * 
+ * Signed-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11
+ */
+
+/**
+ * PST data type - maps coord string to bonus value in centipawns.
+ */
+export type PieceSquareTable = Map<string, number>;
+
+/**
+ * Generate a coordinate key for PST lookup.
+ */
+function pstKey(q: number, r: number): string {
+  return `${q},${r}`;
+}
+
+/**
+ * Build a PST from a scoring function that takes (q, r) and returns bonus.
+ * Only includes valid board cells.
+ */
+function buildPST(scoreFn: (q: number, r: number) => number): PieceSquareTable {
+  const pst = new Map<string, number>();
+  for (let q = -BOARD_RADIUS; q <= BOARD_RADIUS; q++) {
+    for (let r = -BOARD_RADIUS; r <= BOARD_RADIUS; r++) {
+      const s = -q - r;
+      if (Math.max(Math.abs(q), Math.abs(r), Math.abs(s)) <= BOARD_RADIUS) {
+        pst.set(pstKey(q, r), scoreFn(q, r));
+      }
+    }
+  }
+  return pst;
+}
+
+/**
+ * Get the mirrored position for black (flip across horizontal axis).
+ * Black's perspective: r is negated.
+ */
+function mirrorForBlack(coord: HexCoord): HexCoord {
+  return { q: coord.q, r: -coord.r };
+}
+
+/**
+ * Calculate hex distance from center (0,0).
+ */
+function distanceFromCenter(q: number, r: number): number {
+  const s = -q - r;
+  return Math.max(Math.abs(q), Math.abs(r), Math.abs(s));
+}
+
+// ============================================================================
+// PST Definitions
+// ============================================================================
+
+/**
+ * Pawn PST: Encourage advancement and central control.
+ * - Big bonuses for advanced pawns (near promotion)
+ * - Slight central bias
+ * - Small penalty for edge pawns
+ */
+export const PAWN_PST: PieceSquareTable = buildPST((q, r) => {
+  // r = -4 is promotion zone for white, r = 4 is start
+  // Advancement bonus: exponential as pawn gets closer to promotion
+  const rank = BOARD_RADIUS - r; // 0 at r=4, 8 at r=-4
+  const advancementBonus = Math.floor((rank / 8) * (rank / 8) * 40);
+  
+  // Central file bonus (q = 0 is center)
+  const fileBonus = Math.max(0, 10 - Math.abs(q) * 3);
+  
+  // Slight penalty for edge positions
+  const dist = distanceFromCenter(q, r);
+  const edgePenalty = dist >= BOARD_RADIUS ? -5 : 0;
+  
+  return advancementBonus + fileBonus + edgePenalty;
+});
+
+/**
+ * Knight PST: Prefer central positions with good hop range.
+ * - Strong central bonus
+ * - Penalty for edge positions (fewer targets)
+ */
+export const KNIGHT_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Central knights are very strong
+  if (dist === 0) return 25;
+  if (dist === 1) return 20;
+  if (dist === 2) return 15;
+  if (dist === 3) return 5;
+  
+  // Edge knights are weak
+  return -10;
+});
+
+/**
+ * Lance PST: Control key files (N-S and diagonals).
+ * - Bonus for controlling open ranks
+ * - Slight central preference
+ */
+export const LANCE_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Central lanes are good
+  if (Math.abs(q) <= 1) return 10;
+  
+  // Moderate center preference
+  if (dist <= 2) return 5;
+  
+  return 0;
+});
+
+/**
+ * Chariot PST: Control diagonal lines.
+ * - Bonus for central positions (more targets)
+ * - Long diagonals are valuable
+ */
+export const CHARIOT_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Central chariots dominate
+  if (dist === 0) return 15;
+  if (dist === 1) return 12;
+  if (dist === 2) return 8;
+  
+  return 0;
+});
+
+/**
+ * Queen PST: Central but not overextended.
+ * - Strong central bonuses
+ * - Safe positions in mid-ring
+ */
+export const QUEEN_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Queen loves the center
+  if (dist === 0) return 15;
+  if (dist === 1) return 12;
+  if (dist === 2) return 8;
+  if (dist === 3) return 4;
+  
+  return 0;
+});
+
+/**
+ * King PST for middlegame: Safe, back-rank positions.
+ * - Penalize central exposure
+ * - Bonus for back rank (r=3,4 for white)
+ */
+export const KING_MG_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Back rank is safe for white (r >= 2)
+  if (r >= 3) {
+    // Corner-ish positions are safest
+    if (Math.abs(q) >= 2) return 20;
+    return 10;
+  }
+  
+  if (r >= 2) return 5;
+  
+  // Central king is dangerous in middlegame
+  if (dist <= 1) return -30;
+  if (dist === 2) return -15;
+  
+  return -5;
+});
+
+/**
+ * King PST for endgame: Central, active king.
+ * - Strong central bonus
+ * - King should be active
+ */
+export const KING_EG_PST: PieceSquareTable = buildPST((q, r) => {
+  const dist = distanceFromCenter(q, r);
+  
+  // Active central king in endgame
+  if (dist === 0) return 25;
+  if (dist === 1) return 20;
+  if (dist === 2) return 12;
+  if (dist === 3) return 5;
+  
+  return 0;
+});
+
+/**
+ * Map from piece type to PST (middlegame).
+ */
+export const PIECE_SQUARE_TABLES: Record<PieceType, PieceSquareTable> = {
+  pawn: PAWN_PST,
+  knight: KNIGHT_PST,
+  lance: LANCE_PST,
+  chariot: CHARIOT_PST,
+  queen: QUEEN_PST,
+  king: KING_MG_PST,
+};
+
+// ============================================================================
 // Position Evaluation
 // ============================================================================
+
+/**
+ * Get PST bonus for a piece at a position.
+ * Automatically mirrors for black pieces.
+ * 
+ * @param piece The piece to evaluate
+ * @param coord The position on the board
+ * @param isEndgame Whether we're in the endgame (affects king PST)
+ * @returns Bonus in centipawns
+ */
+export function getPSTBonus(piece: Piece, coord: HexCoord, isEndgame: boolean = false): number {
+  // Select the appropriate PST
+  let pst: PieceSquareTable;
+  if (piece.type === 'king') {
+    pst = isEndgame ? KING_EG_PST : KING_MG_PST;
+  } else {
+    pst = PIECE_SQUARE_TABLES[piece.type];
+  }
+  
+  // For black pieces, mirror the position
+  const lookupCoord = piece.color === 'white' ? coord : mirrorForBlack(coord);
+  const key = pstKey(lookupCoord.q, lookupCoord.r);
+  
+  return pst.get(key) ?? 0;
+}
+
+/**
+ * Detect if position is likely an endgame.
+ * Simple heuristic: endgame if total material (excluding kings) < threshold.
+ */
+export function isEndgame(board: BoardState): boolean {
+  let totalMaterial = 0;
+  for (const piece of board.values()) {
+    if (piece.type !== 'king') {
+      totalMaterial += PIECE_VALUES[piece.type];
+    }
+  }
+  // Endgame threshold: roughly when each side has < queen + minor piece
+  return totalMaterial < 2400;
+}
 
 /**
  * Calculate centrality bonus for a position.
  * Pieces closer to the center are generally stronger on a hex board.
  * Returns value in centipawns.
+ * 
+ * @deprecated Use getPSTBonus instead for piece-specific positional evaluation.
  */
 export function getCentralityBonus(coord: HexCoord): number {
-  const distanceFromCenter = hexDistance(coord, { q: 0, r: 0 });
+  const distanceFromCtr = hexDistance(coord, { q: 0, r: 0 });
   // Max distance is BOARD_RADIUS (4), so bonus decreases from center
-  const centralityScore = BOARD_RADIUS - distanceFromCenter;
+  const centralityScore = BOARD_RADIUS - distanceFromCtr;
   return centralityScore * 5; // 5 centipawns per ring closer to center
 }
 
 /**
  * Calculate pawn advancement bonus.
  * Pawns that are closer to promotion are more valuable.
+ * 
+ * @deprecated Integrated into PAWN_PST.
  */
 export function getPawnAdvancementBonus(coord: HexCoord, color: Color): number {
   // White advances toward r=-4, black toward r=4
@@ -196,38 +643,27 @@ export function getPawnAdvancementBonus(coord: HexCoord, color: Color): number {
 
 /**
  * Evaluate piece position bonus (beyond material).
+ * Now uses Piece-Square Tables for more nuanced positional evaluation.
  */
-export function getPiecePositionBonus(piece: Piece, coord: HexCoord): number {
-  let bonus = getCentralityBonus(coord);
-  
-  if (piece.type === 'pawn') {
-    bonus += getPawnAdvancementBonus(coord, piece.color);
-  }
-  
-  // King safety: penalize central king in early/mid game
-  // (This is a simplification - could be enhanced with game phase detection)
-  if (piece.type === 'king') {
-    const distFromCenter = hexDistance(coord, { q: 0, r: 0 });
-    if (distFromCenter < 2) {
-      bonus -= 30; // Penalize exposed king
-    }
-  }
-  
-  return bonus;
+export function getPiecePositionBonus(piece: Piece, coord: HexCoord, boardState?: BoardState): number {
+  const endgame = boardState ? isEndgame(boardState) : false;
+  return getPSTBonus(piece, coord, endgame);
 }
 
 /**
  * Evaluate material balance for a board position.
  * Returns value from white's perspective in centipawns.
+ * Uses piece-square tables for positional bonuses.
  */
 export function evaluateMaterial(board: BoardState): number {
   let score = 0;
+  const endgame = isEndgame(board);
   
   for (const [posStr, piece] of board.entries()) {
     const value = PIECE_VALUES[piece.type];
     const parts = posStr.split(',').map(Number);
     const coord: HexCoord = { q: parts[0] ?? 0, r: parts[1] ?? 0 };
-    const positionBonus = getPiecePositionBonus(piece, coord);
+    const positionBonus = getPSTBonus(piece, coord, endgame);
     
     const totalValue = value + positionBonus;
     
