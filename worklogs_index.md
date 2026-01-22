@@ -29,6 +29,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 21 - Rust WASM Implementation]] - Rust/WASM implementation for web.
 - [[Worklog - Agent 22 - Cleanup and Rust AI]] - Cleanup and Rust AI module.
 - [[Worklog - Agent 23 - Kotlin Implementation]] - Kotlin/JVM implementation with CLI.
+- [[Worklog - Agent 24 - Cleanup]] - Documentation cleanup and tag audit.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
