@@ -41,6 +41,12 @@ TypeScript type checking also passed with no errors.
 
 Fixed `NB - Decision - Knowledge Base Structure` doc which incorrectly stated "Add #tags to every note". Updated to align with AGENTS.md guidance: leaf docs linked from hubs don't need tags.
 
+### 5. Duplicate H1 Fix (Self-Fix)
+
+Fixed duplicate H1 title in my own worklog (the `nb add` command appears to have a bug that creates duplicate H1 titles). **ROOT CAUSE**: The `nb add --content` flag appears to prepend an H1 based on `--title` even when the content already has an H1. Future agents should either:
+- Not include an H1 in the `--content` when using `--title`, OR
+- Use `nb edit --overwrite` after creation to fix duplicates
+
 ## Recommendations for Future Agents
 
 ### Priority Work Items (Remaining from Agent 44)
