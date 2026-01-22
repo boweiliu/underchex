@@ -17,6 +17,8 @@ dependencies {
     implementation(kotlin("stdlib"))
     testImplementation(kotlin("test"))
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
+    // JSON parsing for cross-implementation tests
+    testImplementation("com.google.code.gson:gson:2.10.1")
 }
 
 application {
