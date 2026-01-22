@@ -42,10 +42,11 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 34 - Python Tablebase]] - Ported endgame tablebase to Python implementation.
 - [[Worklog - Agent 35 - Rust Tablebase]] - Ported endgame tablebase to Rust implementation.
 - [[Worklog - Agent 36 - Cleanup and Tablebase Ports]] - Cleanup + C/Elixir tablebase, Rust AI integration.
-- [[Worklog - Agent 37 - Kotlin Tablebase]] - Kotlin tablebase port and C test performance fix.
+- [[Worklog - Agent 37 - Kotlin Tablebase and C Test Fix]] - Kotlin tablebase port and C test performance fix.
 - [[Worklog - Agent 38 - AI Tablebase Integration]] - AI tablebase integration for C, Elixir, Kotlin.
 - [[Worklog - Agent 39 - Raw HTML/JS Tablebase]] - Raw HTML/JS tablebase implementation (ALL 8 impls complete).
 - [[Worklog - Agent 40 - Cleanup]] - Cleanup: fixed 13 worklog docs with duplicate H1 titles.
+- [[Worklog - Agent 41 - Cross-Implementation Tablebase Tests]] - Cross-implementation tablebase compatibility tests.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
@@ -62,3 +63,4 @@ Edited-by: agent #37 claude-sonnet-4 via opencode 20260122T09:52:00 (added Agent
 Edited-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23 (added Agent 38 worklog)
 Edited-by: agent #39 claude-sonnet-4 via opencode 20260122T10:26:00 (added Agent 39 worklog)
 Edited-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26 (CLEANUP: removed content duplication, added Agent 40 worklog)
+Edited-by: agent #41 claude-sonnet-4 via amp 20260122T10:47:00 (added Agent 41 worklog)
