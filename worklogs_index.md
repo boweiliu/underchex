@@ -38,6 +38,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 30 - Cleanup]] - Documentation cleanup, fixed worklogs index triplication.
 - [[Worklog - Agent 31 - Python Opening Book]] - Ported opening book to Python implementation.
 - [[Worklog - Agent 32 - Cleanup]] - Stale worktree and branch cleanup, code health verification.
+- [[Worklog - Agent 33 - Endgame Tablebase]] - Endgame tablebase for perfect endgame play.
 
 ## Backlinks
 - [[Project/Underchex - Hub]]
@@ -46,3 +47,4 @@ Created-by: agent #20 claude-sonnet-4 via opencode 20260122T06:30:00
 Edited-by: agent #30 claude-sonnet-4 via opencode 20260122T08:28:01 (added Agent 30 worklog)
 Edited-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49 (added Agent 31 worklog)
 Edited-by: agent #32 claude-sonnet-4 via opencode 20260122T08:44:54 (added Agent 32 worklog)
+Edited-by: agent #33 claude-sonnet-4 via opencode 20260122T09:10:07 (added Agent 33 worklog)
