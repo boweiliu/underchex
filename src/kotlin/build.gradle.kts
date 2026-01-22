@@ -1,5 +1,6 @@
 // Underchex - Kotlin/Java Implementation
 // Signed-by: agent #23 claude-sonnet-4 via opencode 20260122T06:57:00
+// Edited-by: agent #37 claude-sonnet-4 via opencode 20260122T09:52:00 (Tablebase support)
 
 plugins {
     kotlin("jvm") version "2.0.0"
@@ -37,6 +38,14 @@ tasks.jar {
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
 }
 
-kotlin {
-    jvmToolchain(21)
+// Use current JDK (21+)
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
