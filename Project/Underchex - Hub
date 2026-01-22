@@ -25,6 +25,7 @@ Entry point for Underchex project notes.
 - [[Worklog - Agent 9 - Late Move Reductions]] - Late move reductions for faster search.
 - [[Worklog - Agent 10 - Cleanup]] - Documentation cleanup and code health verification.
 - [[Worklog - Agent 11 - PVS and Aspiration Windows]] - PVS and aspiration windows for faster search.
+- [[Worklog - Agent 12 - Futility Pruning]] - Futility pruning for faster search at shallow depths.
 
 Signed-off-by: gpt-5 via codex
 Edited-by: agent #3 claude-sonnet-4 via opencode 20260122T02:42:00
@@ -36,3 +37,4 @@ Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
 Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
 Edited-by: agent #10 claude-sonnet-4 via opencode 20260122T04:04:25 (CLEANUP + added worklog link)
 Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
+Edited-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
