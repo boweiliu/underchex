@@ -879,6 +879,114 @@ export function adjustLMRReduction(
 }
 
 // ============================================================================
+// Futility Pruning
+// ============================================================================
+
+/**
+ * Futility Pruning skips moves at low depths (frontier nodes) that have no
+ * reasonable chance of raising alpha. The idea is: if the static evaluation
+ * plus a margin is still below alpha, the position is so bad that even a
+ * significant improvement won't help.
+ * 
+ * Benefits:
+ * - Significantly reduces search tree at low depths
+ * - Minimal risk since we use conservative margins
+ * - Works well with other pruning techniques (LMR, NMP)
+ * 
+ * Signed-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
+ */
+
+/**
+ * Maximum depth for futility pruning.
+ * Typically 2-3 plies from the horizon.
+ */
+export const FUTILITY_MAX_DEPTH = 3;
+
+/**
+ * Futility margins by depth (in centipawns).
+ * Depth 1: ~2 pawns (can miss a pawn capture)
+ * Depth 2: ~3 pawns (can miss a minor piece capture)
+ * Depth 3: ~5 pawns (can miss larger captures)
+ * 
+ * These margins are conservative to avoid pruning too aggressively.
+ */
+export const FUTILITY_MARGINS: Record<number, number> = {
+  1: 200,   // Frontier node
+  2: 350,   // Pre-frontier node
+  3: 500,   // Pre-pre-frontier node
+};
+
+/**
+ * Determine if a position can be futility pruned.
+ * 
+ * We don't apply futility pruning when:
+ * - Depth is too high (beyond FUTILITY_MAX_DEPTH)
+ * - The side to move is in check (can't skip when threatened)
+ * - The move is a capture or promotion (tactical move - might raise score significantly)
+ * - This is the first move in the move list (never prune PV candidate)
+ * - Score is near mate (endgame positions require full search)
+ * 
+ * @param staticEval Static evaluation of the position (from current side's perspective)
+ * @param alpha Current alpha bound
+ * @param depth Current search depth
+ * @param inCheck Whether the side to move is in check
+ * @param move The move being considered
+ * @param moveIndex Index of the move in ordered move list
+ * @param maximizing Whether current player is maximizing
+ * @returns True if the position can be futility pruned
+ */
+export function canFutilityPrune(
+  staticEval: number,
+  alpha: number,
+  beta: number,
+  depth: number,
+  inCheck: boolean,
+  move: Move,
+  moveIndex: number,
+  maximizing: boolean
+): boolean {
+  // Only at shallow depths
+  if (depth > FUTILITY_MAX_DEPTH || depth <= 0) {
+    return false;
+  }
+  
+  // Don't prune when in check
+  if (inCheck) {
+    return false;
+  }
+  
+  // Don't prune captures or promotions (tactical moves)
+  if (move.captured || move.promotion) {
+    return false;
+  }
+  
+  // Don't prune the first move (PV candidate)
+  if (moveIndex === 0) {
+    return false;
+  }
+  
+  // Don't prune near mate scores
+  const mateThreshold = CHECKMATE_VALUE - 1000;
+  if (Math.abs(staticEval) > mateThreshold || 
+      Math.abs(alpha) > mateThreshold ||
+      Math.abs(beta) > mateThreshold) {
+    return false;
+  }
+  
+  // Get the margin for this depth
+  const margin = FUTILITY_MARGINS[depth] ?? FUTILITY_MARGINS[FUTILITY_MAX_DEPTH]!;
+  
+  // Futility condition: static eval + margin is still below/above the bound
+  if (maximizing) {
+    // For maximizing player, if eval + margin <= alpha, prune
+    return staticEval + margin <= alpha;
+  } else {
+    // For minimizing player, if eval - margin >= beta, prune
+    return staticEval - margin >= beta;
+  }
+}
+
+// ============================================================================
 // Piece-Square Tables (PST)
 // ============================================================================
 
@@ -1421,6 +1529,7 @@ export interface SearchStats {
   lmrResearches: number;
   pvsResearches: number;
   aspirationResearches: number;
+  futilityPrunes: number;
 }
 
 /**
@@ -1546,6 +1655,17 @@ function alphaBeta(
     }
   }
   
+  // Calculate static evaluation for futility pruning
+  // Only needed at low depths where we might apply futility pruning
+  let staticEval: number | null = null;
+  if (depth <= FUTILITY_MAX_DEPTH && !inCheck) {
+    staticEval = evaluatePosition(board);
+    // Convert to perspective of current player
+    if (!maximizing) {
+      staticEval = -staticEval;
+    }
+  }
+  
   // Order moves for better pruning
   // If we have a TT hit with a best move, try that first
   let orderedMoves: Move[];
@@ -1574,6 +1694,14 @@ function alphaBeta(
     
     for (let moveIndex = 0; moveIndex < orderedMoves.length; moveIndex++) {
       const move = orderedMoves[moveIndex]!;
+      
+      // Futility Pruning: Skip quiet moves that can't raise alpha
+      if (staticEval !== null && 
+          canFutilityPrune(staticEval, alpha, beta, depth, inCheck, move, moveIndex, maximizing)) {
+        stats.futilityPrunes++;
+        continue;
+      }
+      
       const newBoard = applyMove(board, move);
       
       let evalScore: number;
@@ -1661,6 +1789,14 @@ function alphaBeta(
     
     for (let moveIndex = 0; moveIndex < orderedMoves.length; moveIndex++) {
       const move = orderedMoves[moveIndex]!;
+      
+      // Futility Pruning: Skip quiet moves that can't lower beta
+      if (staticEval !== null && 
+          canFutilityPrune(staticEval, alpha, beta, depth, inCheck, move, moveIndex, maximizing)) {
+        stats.futilityPrunes++;
+        continue;
+      }
+      
       const newBoard = applyMove(board, move);
       
       let evalScore: number;
@@ -1783,6 +1919,7 @@ export function findBestMove(
     lmrResearches: 0,
     pvsResearches: 0,
     aspirationResearches: 0,
+    futilityPrunes: 0,
   };
   
   // Clear killer moves at start of new search
@@ -1892,6 +2029,7 @@ export function findBestMoveIterative(
       lmrResearches: 0,
       pvsResearches: 0,
       aspirationResearches: 0,
+      futilityPrunes: 0,
     } 
   };
   
@@ -1906,6 +2044,7 @@ export function findBestMoveIterative(
   let totalLMRResearches = 0;
   let totalPVSResearches = 0;
   let totalAspirationResearches = 0;
+  let totalFutilityPrunes = 0;
   
   // Helper to accumulate stats from a search result
   const accumulateStats = (result: SearchResult) => {
@@ -1919,6 +2058,7 @@ export function findBestMoveIterative(
     totalLMRResearches += result.stats.lmrResearches;
     totalPVSResearches += result.stats.pvsResearches;
     totalAspirationResearches += result.stats.aspirationResearches;
+    totalFutilityPrunes += result.stats.futilityPrunes;
   };
   
   // Get initial moves quickly at depth 1
@@ -2014,6 +2154,7 @@ export function findBestMoveIterative(
   bestResult.stats.lmrResearches = totalLMRResearches;
   bestResult.stats.pvsResearches = totalPVSResearches;
   bestResult.stats.aspirationResearches = totalAspirationResearches;
+  bestResult.stats.futilityPrunes = totalFutilityPrunes;
   
   return bestResult;
 }
@@ -2070,6 +2211,7 @@ export function getAIMove(
         lmrResearches: 0,
         pvsResearches: 0,
         aspirationResearches: 0,
+        futilityPrunes: 0,
       } 
     };
   }

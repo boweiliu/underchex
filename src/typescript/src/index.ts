@@ -163,6 +163,10 @@ export {
   ASPIRATION_WINDOW,
   ASPIRATION_WINDOW_EXPANSION,
   ASPIRATION_MIN_DEPTH,
+  // Futility Pruning exports (added by agent #12)
+  FUTILITY_MAX_DEPTH,
+  FUTILITY_MARGINS,
+  canFutilityPrune,
 } from './ai';
 
 // Re-export self-play

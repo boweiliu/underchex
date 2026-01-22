@@ -8,6 +8,7 @@
  * Edited-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
  * Edited-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
  * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
+ * Edited-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -76,6 +77,10 @@ import {
   ASPIRATION_WINDOW,
   ASPIRATION_WINDOW_EXPANSION,
   ASPIRATION_MIN_DEPTH,
+  // Futility Pruning functions (added by agent #12)
+  FUTILITY_MAX_DEPTH,
+  FUTILITY_MARGINS,
+  canFutilityPrune,
 } from '../src/ai';
 import {
   HexCoord,
@@ -1945,6 +1950,172 @@ describe('Aspiration Windows', () => {
       // Verify new stats fields exist and are numbers
       expect(typeof result.stats.pvsResearches).toBe('number');
       expect(typeof result.stats.aspirationResearches).toBe('number');
+      expect(typeof result.stats.futilityPrunes).toBe('number');
+    });
+  });
+
+  // ============================================================================
+  // Futility Pruning Tests (added by agent #12)
+  // ============================================================================
+  describe('Futility Pruning', () => {
+    describe('Constants', () => {
+      it('FUTILITY_MAX_DEPTH should be positive', () => {
+        expect(FUTILITY_MAX_DEPTH).toBeGreaterThan(0);
+        expect(FUTILITY_MAX_DEPTH).toBeLessThanOrEqual(4);
+      });
+
+      it('FUTILITY_MARGINS should have entries for depths 1-3', () => {
+        expect(FUTILITY_MARGINS[1]).toBeDefined();
+        expect(FUTILITY_MARGINS[2]).toBeDefined();
+        expect(FUTILITY_MARGINS[3]).toBeDefined();
+      });
+
+      it('FUTILITY_MARGINS should increase with depth', () => {
+        expect(FUTILITY_MARGINS[2]!).toBeGreaterThan(FUTILITY_MARGINS[1]!);
+        expect(FUTILITY_MARGINS[3]!).toBeGreaterThan(FUTILITY_MARGINS[2]!);
+      });
+
+      it('FUTILITY_MARGINS should be reasonable values', () => {
+        // Margins should be at least a pawn value
+        expect(FUTILITY_MARGINS[1]!).toBeGreaterThanOrEqual(100);
+        // But not more than a queen
+        expect(FUTILITY_MARGINS[3]!).toBeLessThanOrEqual(1000);
+      });
+    });
+
+    describe('canFutilityPrune function', () => {
+      const quietMove: Move = {
+        from: { q: 0, r: 0 },
+        to: { q: 0, r: 1 },
+        piece: { type: 'pawn', color: 'white' },
+      };
+
+      const captureMove: Move = {
+        from: { q: 0, r: 0 },
+        to: { q: 0, r: 1 },
+        piece: { type: 'pawn', color: 'white' },
+        captured: { type: 'pawn', color: 'black' },
+      };
+
+      const promotionMove: Move = {
+        from: { q: 0, r: -3 },
+        to: { q: 0, r: -4 },
+        piece: { type: 'pawn', color: 'white' },
+        promotion: 'queen',
+      };
+
+      it('should not prune when depth is too high', () => {
+        expect(canFutilityPrune(-500, 0, 1000, 4, false, quietMove, 1, true)).toBe(false);
+        expect(canFutilityPrune(-500, 0, 1000, 5, false, quietMove, 1, true)).toBe(false);
+      });
+
+      it('should not prune when in check', () => {
+        expect(canFutilityPrune(-500, 0, 1000, 2, true, quietMove, 1, true)).toBe(false);
+      });
+
+      it('should not prune captures', () => {
+        expect(canFutilityPrune(-500, 0, 1000, 2, false, captureMove, 1, true)).toBe(false);
+      });
+
+      it('should not prune promotions', () => {
+        expect(canFutilityPrune(-500, 0, 1000, 2, false, promotionMove, 1, true)).toBe(false);
+      });
+
+      it('should not prune the first move (PV candidate)', () => {
+        expect(canFutilityPrune(-500, 0, 1000, 2, false, quietMove, 0, true)).toBe(false);
+      });
+
+      it('should not prune near-mate scores', () => {
+        const nearMate = CHECKMATE_VALUE - 500;
+        expect(canFutilityPrune(nearMate, 0, nearMate + 100, 2, false, quietMove, 1, true)).toBe(false);
+        expect(canFutilityPrune(-nearMate, -nearMate - 100, 0, 2, false, quietMove, 1, false)).toBe(false);
+      });
+
+      it('should prune when eval + margin is below alpha (maximizing)', () => {
+        // Static eval is -500, margin at depth 2 is 350
+        // -500 + 350 = -150 which is still below alpha of 0
+        expect(canFutilityPrune(-500, 0, 1000, 2, false, quietMove, 1, true)).toBe(true);
+      });
+
+      it('should not prune when eval + margin exceeds alpha (maximizing)', () => {
+        // Static eval is -100, margin at depth 2 is 350
+        // -100 + 350 = 250 which exceeds alpha of 0
+        expect(canFutilityPrune(-100, 0, 1000, 2, false, quietMove, 1, true)).toBe(false);
+      });
+
+      it('should prune when eval - margin is above beta (minimizing)', () => {
+        // For minimizing player, we want staticEval - margin >= beta
+        // Static eval is 500, margin at depth 2 is 350
+        // 500 - 350 = 150 which is above beta of 0
+        expect(canFutilityPrune(500, -1000, 0, 2, false, quietMove, 1, false)).toBe(true);
+      });
+
+      it('should not prune when eval - margin is below beta (minimizing)', () => {
+        // Static eval is 100, margin at depth 2 is 350
+        // 100 - 350 = -250 which is below beta of 0
+        expect(canFutilityPrune(100, -1000, 0, 2, false, quietMove, 1, false)).toBe(false);
+      });
+
+      it('should use appropriate margin for each depth', () => {
+        // At depth 1, margin is 200
+        // eval -199 + 200 = 1 which is above alpha boundary, should not prune
+        expect(canFutilityPrune(-199, 0, 1000, 1, false, quietMove, 1, true)).toBe(false);
+        // eval -201 + 200 = -1 which is below alpha (condition is <=), should prune
+        expect(canFutilityPrune(-201, 0, 1000, 1, false, quietMove, 1, true)).toBe(true);
+        // eval -200 + 200 = 0 which equals alpha boundary (condition is <=), should prune
+        expect(canFutilityPrune(-200, 0, 1000, 1, false, quietMove, 1, true)).toBe(true);
+      });
+    });
+
+    describe('Integration with search', () => {
+      it('search should track futility prunes in stats', () => {
+        const game = createNewGame();
+        const result = findBestMove(game.board, 'white', 3, true, true, true);
+        
+        // Stats should include futilityPrunes field
+        expect(result.stats.futilityPrunes).toBeDefined();
+        expect(typeof result.stats.futilityPrunes).toBe('number');
+        expect(result.stats.futilityPrunes).toBeGreaterThanOrEqual(0);
+      });
+
+      it('search should still find valid moves with futility pruning', () => {
+        const game = createNewGame();
+        const result = findBestMove(game.board, 'white', 3, true, true, true);
+        
+        expect(result.move).not.toBeNull();
+        expect(result.move!.piece).toBeDefined();
+      });
+
+      it('iterative deepening should accumulate futility prunes', () => {
+        const game = createNewGame();
+        const result = findBestMoveIterative(game.board, 'white', 4, 5000, true, true, true);
+        
+        expect(result.stats.futilityPrunes).toBeDefined();
+        expect(typeof result.stats.futilityPrunes).toBe('number');
+      });
+
+      it('futility pruning should not affect correctness in tactical positions', () => {
+        // Create a position where white has queen vs king
+        // White should be clearly winning
+        const board: BoardState = new Map();
+        board.set(coordToString({ q: 0, r: 3 }), { type: 'king', color: 'white' });
+        board.set(coordToString({ q: 1, r: 2 }), { type: 'queen', color: 'white' });
+        board.set(coordToString({ q: 0, r: -4 }), { type: 'king', color: 'black' });
+        
+        const result = findBestMove(board, 'white', 3, true, true, true);
+        
+        // Should find a move
+        expect(result.move).not.toBeNull();
+        // Score should be positive (winning with queen vs nothing)
+        expect(result.score).toBeGreaterThan(0);
+      });
+
+      it('getAIMove should track futility prunes', () => {
+        const game = createNewGame();
+        const result = getAIMove(game, 'medium');
+        
+        expect(result.stats.futilityPrunes).toBeDefined();
+      });
     });
   });
 });

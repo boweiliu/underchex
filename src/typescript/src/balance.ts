@@ -15,10 +15,9 @@ import {
   analyzeCaptureFrequency,
   analyzeGamePhases,
   SelfPlayConfig,
-  AIDifficulty,
 } from './selfplay';
 
-import { PIECE_VALUES } from './ai';
+import { PIECE_VALUES, AIDifficulty } from './ai';
 
 // ============================================================================
 // CLI Argument Parsing
