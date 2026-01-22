@@ -6,6 +6,7 @@
   Signed-by: agent #2 claude-sonnet-4 via opencode 20260122T02:28:36
   Edited-by: agent #4 claude-sonnet-4 via opencode 20260122T02:42:41 (added AI vs AI mode)
   Edited-by: agent #15 claude-sonnet-4 via opencode 20260122T05:23:06 (added puzzle mode)
+  Edited-by: agent #39 claude-sonnet-4 via opencode 20260122T10:13:35 (added endgame tablebase)
 -->
 <html lang="en">
 <head>
@@ -891,8 +892,387 @@
     }
     
     // =========================================================================
+    // ENDGAME TABLEBASE MODULE
+    // Provides perfect endgame play for simple endgames (KvK, KQvK, etc.)
+    // Signed-by: agent #39 claude-sonnet-4 via opencode 20260122T10:13:35
+    // =========================================================================
+    
+    // Tablebase storage: maps configuration name to tablebase entries
+    const tablebases = new Map();
+    
+    // WDL outcomes: 'win', 'draw', 'loss' from perspective of side to move
+    
+    /**
+     * Detect the piece configuration of a position.
+     * Returns { name, strongerSide, weakerSide } or null if not supported.
+     */
+    function detectTablebaseConfig(board) {
+      const pieces = { white: [], black: [] };
+      
+      for (const [posStr, piece] of board.entries()) {
+        if (piece.type !== 'king') {
+          pieces[piece.color].push(piece.type);
+        }
+      }
+      
+      // Determine stronger side (more material)
+      let strongerSide, weakerSide;
+      if (pieces.white.length >= pieces.black.length) {
+        strongerSide = pieces.white.sort();
+        weakerSide = pieces.black.sort();
+      } else {
+        strongerSide = pieces.black.sort();
+        weakerSide = pieces.white.sort();
+      }
+      
+      // Generate name: K[pieces]vK[pieces]
+      const abbrev = (type) => {
+        const map = { queen: 'Q', lance: 'L', chariot: 'C', knight: 'N', pawn: 'P' };
+        return map[type] || type[0].toUpperCase();
+      };
+      
+      let name = 'K' + strongerSide.map(abbrev).join('') + 'vK' + weakerSide.map(abbrev).join('');
+      
+      // Only support simple endgames (max 4 pieces total, weaker side has no pieces)
+      const totalPieces = 2 + strongerSide.length + weakerSide.length;
+      if (totalPieces > 4 || weakerSide.length > 0) {
+        return null;
+      }
+      
+      return { name, strongerSide, weakerSide };
+    }
+    
+    /**
+     * Create a position key for tablebase lookup using Zobrist-like hashing.
+     */
+    function getTablebaseKey(board, sideToMove) {
+      // Simple hash: concatenate piece positions in sorted order
+      const pieces = [];
+      for (const [posStr, piece] of board.entries()) {
+        pieces.push(`${piece.color[0]}${piece.type[0]}${posStr}`);
+      }
+      pieces.sort();
+      return pieces.join('-') + '-' + sideToMove;
+    }
+    
+    /**
+     * Check if position is illegal (opponent in check = they could have captured king)
+     */
+    function isIllegalTablebasePosition(board, sideToMove) {
+      const opponent = sideToMove === 'white' ? 'black' : 'white';
+      return isInCheck(board, opponent);
+    }
+    
+    /**
+     * Generate all valid positions for a given tablebase configuration.
+     */
+    function* generateTablebasePositions(config) {
+      const allCells = getAllCells();
+      
+      for (const whiteKingPos of allCells) {
+        for (const blackKingPos of allCells) {
+          // Kings can't be on same cell
+          if (coordsEqual(whiteKingPos, blackKingPos)) continue;
+          
+          // Kings can't be adjacent (hex distance 1)
+          const dist = hexDistance(whiteKingPos, blackKingPos);
+          if (dist <= 1) continue;
+          
+          const remainingCells = allCells.filter(c => 
+            !coordsEqual(c, whiteKingPos) && !coordsEqual(c, blackKingPos)
+          );
+          
+          if (config.strongerSide.length === 0) {
+            // KvK - just kings
+            for (const sideToMove of ['white', 'black']) {
+              const board = new Map();
+              board.set(coordToString(whiteKingPos), { type: 'king', color: 'white' });
+              board.set(coordToString(blackKingPos), { type: 'king', color: 'black' });
+              if (!isIllegalTablebasePosition(board, sideToMove)) {
+                yield { board, sideToMove };
+              }
+            }
+          } else if (config.strongerSide.length === 1) {
+            // K + 1 piece vs K
+            const pieceType = config.strongerSide[0];
+            
+            for (const piecePos of remainingCells) {
+              for (const sideToMove of ['white', 'black']) {
+                const variants = pieceType === 'lance' ? ['A', 'B'] : [null];
+                
+                for (const variant of variants) {
+                  const board = new Map();
+                  board.set(coordToString(whiteKingPos), { type: 'king', color: 'white' });
+                  board.set(coordToString(blackKingPos), { type: 'king', color: 'black' });
+                  
+                  const piece = variant 
+                    ? { type: pieceType, color: 'white', variant }
+                    : { type: pieceType, color: 'white' };
+                  board.set(coordToString(piecePos), piece);
+                  
+                  if (!isIllegalTablebasePosition(board, sideToMove)) {
+                    yield { board: new Map(board), sideToMove };
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    /**
+     * Get terminal outcome of a position.
+     * Returns { wdl, dtm } or null if not terminal.
+     */
+    function getTerminalOutcome(board, sideToMove) {
+      const moves = generateAllLegalMoves(board, sideToMove);
+      
+      if (moves.length === 0) {
+        if (isInCheck(board, sideToMove)) {
+          return { wdl: 'loss', dtm: 0 }; // Checkmate
+        }
+        return { wdl: 'draw', dtm: -1 }; // Stalemate
+      }
+      
+      return null;
+    }
+    
+    /**
+     * Generate a tablebase for a given configuration using retrograde analysis.
+     */
+    function generateTablebase(config) {
+      const startTime = performance.now();
+      
+      const tablebase = {
+        name: config.name,
+        entries: new Map(),
+        metadata: {
+          generatedAt: new Date().toISOString(),
+          generationTimeMs: 0,
+          winCount: 0,
+          drawCount: 0,
+          lossCount: 0,
+        }
+      };
+      
+      // Phase 1: Generate all positions, find terminals
+      const positionMap = new Map();
+      const unknownPositions = new Set();
+      
+      for (const { board, sideToMove } of generateTablebasePositions(config)) {
+        const key = getTablebaseKey(board, sideToMove);
+        positionMap.set(key, { board: new Map(board), sideToMove });
+        
+        const terminal = getTerminalOutcome(board, sideToMove);
+        if (terminal) {
+          tablebase.entries.set(key, { ...terminal });
+          if (terminal.wdl === 'loss') tablebase.metadata.lossCount++;
+          else if (terminal.wdl === 'draw') tablebase.metadata.drawCount++;
+        } else {
+          unknownPositions.add(key);
+        }
+      }
+      
+      // Phase 2: Retrograde analysis
+      let changed = true;
+      let iteration = 0;
+      const MAX_ITERATIONS = 500;
+      
+      while (changed && iteration < MAX_ITERATIONS) {
+        changed = false;
+        iteration++;
+        const toResolve = [];
+        
+        for (const key of unknownPositions) {
+          const pos = positionMap.get(key);
+          if (!pos) continue;
+          
+          const moves = generateAllLegalMoves(pos.board, pos.sideToMove);
+          let hasWinningMove = false;
+          let allMovesLose = true;
+          let bestMoveInfo = null;
+          let maxDTM = 0;
+          
+          for (const move of moves) {
+            const newBoard = applyMove(pos.board, move);
+            const opponent = pos.sideToMove === 'white' ? 'black' : 'white';
+            const newKey = getTablebaseKey(newBoard, opponent);
+            const opponentEntry = tablebase.entries.get(newKey);
+            
+            if (!opponentEntry) {
+              allMovesLose = false;
+              continue;
+            }
+            
+            if (opponentEntry.wdl === 'loss') {
+              hasWinningMove = true;
+              if (!bestMoveInfo || opponentEntry.dtm + 1 < bestMoveInfo.dtm) {
+                bestMoveInfo = {
+                  from: move.from,
+                  to: move.to,
+                  dtm: opponentEntry.dtm + 1,
+                  promotion: move.promotion
+                };
+              }
+            } else if (opponentEntry.wdl === 'win') {
+              maxDTM = Math.max(maxDTM, opponentEntry.dtm);
+            } else {
+              allMovesLose = false;
+            }
+          }
+          
+          if (hasWinningMove && bestMoveInfo) {
+            toResolve.push(key);
+            tablebase.entries.set(key, {
+              wdl: 'win',
+              dtm: bestMoveInfo.dtm,
+              bestMove: { from: bestMoveInfo.from, to: bestMoveInfo.to, promotion: bestMoveInfo.promotion }
+            });
+            tablebase.metadata.winCount++;
+            changed = true;
+          } else if (allMovesLose && moves.length > 0) {
+            toResolve.push(key);
+            tablebase.entries.set(key, {
+              wdl: 'loss',
+              dtm: maxDTM + 1
+            });
+            tablebase.metadata.lossCount++;
+            changed = true;
+          }
+        }
+        
+        for (const key of toResolve) {
+          unknownPositions.delete(key);
+        }
+      }
+      
+      // Phase 3: Remaining unknown = draws
+      for (const key of unknownPositions) {
+        tablebase.entries.set(key, { wdl: 'draw', dtm: -1 });
+        tablebase.metadata.drawCount++;
+      }
+      
+      tablebase.size = tablebase.entries.size;
+      tablebase.metadata.generationTimeMs = performance.now() - startTime;
+      
+      return tablebase;
+    }
+    
+    /**
+     * Probe the tablebase for a position.
+     */
+    function probeTablebase(board, sideToMove) {
+      const config = detectTablebaseConfig(board);
+      if (!config) return { found: false };
+      
+      const tablebase = tablebases.get(config.name);
+      if (!tablebase) return { found: false };
+      
+      const key = getTablebaseKey(board, sideToMove);
+      const entry = tablebase.entries.get(key);
+      
+      if (entry) {
+        return { found: true, entry, tablebaseName: config.name };
+      }
+      
+      return { found: false };
+    }
+    
+    /**
+     * Get the tablebase move for a position.
+     */
+    function getTablebaseMove(board, sideToMove) {
+      const result = probeTablebase(board, sideToMove);
+      
+      if (!result.found || !result.entry?.bestMove) {
+        return null;
+      }
+      
+      const { from, to, promotion } = result.entry.bestMove;
+      const piece = getPieceAt(board, from);
+      if (!piece) return null;
+      
+      return {
+        from,
+        to,
+        piece,
+        captured: getPieceAt(board, to),
+        promotion
+      };
+    }
+    
+    /**
+     * Get tablebase evaluation score.
+     * Returns +CHECKMATE_VALUE - DTM for wins, 0 for draws, -CHECKMATE_VALUE + DTM for losses.
+     */
+    function getTablebaseScore(board, sideToMove) {
+      const result = probeTablebase(board, sideToMove);
+      if (!result.found || !result.entry) return null;
+      
+      switch (result.entry.wdl) {
+        case 'win': return CHECKMATE_VALUE - result.entry.dtm;
+        case 'draw': return 0;
+        case 'loss': return -CHECKMATE_VALUE + result.entry.dtm;
+      }
+    }
+    
+    /**
+     * Check if a position is a tablebase endgame.
+     */
+    function isTablebaseEndgame(board) {
+      const config = detectTablebaseConfig(board);
+      return config !== null && tablebases.has(config.name);
+    }
+    
+    /**
+     * Initialize common tablebases (KvK, KQvK, etc.)
+     */
+    function initializeTablebases() {
+      const configs = [
+        { strongerSide: [], weakerSide: [], name: 'KvK' },
+        { strongerSide: ['queen'], weakerSide: [], name: 'KQvK' },
+        { strongerSide: ['lance'], weakerSide: [], name: 'KLvK' },
+        { strongerSide: ['chariot'], weakerSide: [], name: 'KCvK' },
+        { strongerSide: ['knight'], weakerSide: [], name: 'KNvK' },
+      ];
+      
+      for (const config of configs) {
+        console.log(`Generating tablebase: ${config.name}...`);
+        const tablebase = generateTablebase(config);
+        tablebases.set(config.name, tablebase);
+        console.log(`  ${tablebase.size} positions in ${tablebase.metadata.generationTimeMs.toFixed(0)}ms`);
+      }
+      
+      console.log(`Tablebases initialized: ${tablebases.size} endgames loaded`);
+    }
+    
+    /**
+     * Get tablebase statistics for display.
+     */
+    function getTablebaseStatistics() {
+      let totalEntries = 0;
+      const stats = [];
+      
+      for (const [name, tb] of tablebases) {
+        totalEntries += tb.size;
+        stats.push({
+          name,
+          size: tb.size,
+          wins: tb.metadata.winCount,
+          draws: tb.metadata.drawCount,
+          losses: tb.metadata.lossCount,
+          generationTimeMs: tb.metadata.generationTimeMs
+        });
+      }
+      
+      return { totalEntries, tablebases: stats };
+    }
+    
+    // =========================================================================
     // AI ENGINE
     // Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
+    // Edited-by: agent #39 claude-sonnet-4 via opencode 20260122T10:13:35 (integrated tablebase)
     // =========================================================================
     
     const PIECE_VALUES = {
@@ -984,6 +1364,14 @@
       stats.nodesSearched++;
       
       const color = maximizing ? 'white' : 'black';
+      
+      // Probe tablebase for endgame positions
+      const tbScore = getTablebaseScore(board, color);
+      if (tbScore !== null) {
+        // Adjust score based on perspective
+        return maximizing ? tbScore : -tbScore;
+      }
+      
       const moves = generateAllLegalMoves(board, color);
       
       if (moves.length === 0) {
@@ -1029,7 +1417,22 @@
     }
     
     function findBestMove(board, color, depth) {
-      const stats = { nodesSearched: 0, cutoffs: 0 };
+      const stats = { nodesSearched: 0, cutoffs: 0, usedTablebase: false };
+      
+      // First, probe the tablebase for endgame positions
+      if (isTablebaseEndgame(board)) {
+        const tbMove = getTablebaseMove(board, color);
+        const tbScore = getTablebaseScore(board, color);
+        
+        if (tbMove) {
+          stats.usedTablebase = true;
+          return { move: tbMove, score: tbScore || 0, stats };
+        }
+        
+        // If no best move in tablebase but it's an endgame, use tablebase score if available
+        // Fall through to search but with tablebase-aware evaluation
+      }
+      
       const moves = generateAllLegalMoves(board, color);
       
       if (moves.length === 0) {
@@ -2279,6 +2682,32 @@
         drawBoardForPuzzle();
       }, true);
     });
+    
+    // =========================================================================
+    // INITIALIZATION
+    // Signed-by: agent #39 claude-sonnet-4 via opencode 20260122T10:13:35
+    // =========================================================================
+    
+    // Initialize tablebases on page load
+    // Using setTimeout to avoid blocking initial render
+    let tablebasesLoaded = false;
+    
+    setTimeout(() => {
+      console.log('Initializing endgame tablebases...');
+      const startTime = performance.now();
+      initializeTablebases();
+      tablebasesLoaded = true;
+      const elapsed = performance.now() - startTime;
+      console.log(`All tablebases loaded in ${elapsed.toFixed(0)}ms`);
+      
+      // Show tablebase stats
+      const stats = getTablebaseStatistics();
+      console.log('=== Tablebase Statistics ===');
+      for (const tb of stats.tablebases) {
+        console.log(`${tb.name}: ${tb.size} positions (W:${tb.wins} D:${tb.draws} L:${tb.losses})`);
+      }
+      console.log(`Total: ${stats.totalEntries} positions`);
+    }, 100);
     
     // Initial render
     updateUI();
