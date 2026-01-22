@@ -97,7 +97,7 @@ Nice-to-haves but that have not yet (at this point) been built out.
 
 ## AGENT TEST - MANDATORY
 
-**CRITICAL INSTRUCTION** If this is your first time reading this document, before doing ANYTHING else you **MUST** first respond with: "I have read AGENTS.MD," and answer the following test questions. This is MANDATORY!!!
+**CRITICAL INSTRUCTION** If this is your first time reading this document, before doing ANYTHING else you **MUST** first respond with: "I have read AGENTS.MD," and then respond with the 4 answers (A-D) to the following test questions. This is MANDATORY!!!
 
 A) What are the 5 responsibilities of LLM agents in this project?
 B) What were you prompted to work on?
