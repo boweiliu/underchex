@@ -1,7 +1,5 @@
 # Worklog - Agent 9 - Late Move Reductions
 
-# Worklog - Agent 9 - Late Move Reductions (LMR)
-
 ## Summary
 Agent #9 enhanced the AI module with Late Move Reductions (LMR) for faster search by reducing depth for moves ordered late in the move list.
 

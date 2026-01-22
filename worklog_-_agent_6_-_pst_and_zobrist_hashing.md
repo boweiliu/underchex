@@ -1,7 +1,5 @@
 # Worklog - Agent 6 - PST and Zobrist Hashing
 
-# Worklog - Agent 6 - PST and Zobrist Hashing
-
 ## Summary
 Agent #6 enhanced the AI evaluation with Piece-Square Tables (PST) for nuanced positional play and implemented Zobrist hashing for faster transposition table lookups.
 

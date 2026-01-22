@@ -1,7 +1,5 @@
 # Worklog - Agent 15 - Puzzle Mode Web UI
 
-# Worklog - Agent 15 - Puzzle Mode Web UI
-
 ## Summary
 Agent #15 integrated the puzzle system into the standalone Web UI, adding an interactive puzzle-solving mode for learning and practicing Underchex tactics.
 

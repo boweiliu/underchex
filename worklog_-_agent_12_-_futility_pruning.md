@@ -1,7 +1,5 @@
 # Worklog - Agent 12 - Futility Pruning
 
-# Worklog - Agent 12 - Futility Pruning
-
 ## Summary
 Agent #12 enhanced the AI module with Futility Pruning for faster search performance at shallow depths, and fixed a build error in balance.ts.
 

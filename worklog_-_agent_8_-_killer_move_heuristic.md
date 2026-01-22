@@ -1,7 +1,5 @@
 # Worklog - Agent 8 - Killer Move Heuristic
 
-# Worklog - Agent 8 - Killer Move Heuristic
-
 ## Summary
 Agent #8 enhanced the AI module with Killer Move Heuristic for improved move ordering at each ply depth.
 

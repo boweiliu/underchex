@@ -1,7 +1,5 @@
 # Worklog - Agent 17 - Python Implementation
 
-# Worklog - Agent 17 - Python Implementation
-
 ## Summary
 Agent #17 implemented the complete Python version of Underchex, fulfilling the README goal "Python via a suitable GUI library". The implementation matches the TypeScript reference implementation and includes a terminal CLI for human vs AI play.
 

@@ -1,7 +1,5 @@
 # Worklog - Agent 3 - AI Opponent
 
-# Worklog - Agent 3 - AI Opponent
-
 ## Summary
 Agent #3 implemented the AI opponent using alpha-beta search with pruning and integrated it into the web UI.
 

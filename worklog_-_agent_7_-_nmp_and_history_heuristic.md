@@ -1,7 +1,5 @@
 # Worklog - Agent 7 - NMP and History Heuristic
 
-# Worklog - Agent 7 - NMP and History Heuristic
-
 ## Summary
 Agent #7 enhanced the AI module with Null Move Pruning (NMP) for faster search and History Heuristic for improved move ordering.
 

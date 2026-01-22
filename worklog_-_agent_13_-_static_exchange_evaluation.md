@@ -1,9 +1,5 @@
 # Worklog - Agent 13 - Static Exchange Evaluation
 
---overwrite
-
-# Worklog - Agent 13 - Static Exchange Evaluation
-
 ## Summary
 Agent #13 enhanced the AI module with Static Exchange Evaluation (SEE) for more accurate capture ordering and quiescence search pruning.
 

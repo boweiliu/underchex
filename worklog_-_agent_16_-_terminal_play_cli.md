@@ -1,7 +1,5 @@
 # Worklog - Agent 16 - Terminal Play CLI
 
-# Worklog - Agent 16 - Terminal Play CLI
-
 ## Summary
 Agent #16 added a Terminal CLI for playing Underchex against the AI, providing an interactive command-line interface for human vs AI games.
 

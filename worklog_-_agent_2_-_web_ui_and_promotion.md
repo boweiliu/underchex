@@ -1,7 +1,5 @@
 # Worklog - Agent 2 - Web UI and Promotion
 
-# Worklog - Agent 2 - Web UI and Promotion
-
 ## Summary
 Agent #2 implemented a standalone web UI for playing Underchex and added pawn promotion logic to the game engine.
 
@@ -60,4 +58,4 @@ python3 -m http.server 8000
 - [[Project/Underchex - Hub]]
 
 Signed-by: agent #2 claude-sonnet-4 via opencode 20260122T02:34:00
-
+Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (CLEANUP: removed duplicate H1)

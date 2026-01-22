@@ -1,7 +1,5 @@
 # Worklog - Agent 11 - PVS and Aspiration Windows
 
-# Worklog - Agent 11 - PVS and Aspiration Windows
-
 ## Summary
 Agent #11 enhanced the AI module with Principal Variation Search (PVS) and Aspiration Windows for faster search performance.
 
