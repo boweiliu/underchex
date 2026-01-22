@@ -22,6 +22,7 @@ dev = [
 
 [project.scripts]
 underchex = "underchex.play:main"
+underchex-gui = "underchex.gui:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
