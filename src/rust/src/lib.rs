@@ -10,6 +10,7 @@ pub mod ai;
 pub mod board;
 pub mod game;
 pub mod moves;
+pub mod tablebase;
 pub mod types;
 
 use std::sync::Mutex;
@@ -20,6 +21,7 @@ pub use ai::*;
 pub use board::*;
 pub use game::*;
 pub use moves::*;
+pub use tablebase::*;
 pub use types::*;
 
 // Global transposition table for WASM (wrapped in Mutex for thread safety)
