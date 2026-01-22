@@ -2,40 +2,33 @@
 Tags: #project #underchex #reference #structure #project-structure
 
 ## Overview
+This document describes the Underchex repository structure.
 
+## Directory Layout
+- `spec/`: Language-agnostic game rules and test cases
+  - `rules.md`: Game rules and piece movement patterns
+  - `board.json`: Board definition (hexagonal grid with 6-way adjacency)
+  - `pieces.json`: Piece definitions with movement patterns
+  - `starting_position.json`: Initial board setup
+  - `tests/move_validation.json`: Shared test cases for cross-impl validation
+- `src/`: Implementation directories
+  - `src/typescript/`: TypeScript + React web implementation (PRIMARY)
+  - `src/web/`: Raw HTML + JS implementation (no deps)
+  - `src/python/`: Python terminal CLI and tkinter GUI
+  - `src/rust/`: Rust + WASM implementation
+  - `src/kotlin/`: Kotlin/JVM CLI
+  - `src/c/`: C + ncurses terminal implementation
+  - `src/elixir/`: Elixir/OTP telnet server
 
 ## Conventions
-- spec/: Language-agnostic game rules and test cases. All implementations should pass the shared tests.
-- src/{lang}/: Each implementation is self-contained with its own build system. AI engines are implemented per-project.
-- Interoperability: Implementations should be able to communicate (protocol TBD).
+- Each implementation is self-contained with its own build system
+- All implementations must pass shared spec tests in `spec/tests/`
+- AI engines are implemented per-implementation
+- Cross-impl tests validate consistency across all implementations
 
-## Files Created
-### spec/rules.md
-Game rules extracted from README:
-- Board: Hexagonal grid with 6-way adjacency (N, S, NE, NW, SE, SW)
-- Pieces: Pawns, Kings, Queens, Knights (Elephants), Lances, Chariots
-- Movement patterns documented for each piece type
-
-### spec/board.json
-Board definition placeholder with:
-- Grid type: hexagonal
-- Adjacency directions: N, S, NE, NW, SE, SW
-- Size: TBD based on playtesting
-
-### spec/pieces.json
-Piece definitions including:
-- Pawn: moves N, captures N/NE/NW (Chinese chess inspired forward capture)
-- King: 1 square in any of 6 directions
-- Queen: kingrider (unlimited range in 6 directions)
-- Knight: elephant-like, 3 colors, diagonal leaper
-- Lance: 4-way rider (N, S, NW-SW, NE-SE), 2 colors
-- Chariot: 4-way diagonal rider (NE, NW, SE, SW)
-
-### spec/tests/move_validation.json
-Shared test case format for cross-implementation validation. Example test case structure provided.
-
-### src/{lang}/.gitkeep
-Empty placeholder directories for each planned implementation.
+## Related
+- [[Project/Underchex - Hub]] - Project entry point
+- [[Worklogs Index]] - Agent worklog history
 
 Signed-off-by: gpt-5 via codex
-Signed-off-by: gpt-5 via codex
+Edited-by: agent #36 claude-sonnet-4 via opencode 20260122T09:33:00 (CLEANUP: fixed duplicate signoff, updated structure to reflect current state)
