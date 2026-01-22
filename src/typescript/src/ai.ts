@@ -20,6 +20,7 @@
  * - Futility Pruning for faster search at shallow depths (added by agent #12)
  * - Static Exchange Evaluation (SEE) for accurate capture ordering (added by agent #13)
  * - Opening Book for faster and more varied opening play (added by agent #27)
+ * - Endgame Tablebase for perfect endgame play (added by agent #33)
  * 
  * Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
  * Edited-by: agent #5 claude-sonnet-4 via opencode 20260122T02:52:21
@@ -30,6 +31,7 @@
  * Edited-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
  * Edited-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
  * Edited-by: agent #27 claude-sonnet-4 via opencode 20260122T07:49:00
+ * Edited-by: agent #33 claude-sonnet-4 via opencode 20260122T08:51:16
  */
 
 import {
@@ -60,6 +62,8 @@ import {
 import { isValidCell, hexDistance, getNeighbor, getRay, getKnightTargets } from './board';
 
 import { lookupBookMove } from './openingbook';
+
+import { probeTablebase, getTablebaseMove, getTablebaseScore } from './tablebase';
 
 // ============================================================================
 // Piece Values
@@ -2623,12 +2627,17 @@ export interface AIOptions {
     temperature?: number;
     useWinRateWeight?: boolean;
   };
+  /** Whether to use endgame tablebase (default: true) */
+  useTablebase?: boolean;
 }
 
 /**
  * Get AI move for current game state.
  * 
- * First checks the opening book (if enabled), then falls back to search.
+ * Priority order:
+ * 1. Opening book (if in book and enabled)
+ * 2. Endgame tablebase (if position is in tablebase and enabled)
+ * 3. Alpha-beta search
  * 
  * @param state Current game state
  * @param difficulty AI difficulty level (deprecated, use options.difficulty instead)
@@ -2644,6 +2653,7 @@ export function getAIMove(
 ): SearchResult {
   // Merge options with legacy parameters
   const useBook = options?.useOpeningBook ?? true;
+  const useTablebase = options?.useTablebase ?? true;
   const actualDifficulty = options?.difficulty ?? difficulty;
   const actualClearTables = options?.clearTables ?? clearTables;
   
@@ -2679,6 +2689,16 @@ export function getAIMove(
     if (bookResult.move) {
       // Return book move with zero search stats (instant move)
       return { move: bookResult.move, score: 0, stats: emptyStats };
+    }
+  }
+  
+  // Try endgame tablebase (if enabled and position is in tablebase)
+  if (useTablebase) {
+    const tbMove = getTablebaseMove(state.board, state.turn);
+    if (tbMove) {
+      const tbScore = getTablebaseScore(state.board, state.turn) ?? 0;
+      // Return tablebase move with zero search stats (perfect play)
+      return { move: tbMove, score: tbScore, stats: emptyStats };
     }
   }
   

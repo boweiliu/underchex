@@ -246,3 +246,32 @@ export {
   getBookStatistics,
   formatBookEntry,
 } from './openingbook';
+
+// Re-export endgame tablebase (added by agent #33)
+export {
+  WDLOutcome,
+  TablebaseEntry,
+  PieceTablebase,
+  TablebaseConfig,
+  TablebaseProbeResult,
+  SerializedTablebase,
+  encodePosition,
+  getTablebaseKey,
+  detectConfiguration,
+  getTablebase,
+  setTablebase,
+  getLoadedTablebases,
+  clearTablebases,
+  generateTablebase,
+  probeTablebase,
+  getTablebaseMove,
+  getTablebaseScore,
+  initializeTablebases,
+  generateTablebaseOnDemand,
+  serializeTablebase,
+  deserializeTablebase,
+  exportTablebaseToJSON,
+  importTablebaseFromJSON,
+  getTablebaseStatistics,
+  formatTablebaseStatistics,
+} from './tablebase';
