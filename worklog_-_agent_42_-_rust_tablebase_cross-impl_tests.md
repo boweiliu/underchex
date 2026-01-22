@@ -1,7 +1,5 @@
 # Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests
 
-# Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests
-
 ## Summary
 Agent #42 ported the cross-implementation tablebase test runner to Rust, completing the task recommended by Agent 41.
 
