@@ -235,10 +235,419 @@
       },
       "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 0}},
       "expected": {"legal": false, "reason": "movesIntoCheck"}
+    },
+    
+    {
+      "id": "board_005",
+      "description": "Negative coordinate at boundary is valid",
+      "type": "boardValidation",
+      "input": {"q": -4, "r": 0},
+      "expected": {"valid": true}
+    },
+    {
+      "id": "board_006",
+      "description": "Cell at q=-4, r=4 is valid (on boundary)",
+      "type": "boardValidation",
+      "input": {"q": -4, "r": 4},
+      "expected": {"valid": true}
+    },
+    {
+      "id": "board_007",
+      "description": "Cell at q=2, r=-4 is invalid (|q|+|r|>radius for cube)",
+      "type": "boardValidation",
+      "input": {"q": 2, "r": -4},
+      "expected": {"valid": true}
+    },
+    {
+      "id": "board_008",
+      "description": "Cell at q=4, r=-4 is valid (corner)",
+      "type": "boardValidation",
+      "input": {"q": 4, "r": -4},
+      "expected": {"valid": true}
+    },
+    
+    {
+      "id": "king_004",
+      "description": "King cannot capture friendly piece",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "white", "q": 0, "r": -1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -1}},
+      "expected": {"legal": false}
+    },
+    {
+      "id": "king_005",
+      "description": "King moves in all 6 directions from center",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "king", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -1, "r": 0}},
+      "expected": {"legal": true}
+    },
+    
+    {
+      "id": "pawn_005",
+      "description": "Black pawn moves south",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "black", "q": 0, "r": -2}],
+        "turn": "black"
+      },
+      "move": {"from": {"q": 0, "r": -2}, "to": {"q": 0, "r": -1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "pawn_006",
+      "description": "Black pawn cannot move north",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "black", "q": 0, "r": -2}],
+        "turn": "black"
+      },
+      "move": {"from": {"q": 0, "r": -2}, "to": {"q": 0, "r": -3}},
+      "expected": {"legal": false}
+    },
+    {
+      "id": "pawn_007",
+      "description": "White pawn cannot move forward if blocked",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "pawn", "color": "white", "q": 0, "r": 2},
+          {"piece": "pawn", "color": "white", "q": 0, "r": 1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 0, "r": 1}},
+      "expected": {"legal": false}
+    },
+    {
+      "id": "pawn_008",
+      "description": "White pawn captures diagonally NW",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "pawn", "color": "white", "q": 0, "r": 2},
+          {"piece": "pawn", "color": "black", "q": -1, "r": 2}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": -1, "r": 2}},
+      "expected": {"legal": true, "capture": true}
+    },
+    {
+      "id": "pawn_009",
+      "description": "Pawn cannot capture diagonally without enemy",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "white", "q": 0, "r": 2}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 2}, "to": {"q": 1, "r": 1}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "knight_003",
+      "description": "Knight has 6 targets from center",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -1, "r": -1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_004",
+      "description": "Knight target at q=2, r=-1",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 2, "r": -1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_005",
+      "description": "Knight target at q=1, r=1",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_006",
+      "description": "Knight target at q=-1, r=2",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -1, "r": 2}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_007",
+      "description": "Knight target at q=-2, r=1",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -2, "r": 1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "knight_008",
+      "description": "Knight cannot move to non-target cell",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "knight", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": 0}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "lance_003",
+      "description": "Lance A can slide south",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "A"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": 3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_004",
+      "description": "Lance A can slide NW",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "A"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -3, "r": 0}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_005",
+      "description": "Lance A can slide SE",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "A"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 3, "r": 0}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_006",
+      "description": "Lance B can slide NE",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "B"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 3, "r": -3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_007",
+      "description": "Lance B can slide SW",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "B"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -3, "r": 3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "lance_008",
+      "description": "Lance B cannot move NW (not in its directions)",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "lance", "color": "white", "q": 0, "r": 0, "variant": "B"}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -3, "r": 0}},
+      "expected": {"legal": false}
+    },
+    
+    {
+      "id": "chariot_003",
+      "description": "Chariot can slide NW",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "chariot", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -3, "r": 3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "chariot_004",
+      "description": "Chariot can slide SE",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "chariot", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 3, "r": 0}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "chariot_005",
+      "description": "Chariot can slide SW",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "chariot", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": -3, "r": 0}},
+      "expected": {"legal": true}
+    },
+    
+    {
+      "id": "queen_003",
+      "description": "Queen can slide south",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "queen", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": 3}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "queen_004",
+      "description": "Queen can capture enemy at end of slide",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "queen", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "black", "q": 0, "r": -3}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -3}},
+      "expected": {"legal": true, "capture": true}
+    },
+    
+    {
+      "id": "check_002",
+      "description": "Pinned piece cannot move (would expose king)",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "lance", "color": "white", "q": 0, "r": -1, "variant": "A"},
+          {"piece": "queen", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": -1}, "to": {"q": 1, "r": -1}},
+      "expected": {"legal": false, "reason": "movesIntoCheck"}
+    },
+    {
+      "id": "check_003",
+      "description": "Must block check when king is in check",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "lance", "color": "white", "q": 2, "r": -2, "variant": "A"},
+          {"piece": "queen", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 2, "r": -2}, "to": {"q": 2, "r": 0}},
+      "expected": {"legal": false, "reason": "movesIntoCheck"}
+    },
+    {
+      "id": "check_004",
+      "description": "Lance can block check along same line",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "lance", "color": "white", "q": 2, "r": -2, "variant": "A"},
+          {"piece": "queen", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 2, "r": -2}, "to": {"q": 0, "r": -2}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "check_005",
+      "description": "King can escape check by moving",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "queen", "color": "black", "q": 0, "r": -4}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 1, "r": -1}},
+      "expected": {"legal": true}
+    },
+    {
+      "id": "check_006",
+      "description": "King can capture attacker to escape check",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [
+          {"piece": "king", "color": "white", "q": 0, "r": 0},
+          {"piece": "pawn", "color": "black", "q": 0, "r": -1}
+        ],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": 0}, "to": {"q": 0, "r": -1}},
+      "expected": {"legal": true, "capture": true}
+    },
+    
+    {
+      "id": "turn_001",
+      "description": "Cannot move opponent's piece",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "pawn", "color": "black", "q": 0, "r": -2}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 0, "r": -2}, "to": {"q": 0, "r": -1}},
+      "expected": {"legal": false, "reason": "notYourPiece"}
+    },
+    {
+      "id": "turn_002",
+      "description": "Cannot move from empty cell",
+      "type": "moveValidation",
+      "setup": {
+        "pieces": [{"piece": "king", "color": "white", "q": 0, "r": 0}],
+        "turn": "white"
+      },
+      "move": {"from": {"q": 1, "r": 0}, "to": {"q": 2, "r": 0}},
+      "expected": {"legal": false, "reason": "noPieceAtSource"}
     }
   ],
   
   "_meta": {
-    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57"
+    "signedBy": "agent #1 claude-sonnet-4 via opencode 20260122T02:18:57",
+    "editedBy": "agent #28 claude-sonnet-4 via opencode 20260122T08:04:58 (added comprehensive cross-implementation test cases)"
   }
 }
