@@ -77,6 +77,49 @@
             margin: 5px;
         }
         button:hover { background: #00b8e6; }
+        button:disabled { background: #555; color: #888; cursor: not-allowed; }
+        select {
+            background: #16213e;
+            color: #eee;
+            border: 1px solid #00d9ff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .ai-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #0f0f23;
+            border-radius: 8px;
+        }
+        .ai-section h3 { margin-top: 0; color: #00d9ff; }
+        .eval-bar {
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to right, #333 50%, #666 50%);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            margin: 10px 0;
+        }
+        .eval-fill {
+            height: 100%;
+            background: #00d9ff;
+            transition: width 0.3s ease;
+        }
+        .eval-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 20px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 0 2px #000;
+        }
+        .thinking { animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -92,6 +135,29 @@
         <p>Turn: <span id="turn">-</span> | Move: <span id="move-num">-</span></p>
         <button onclick="newGame()">New Game</button>
         <button onclick="resign()">Resign</button>
+        
+        <div class="ai-section">
+            <h3>AI Controls</h3>
+            <label>Difficulty: </label>
+            <select id="ai-difficulty">
+                <option value="easy">Easy (Depth 2)</option>
+                <option value="medium" selected>Medium (Depth 4)</option>
+                <option value="hard">Hard (Depth 6)</option>
+            </select>
+            <br><br>
+            <button id="ai-move-btn" onclick="makeAIMove()">AI Move</button>
+            <button id="ai-hint-btn" onclick="getAIHint()">Get Hint</button>
+            <button onclick="toggleAutoPlay()">Auto-Play AI</button>
+            <p id="ai-status"></p>
+            <div>
+                <label>Evaluation: </label>
+                <div class="eval-bar">
+                    <div class="eval-fill" id="eval-fill"></div>
+                    <div class="eval-text" id="eval-text">0.00</div>
+                </div>
+            </div>
+        </div>
+        
         <h3>Move History</h3>
         <div id="moves-list"></div>
     </div>
@@ -102,6 +168,7 @@
         let game;
         let selectedCell = null;
         let legalMoves = [];
+        let autoPlayInterval = null;
 
         // Piece unicode symbols
         const PIECE_SYMBOLS = {
@@ -184,6 +251,7 @@
                     selectedCell = null;
                     legalMoves = [];
                     updateUI();
+                    updateEvaluation();
                     return;
                 }
             }
@@ -237,22 +305,150 @@
         }
 
         window.newGame = function() {
+            stopAutoPlay();
             game = new WasmGame();
+            game.clear_ai_cache();
             selectedCell = null;
             legalMoves = [];
             updateUI();
+            updateEvaluation();
         };
 
         window.resign = function() {
+            stopAutoPlay();
             game.resign();
             updateUI();
         };
+
+        window.makeAIMove = async function() {
+            const status = JSON.parse(game.get_status());
+            if (status !== 'Ongoing') return;
+            
+            const difficulty = document.getElementById('ai-difficulty').value;
+            const aiStatus = document.getElementById('ai-status');
+            const aiBtn = document.getElementById('ai-move-btn');
+            
+            aiBtn.disabled = true;
+            aiStatus.textContent = 'AI thinking...';
+            aiStatus.className = 'thinking';
+            
+            // Use setTimeout to allow UI to update
+            await new Promise(r => setTimeout(r, 10));
+            
+            const success = game.make_ai_move(difficulty);
+            
+            if (success) {
+                selectedCell = null;
+                legalMoves = [];
+                updateUI();
+                updateEvaluation();
+                aiStatus.textContent = '';
+            } else {
+                aiStatus.textContent = 'No legal moves available';
+            }
+            
+            aiStatus.className = '';
+            aiBtn.disabled = false;
+        };
+
+        window.getAIHint = async function() {
+            const status = JSON.parse(game.get_status());
+            if (status !== 'Ongoing') return;
+            
+            const difficulty = document.getElementById('ai-difficulty').value;
+            const aiStatus = document.getElementById('ai-status');
+            const hintBtn = document.getElementById('ai-hint-btn');
+            
+            hintBtn.disabled = true;
+            aiStatus.textContent = 'Calculating hint...';
+            aiStatus.className = 'thinking';
+            
+            await new Promise(r => setTimeout(r, 10));
+            
+            const result = game.get_ai_move(difficulty);
+            
+            if (result && result !== 'null') {
+                const move = JSON.parse(result);
+                const fromQ = move.from[0], fromR = move.from[1];
+                const toQ = move.to[0], toR = move.to[1];
+                const scoreStr = (move.score / 100).toFixed(2);
+                aiStatus.textContent = `Best: (${fromQ},${fromR}) → (${toQ},${toR}), Score: ${scoreStr}, Nodes: ${move.nodes}`;
+                
+                // Highlight the suggested move
+                selectedCell = { q: fromQ, r: fromR };
+                legalMoves = JSON.parse(game.get_legal_moves_for_piece(fromQ, fromR));
+                renderBoard();
+            } else {
+                aiStatus.textContent = 'No moves available';
+            }
+            
+            aiStatus.className = '';
+            hintBtn.disabled = false;
+        };
+
+        window.toggleAutoPlay = function() {
+            if (autoPlayInterval) {
+                stopAutoPlay();
+            } else {
+                startAutoPlay();
+            }
+        };
+
+        function startAutoPlay() {
+            const status = JSON.parse(game.get_status());
+            if (status !== 'Ongoing') return;
+            
+            document.getElementById('ai-status').textContent = 'Auto-play enabled';
+            autoPlayInterval = setInterval(async () => {
+                const status = JSON.parse(game.get_status());
+                if (status !== 'Ongoing') {
+                    stopAutoPlay();
+                    return;
+                }
+                await makeAIMove();
+            }, 500);
+        }
+
+        function stopAutoPlay() {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+                autoPlayInterval = null;
+                document.getElementById('ai-status').textContent = 'Auto-play stopped';
+            }
+        }
+
+        function updateEvaluation() {
+            const evalScore = game.evaluate();
+            const evalText = document.getElementById('eval-text');
+            const evalFill = document.getElementById('eval-fill');
+            
+            // Convert centipawns to display value
+            const displayScore = (evalScore / 100).toFixed(2);
+            const prefix = evalScore > 0 ? '+' : '';
+            evalText.textContent = `${prefix}${displayScore}`;
+            
+            // Calculate fill width (0-100%), center is 50%
+            // Clamp to ±10 pawns range for display
+            const clampedScore = Math.max(-1000, Math.min(1000, evalScore));
+            const fillPercent = 50 + (clampedScore / 20); // ±1000 maps to ±50%
+            evalFill.style.width = `${fillPercent}%`;
+            
+            // Color based on advantage
+            if (evalScore > 50) {
+                evalFill.style.background = '#00d9ff'; // White advantage - cyan
+            } else if (evalScore < -50) {
+                evalFill.style.background = '#ff6b6b'; // Black advantage - red
+            } else {
+                evalFill.style.background = '#888'; // Equal - gray
+            }
+        }
 
         // Initialize
         async function main() {
             await init();
             game = new WasmGame();
             updateUI();
+            updateEvaluation();
             document.getElementById('status').textContent = 'Game ready - White to move';
         }
 
