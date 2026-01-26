@@ -239,7 +239,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
   <div class="frame">
     <aside class="panel">
       <h1>NB Graph</h1>
-      <p>Directed links between nb docs. Reload after running the build script.</p>
+      <p>Directed links between nb docs (arrowheads show direction). Reload after running the build script.</p>
       <p>Zoom: trackpad pinch or scroll. Pan: drag the background. Double-click to re-center.</p>
       <div class="stats" id="stats">Loading graph...</div>
       <div class="footer">
@@ -297,13 +297,27 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         .force("charge", d3.forceManyBody().strength(-220))
         .force("center", d3.forceCenter(width() / 2, height() / 2));
 
+      const defs = svg.append("defs");
+      defs.append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 14)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "#2b3b4d");
+
       const link = group.append("g")
         .attr("stroke-linecap", "round")
         .selectAll("line")
         .data(graph.edges)
         .enter()
         .append("line")
-        .attr("class", "edge");
+        .attr("class", "edge")
+        .attr("marker-end", "url(#arrow)");
 
       const node = group.append("g")
         .selectAll("g")
