@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Constant Node Size
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #hover #hitbox #svg
 
 ## Motivation
 - You wanted the enlarged hover area without changing the visible node size.
@@ -17,4 +17,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `.attr("r", 6).attr("class", "dot")`
 - Commit: a3baf01 (separate dot class + invisible hitbox)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
