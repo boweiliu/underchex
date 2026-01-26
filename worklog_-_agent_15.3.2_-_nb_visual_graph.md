@@ -1,6 +1,6 @@
 # Worklog - Agent 15.3.2 - NB Visual Graph
 
-Tags: #worklog #nb #visualization
+Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 
 ## Human Requests
 - Create `nb-visual/` with a Python program that extracts nb hyperlink structure into a serialized directed graph and renders an HTML visualization that auto-updates when rebuilt.
