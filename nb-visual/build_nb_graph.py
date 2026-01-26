@@ -259,6 +259,20 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     const width = () => svg.node().clientWidth;
     const height = () => svg.node().clientHeight;
 
+    function fitToViewport(group, nodes) {
+      const w = width();
+      const h = height();
+      const padding = 40;
+      const xExtent = d3.extent(nodes, d => d.x);
+      const yExtent = d3.extent(nodes, d => d.y);
+      const graphW = Math.max(1, xExtent[1] - xExtent[0]);
+      const graphH = Math.max(1, yExtent[1] - yExtent[0]);
+      const scale = Math.min((w - padding * 2) / graphW, (h - padding * 2) / graphH, 2);
+      const tx = (w - graphW * scale) / 2 - xExtent[0] * scale;
+      const ty = (h - graphH * scale) / 2 - yExtent[0] * scale;
+      group.attr("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+    }
+
     function showTooltip(event, d) {
       tooltip.style.opacity = 1;
       tooltip.style.left = `${event.offsetX + 12}px`;
@@ -274,12 +288,13 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       stats.textContent = `Nodes: ${graph.nodes.length} | Edges: ${graph.edges.length}`;
       svg.selectAll("*").remove();
 
+      const group = svg.append("g");
       const simulation = d3.forceSimulation(graph.nodes)
         .force("link", d3.forceLink(graph.edges).id(d => d.id).distance(80))
         .force("charge", d3.forceManyBody().strength(-220))
         .force("center", d3.forceCenter(width() / 2, height() / 2));
 
-      const link = svg.append("g")
+      const link = group.append("g")
         .attr("stroke-linecap", "round")
         .selectAll("line")
         .data(graph.edges)
@@ -287,28 +302,12 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         .append("line")
         .attr("class", "edge");
 
-      const node = svg.append("g")
+      const node = group.append("g")
         .selectAll("g")
         .data(graph.nodes)
         .enter()
         .append("g")
-        .attr("class", "node")
-        .call(d3.drag()
-          .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          })
-        );
+        .attr("class", "node");
 
       node.append("circle")
         .attr("r", 6)
@@ -320,19 +319,23 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         .attr("y", 4)
         .text(d => d.title.length > 22 ? d.title.slice(0, 22) + "..." : d.title);
 
-      simulation.on("tick", () => {
-        link
-          .attr("x1", d => d.source.x)
-          .attr("y1", d => d.source.y)
-          .attr("x2", d => d.target.x)
-          .attr("y2", d => d.target.y);
+      simulation.stop();
+      for (let i = 0; i < 240; i += 1) {
+        simulation.tick();
+      }
 
-        node.attr("transform", d => `translate(${d.x}, ${d.y})`);
-      });
+      link
+        .attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+
+      node.attr("transform", d => `translate(${d.x}, ${d.y})`);
+
+      fitToViewport(group, graph.nodes);
 
       window.addEventListener("resize", () => {
-        simulation.force("center", d3.forceCenter(width() / 2, height() / 2));
-        simulation.alpha(0.3).restart();
+        fitToViewport(group, graph.nodes);
       });
     }
 
