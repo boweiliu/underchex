@@ -19,5 +19,4 @@ Tags: #worklog-details #nb-visual
 - Snippet: `.attr("class", "hitbox");`
 - Commit: a3baf01 (invisible hitbox + hover behavior adjustment)
 
-[Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
-
+[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
