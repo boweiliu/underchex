@@ -124,8 +124,9 @@ def build_graph(notebook_path: Path) -> dict:
     }
 
 
-def write_index_html(out_dir: Path) -> None:
+def write_index_html(out_dir: Path, graph: dict) -> None:
     html_path = out_dir / "index.html"
+    graph_json = json.dumps(graph)
     html = """<!doctype html>
 <html lang="en">
 <head>
@@ -251,6 +252,7 @@ def write_index_html(out_dir: Path) -> None:
     </main>
   </div>
   <script>
+    const graph = __GRAPH_JSON__;
     const tooltip = document.getElementById("tooltip");
     const stats = document.getElementById("stats");
     const svg = d3.select("svg");
@@ -334,17 +336,12 @@ def write_index_html(out_dir: Path) -> None:
       });
     }
 
-    fetch("graph.json")
-      .then(response => response.json())
-      .then(renderGraph)
-      .catch(error => {
-        stats.textContent = "Failed to load graph.json";
-        console.error(error);
-      });
+    renderGraph(graph);
   </script>
 </body>
 </html>
 """
+    html = html.replace("__GRAPH_JSON__", graph_json)
     html_path.write_text(html, encoding="utf-8")
 
 
@@ -362,7 +359,7 @@ def main() -> int:
     graph = build_graph(notebook_path)
     graph_path = out_dir / "graph.json"
     graph_path.write_text(json.dumps(graph, indent=2), encoding="utf-8")
-    write_index_html(out_dir)
+    write_index_html(out_dir, graph)
 
     print(f"Wrote {graph_path} and {out_dir / 'index.html'}")
     return 0
