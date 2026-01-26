@@ -295,7 +295,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       const simulation = d3.forceSimulation(graph.nodes)
         .force("link", d3.forceLink(graph.edges)
           .id(d => d.id)
-          .distance(70)
+          .distance(140)
           .strength(0.8))
         .force("charge", d3.forceManyBody().strength(-160))
         .force("collide", d3.forceCollide(10))
