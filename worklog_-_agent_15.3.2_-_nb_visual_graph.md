@@ -11,6 +11,7 @@ Tags: #worklog #nb #visualization
 - Reduce label clutter (fade labels unless hovered), enlarge hover hitbox (but keep it invisible), and add a label visibility toggle (hide/hover/show).
 - Ensure hover hitbox does not render and supports hovering over label text.
 - Add another toggle for label visibility and keep nodes visually unchanged.
+- Correct signoff format to “agent #15.3.2 opus via codex” and update prior worklog docs accordingly.
 
 ## Worklog Details
 - [[Worklog Details - NB Visual - Graph Builder]]
@@ -39,9 +40,10 @@ Tags: #worklog #nb #visualization
 - Tuned layout forces (link distance/strength, charge, collide, mild centering) and later doubled average link distance.
 - Faded labels by default, added hover highlight, expanded invisible hitbox, and ensured text hover works.
 - Added label visibility toggle (hide/hover/show) with UI controls and CSS states.
+- Corrected all related worklog signoffs to the requested “agent #15.3.2 opus via codex” format.
 
 ## Notes
 - Several incremental commits were made to keep changes small and traceable.
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
