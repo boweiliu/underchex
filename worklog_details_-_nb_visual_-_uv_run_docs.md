@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - uv Run Docs
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #uv #cli
 
 ## Motivation
 - You asked for `uv run` to be the documented way to execute the builder.
@@ -16,4 +16,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `uv run nb-visual/build_nb_graph.py`
 - Commit: 7fa7d4e (README update)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
