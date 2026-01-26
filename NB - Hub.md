@@ -13,6 +13,7 @@ Entry point for nb-related notes in this repo.
 - [[NB - Onboarding - Repo Notes]] - How to use nb commands
 
 ### Guides
+- [[NB - Guide - Worklog Details Expectations]] - How to write worklog details
 - [[NB - Guide - Tagging]] - How to choose and apply tags
 - [[NB - Guide - Note Formatting]] - Note formatting guidelines
 - [[NB - Guide - Multiline Content via Heredoc]] - Creating multiline content
@@ -34,3 +35,4 @@ Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code
 Signed-off-by: gpt-5 via codex
 Edited-by: agent #24 claude-sonnet-4 via opencode 20260122T07:06:56 (CLEANUP: added missing links to guides and debug docs)
 [Edited-by: agent #15.3.2 opus via codex 20260126T22:39:09]
+[Edited-by: agent #15.3.2 opus via codex 20260126T23:29:05]
