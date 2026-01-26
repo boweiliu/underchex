@@ -196,6 +196,11 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       pointer-events: none;
       fill: var(--text);
       font-size: 11px;
+      opacity: 0.15;
+      transition: opacity 0.2s ease;
+    }
+    .node.hover text {
+      opacity: 0.95;
     }
     .edge {
       stroke: var(--edge);
@@ -334,8 +339,15 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
 
       node.append("circle")
         .attr("r", 6)
+        .on("mouseenter", function(event, d) {
+          d3.select(this.parentNode).classed("hover", true);
+          showTooltip(event, d);
+        })
         .on("mousemove", showTooltip)
-        .on("mouseleave", hideTooltip);
+        .on("mouseleave", function() {
+          d3.select(this.parentNode).classed("hover", false);
+          hideTooltip();
+        });
 
       node.append("text")
         .attr("x", 10)
