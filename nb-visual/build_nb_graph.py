@@ -240,6 +240,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     <aside class="panel">
       <h1>NB Graph</h1>
       <p>Directed links between nb docs. Reload after running the build script.</p>
+      <p>Zoom: trackpad pinch or scroll. Pan: drag the background. Double-click to re-center.</p>
       <div class="stats" id="stats">Loading graph...</div>
       <div class="footer">
         <div>Build: <code>python nb-visual/build_nb_graph.py</code></div>
@@ -270,7 +271,9 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       const scale = Math.min((w - padding * 2) / graphW, (h - padding * 2) / graphH, 2);
       const tx = (w - graphW * scale) / 2 - xExtent[0] * scale;
       const ty = (h - graphH * scale) / 2 - yExtent[0] * scale;
-      group.attr("transform", `translate(${tx}, ${ty}) scale(${scale})`);
+      const transform = d3.zoomIdentity.translate(tx, ty).scale(scale);
+      group.attr("transform", transform);
+      return transform;
     }
 
     function showTooltip(event, d) {
@@ -332,10 +335,22 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
 
       node.attr("transform", d => `translate(${d.x}, ${d.y})`);
 
-      fitToViewport(group, graph.nodes);
+      const baseTransform = fitToViewport(group, graph.nodes);
+      const zoom = d3.zoom()
+        .scaleExtent([0.2, 4])
+        .on("zoom", (event) => {
+          group.attr("transform", event.transform);
+        });
+
+      svg.call(zoom).call(zoom.transform, baseTransform);
+      svg.on("dblclick.zoom", null);
+      svg.on("dblclick", () => {
+        svg.transition().duration(250).call(zoom.transform, baseTransform);
+      });
 
       window.addEventListener("resize", () => {
-        fitToViewport(group, graph.nodes);
+        const nextTransform = fitToViewport(group, graph.nodes);
+        svg.call(zoom.transform, nextTransform);
       });
     }
 
