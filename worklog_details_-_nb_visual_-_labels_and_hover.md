@@ -21,5 +21,4 @@ Tags: #worklog-details #nb-visual
 - Snippet: `body.classList.add(`labels-${labelMode.value}`);`
 - Commits: c9febe3 (fade labels), 8d56d75 (bigger hitbox), 32098f3 (label toggle)
 
-[Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
-
+[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
