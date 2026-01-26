@@ -19,5 +19,4 @@ Tags: #worklog-details #nb-visual
 - Snippet: `.distance(140).strength(0.8)`
 - Commits: 10d7639 (arrowhead visibility), 5ff14e7 (layout force tuning), 7c34bb1 (2x link distance)
 
-[Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
-
+[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
