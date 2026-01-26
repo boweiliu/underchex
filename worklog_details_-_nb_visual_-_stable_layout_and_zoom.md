@@ -21,5 +21,4 @@ Tags: #worklog-details #nb-visual
 - Snippet: `svg.call(zoom).call(zoom.transform, baseTransform);`
 - Commits: 532131e (stable layout), 6e5abae (zoom/pan), b859e8f (arrowheads)
 
-[Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
-
+[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
