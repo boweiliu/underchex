@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Inline Graph JSON
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #cors #html #serialization
 
 ## Motivation
 - Opening the HTML via `file://` failed due to CORS when `index.html` tried to fetch `graph.json`. You requested inlining the JSON.
@@ -17,4 +17,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `const graph = __GRAPH_JSON__;`
 - Commit: fd19e17 (inline graph JSON to avoid CORS)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
