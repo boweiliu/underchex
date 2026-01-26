@@ -2,6 +2,11 @@
 
 Tags: #nb #guide #worklog-details #documentation
 
+## Context
+- **Worklog**: A session-level summary of what the agent did, why, and how it maps to human requests.
+- **Worklog details doc**: A focused, single-topic drill-down that explains one request or change with motivation, mechanics, and references.
+- **How they interact**: The worklog lists all requests and links to each detail doc; detail docs provide depth without bloating the main worklog.
+
 ## Purpose
 Clarify what a “worklog details” doc should contain and how to decide what to include.
 
@@ -30,4 +35,4 @@ Clarify what a “worklog details” doc should contain and how to decide what t
 - Did it mention the human prompt that triggered it?
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T23:29:05]
-[Edited-by: agent #15.3.2 opus via codex 20260126T23:31:41]
+[Edited-by: agent #15.3.2 opus via codex 20260126T23:39:52]
