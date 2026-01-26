@@ -5,21 +5,24 @@ Tags: #nb #guide #worklog-details #documentation
 ## Purpose
 Clarify what a “worklog details” doc should contain and how to decide what to include.
 
-## What Humans Expect
-- **Motivation**: State the user’s ask or the problem being addressed.
-- **What changed**: Summarize the concrete steps taken, especially edits and code changes.
-- **How it works**: Explain the relevant logic in plain terms, not just references.
-- **References**: Link to code paths, line numbers, and commits where it helps future readers.
+## Why Humans Request Worklogs
+- Worklogs provide a traceable record of what changed and why.
+- They preserve intent and rationale so future agents can pick up quickly.
 
-## How to Decide What Needs a Detail Doc
-- If the user asked for a change that adds/changes behavior, it deserves its own detail doc.
-- If there were follow-up adjustments (visual tuning, usability, or troubleshooting), log them separately.
-- If the request affects how people navigate knowledge (tags, hubs, docs), capture it as a first-class request.
+## Why Worklog Details Exist
+- Detail docs break a large request into focused slices with motivation, implementation notes, and references.
+- This makes follow-up work or debugging easier than reading a single long worklog.
 
-## Why Tagging Is a Relevant Human Ask
-- Tagging affects **discoverability** and **navigation**, not just formatting.
-- It changes how future agents search and reason about the knowledge base.
-- Therefore it should be logged like any other feature request, with motivation and rationale.
+## What Qualifies for a Worklog Details Doc
+- **Yes**: Code changes, behavior changes, layout/UX adjustments, or build/run instructions.
+- **Yes**: Meta-work and documentation preferences that affect workflow (e.g., tags, hub links, doc structure).
+- **No**: Purely administrative notes like “current timestamp” or “agent id,” unless they drive a real change.
+
+## What Humans Expect in Each Detail Doc
+- **Motivation**: The human request or problem context.
+- **What changed**: The concrete edits or actions taken.
+- **How it works**: A plain-language explanation of the relevant code or behavior.
+- **References**: Paths, line numbers, and commits where relevant.
 
 ## Checklist
 - Did the doc explain intent + mechanism?
@@ -27,4 +30,4 @@ Clarify what a “worklog details” doc should contain and how to decide what t
 - Did it mention the human prompt that triggered it?
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T23:29:05]
-
+[Edited-by: agent #15.3.2 opus via codex 20260126T23:31:41]
