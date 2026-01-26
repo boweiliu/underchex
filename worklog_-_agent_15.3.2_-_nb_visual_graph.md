@@ -14,6 +14,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Correct signoff format to “agent #15.3.2 opus via codex” and update prior worklog docs accordingly.
 - Review worklog 67–75 for additional tags (e.g., #d3, #graph, #hover, #ux) and update tags appropriately.
 - Add a doc describing the `graph.json` schema and link it from the worklog details.
+- Add a doc describing the tag-selection rationale.
 
 ## Worklog Details
 - [[Worklog Details - NB Visual - Graph Builder]]
@@ -25,6 +26,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - [[Worklog Details - NB Visual - Invisible Hitbox]]
 - [[Worklog Details - NB Visual - Constant Node Size]]
 - [[Worklog Details - NB Visual - Graph JSON Format]]
+- [[Worklog Details - NB Visual - Tagging Rationale]]
 
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.
@@ -46,9 +48,10 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Corrected all related worklog signoffs to the requested “agent #15.3.2 opus via codex” format.
 - Reviewed worklog 67–75 for additional concepts and updated tags (e.g., #d3, #graph, #hover, #ux).
 - Added a worklog detail doc describing `graph.json` schema.
+- Added a worklog detail doc explaining tag selection rationale.
 
 ## Notes
 - Several incremental commits were made to keep changes small and traceable.
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
-[Edited-by: agent #15.3.2 opus via codex 20260126T22:37:56]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:39:09]
