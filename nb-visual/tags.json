@@ -1,0 +1,501 @@
+{
+  "tags": [
+    {
+      "tag": "nb-visual",
+      "count": 11,
+      "doc_ids": [
+        26,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ]
+    },
+    {
+      "tag": "worklog-details",
+      "count": 11,
+      "doc_ids": [
+        18,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72
+      ]
+    },
+    {
+      "tag": "guide",
+      "count": 6,
+      "doc_ids": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        75
+      ]
+    },
+    {
+      "tag": "nb",
+      "count": 5,
+      "doc_ids": [
+        5,
+        6,
+        17,
+        18,
+        26
+      ]
+    },
+    {
+      "tag": "graph",
+      "count": 4,
+      "doc_ids": [
+        26,
+        64,
+        65,
+        72
+      ]
+    },
+    {
+      "tag": "ux",
+      "count": 4,
+      "doc_ids": [
+        16,
+        26,
+        67,
+        68
+      ]
+    },
+    {
+      "tag": "git",
+      "count": 3,
+      "doc_ids": [
+        12,
+        75,
+        76
+      ]
+    },
+    {
+      "tag": "hover",
+      "count": 3,
+      "doc_ids": [
+        63,
+        67,
+        68
+      ]
+    },
+    {
+      "tag": "hub",
+      "count": 3,
+      "doc_ids": [
+        5,
+        7,
+        76
+      ]
+    },
+    {
+      "tag": "knowledge-base",
+      "count": 3,
+      "doc_ids": [
+        5,
+        13,
+        20
+      ]
+    },
+    {
+      "tag": "onboarding",
+      "count": 3,
+      "doc_ids": [
+        6,
+        7,
+        20
+      ]
+    },
+    {
+      "tag": "workflow",
+      "count": 3,
+      "doc_ids": [
+        6,
+        13,
+        20
+      ]
+    },
+    {
+      "tag": "worktrees",
+      "count": 3,
+      "doc_ids": [
+        74,
+        75,
+        76
+      ]
+    },
+    {
+      "tag": "cli",
+      "count": 2,
+      "doc_ids": [
+        19,
+        71
+      ]
+    },
+    {
+      "tag": "codex",
+      "count": 2,
+      "doc_ids": [
+        7,
+        8
+      ]
+    },
+    {
+      "tag": "d3",
+      "count": 2,
+      "doc_ids": [
+        26,
+        69
+      ]
+    },
+    {
+      "tag": "debug",
+      "count": 2,
+      "doc_ids": [
+        0,
+        12
+      ]
+    },
+    {
+      "tag": "hitbox",
+      "count": 2,
+      "doc_ids": [
+        63,
+        67
+      ]
+    },
+    {
+      "tag": "layout",
+      "count": 2,
+      "doc_ids": [
+        69,
+        72
+      ]
+    },
+    {
+      "tag": "markdown",
+      "count": 2,
+      "doc_ids": [
+        16,
+        64
+      ]
+    },
+    {
+      "tag": "svg",
+      "count": 2,
+      "doc_ids": [
+        63,
+        69
+      ]
+    },
+    {
+      "tag": "tags",
+      "count": 2,
+      "doc_ids": [
+        17,
+        70
+      ]
+    },
+    {
+      "tag": "taxonomy",
+      "count": 2,
+      "doc_ids": [
+        17,
+        70
+      ]
+    },
+    {
+      "tag": "arrowheads",
+      "count": 1,
+      "doc_ids": [
+        72
+      ]
+    },
+    {
+      "tag": "browser",
+      "count": 1,
+      "doc_ids": [
+        16
+      ]
+    },
+    {
+      "tag": "commands",
+      "count": 1,
+      "doc_ids": [
+        6
+      ]
+    },
+    {
+      "tag": "controls",
+      "count": 1,
+      "doc_ids": [
+        68
+      ]
+    },
+    {
+      "tag": "cors",
+      "count": 1,
+      "doc_ids": [
+        66
+      ]
+    },
+    {
+      "tag": "debugging",
+      "count": 1,
+      "doc_ids": [
+        74
+      ]
+    },
+    {
+      "tag": "decision",
+      "count": 1,
+      "doc_ids": [
+        13
+      ]
+    },
+    {
+      "tag": "deprecated",
+      "count": 1,
+      "doc_ids": [
+        8
+      ]
+    },
+    {
+      "tag": "direnv",
+      "count": 1,
+      "doc_ids": [
+        74
+      ]
+    },
+    {
+      "tag": "documentation",
+      "count": 1,
+      "doc_ids": [
+        18
+      ]
+    },
+    {
+      "tag": "forces",
+      "count": 1,
+      "doc_ids": [
+        72
+      ]
+    },
+    {
+      "tag": "formatting",
+      "count": 1,
+      "doc_ids": [
+        15
+      ]
+    },
+    {
+      "tag": "heredoc",
+      "count": 1,
+      "doc_ids": [
+        14
+      ]
+    },
+    {
+      "tag": "html",
+      "count": 1,
+      "doc_ids": [
+        66
+      ]
+    },
+    {
+      "tag": "json",
+      "count": 1,
+      "doc_ids": [
+        65
+      ]
+    },
+    {
+      "tag": "labels",
+      "count": 1,
+      "doc_ids": [
+        68
+      ]
+    },
+    {
+      "tag": "merging",
+      "count": 1,
+      "doc_ids": [
+        75
+      ]
+    },
+    {
+      "tag": "naming",
+      "count": 1,
+      "doc_ids": [
+        0
+      ]
+    },
+    {
+      "tag": "opencode",
+      "count": 1,
+      "doc_ids": [
+        19
+      ]
+    },
+    {
+      "tag": "pan",
+      "count": 1,
+      "doc_ids": [
+        69
+      ]
+    },
+    {
+      "tag": "project",
+      "count": 1,
+      "doc_ids": [
+        73
+      ]
+    },
+    {
+      "tag": "python",
+      "count": 1,
+      "doc_ids": [
+        64
+      ]
+    },
+    {
+      "tag": "remote",
+      "count": 1,
+      "doc_ids": [
+        12
+      ]
+    },
+    {
+      "tag": "scratch",
+      "count": 1,
+      "doc_ids": [
+        10
+      ]
+    },
+    {
+      "tag": "serialization",
+      "count": 1,
+      "doc_ids": [
+        66
+      ]
+    },
+    {
+      "tag": "shell",
+      "count": 1,
+      "doc_ids": [
+        14
+      ]
+    },
+    {
+      "tag": "subtopic",
+      "count": 1,
+      "doc_ids": [
+        14
+      ]
+    },
+    {
+      "tag": "tag1",
+      "count": 1,
+      "doc_ids": [
+        0
+      ]
+    },
+    {
+      "tag": "tag2",
+      "count": 1,
+      "doc_ids": [
+        0
+      ]
+    },
+    {
+      "tag": "testing",
+      "count": 1,
+      "doc_ids": [
+        19
+      ]
+    },
+    {
+      "tag": "tooling",
+      "count": 1,
+      "doc_ids": [
+        19
+      ]
+    },
+    {
+      "tag": "topic",
+      "count": 1,
+      "doc_ids": [
+        14
+      ]
+    },
+    {
+      "tag": "underchex",
+      "count": 1,
+      "doc_ids": [
+        73
+      ]
+    },
+    {
+      "tag": "uv",
+      "count": 1,
+      "doc_ids": [
+        71
+      ]
+    },
+    {
+      "tag": "visualization",
+      "count": 1,
+      "doc_ids": [
+        26
+      ]
+    },
+    {
+      "tag": "wikilinks",
+      "count": 1,
+      "doc_ids": [
+        64
+      ]
+    },
+    {
+      "tag": "worklog",
+      "count": 1,
+      "doc_ids": [
+        26
+      ]
+    },
+    {
+      "tag": "worklogs",
+      "count": 1,
+      "doc_ids": [
+        73
+      ]
+    },
+    {
+      "tag": "zoom",
+      "count": 1,
+      "doc_ids": [
+        69
+      ]
+    }
+  ],
+  "metadata": {
+    "total_tags": 62,
+    "total_tag_usages": 121
+  }
+}

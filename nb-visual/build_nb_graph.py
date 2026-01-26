@@ -10,6 +10,7 @@ from pathlib import Path
 
 H1_RE = re.compile(r"^#\s+(.+)$")
 LINK_RE = re.compile(r"\[\[([^\]]+)\]\]")
+TAG_RE = re.compile(r"#([a-zA-Z0-9_-]+)")
 
 
 def discover_notebook_path(cwd: Path) -> Path:
@@ -61,6 +62,18 @@ def normalize_link_target(raw: str) -> str:
     return target
 
 
+def extract_tags(text: str) -> list[str]:
+    """Extract hashtags from text, typically from 'Tags: #tag1 #tag2' lines."""
+    tags = []
+    for line in text.splitlines():
+        line_stripped = line.strip()
+        # Look for lines that start with "Tags:" (case insensitive)
+        if line_stripped.lower().startswith("tags:"):
+            found = TAG_RE.findall(line_stripped)
+            tags.extend(found)
+    return list(set(tags))  # dedupe
+
+
 def build_graph(notebook_path: Path) -> dict:
     files: list[Path] = []
     for path in notebook_path.rglob("*.md"):
@@ -74,6 +87,8 @@ def build_graph(notebook_path: Path) -> dict:
     title_to_ids: dict[str, list[int]] = {}
     path_to_id: dict[str, int] = {}
 
+    file_texts: dict[int, str] = {}  # Store file texts for reuse
+    
     for idx, path in enumerate(files):
         rel_path = path.relative_to(notebook_path)
         rel_posix = rel_path.as_posix()
@@ -82,12 +97,15 @@ def build_graph(notebook_path: Path) -> dict:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             text = path.read_text(encoding="utf-8", errors="replace")
+        file_texts[idx] = text
         lines = text.splitlines()
         title = extract_title(lines, default_title)
+        tags = extract_tags(text)
         node = {
             "id": idx,
             "title": title,
             "path": rel_posix,
+            "tags": tags,
         }
         nodes.append(node)
         title_to_ids.setdefault(title, []).append(idx)
@@ -96,10 +114,7 @@ def build_graph(notebook_path: Path) -> dict:
 
     edges = set()
     for idx, path in enumerate(files):
-        try:
-            text = path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            text = path.read_text(encoding="utf-8", errors="replace")
+        text = file_texts[idx]
         for raw in LINK_RE.findall(text):
             target = normalize_link_target(raw)
             if not target:
@@ -124,9 +139,10 @@ def build_graph(notebook_path: Path) -> dict:
     }
 
 
-def write_index_html(out_dir: Path, graph: dict) -> None:
+def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
     html_path = out_dir / "index.html"
     graph_json = json.dumps(graph)
+    tags_json = json.dumps(tags_data)
     html = """<!doctype html>
 <html lang="en">
 <head>
@@ -257,6 +273,62 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       padding: 6px 8px;
       font-size: 12px;
     }
+    .tag-section {
+      margin-top: 16px;
+    }
+    .tag-section h2 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .tag-list {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #10161f;
+      border-radius: 10px;
+      padding: 8px;
+    }
+    .tag-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .tag-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .tag-list::-webkit-scrollbar-thumb {
+      background: #2b3b4d;
+      border-radius: 3px;
+    }
+    .tag-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 8px;
+      margin: 2px 0;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .tag-item:hover {
+      background: #1a2533;
+    }
+    .tag-item .tag-name {
+      color: var(--accent);
+    }
+    .tag-item .tag-count {
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .node.tag-highlight .dot {
+      fill: #ffcc00;
+      stroke: #ffcc00;
+      stroke-width: 3px;
+    }
+    .node.tag-highlight text {
+      opacity: 1 !important;
+      fill: #ffcc00;
+    }
     @media (max-width: 900px) {
       .frame {
         grid-template-columns: 1fr;
@@ -284,6 +356,10 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         </select>
       </div>
       <div class="stats" id="stats">Loading graph...</div>
+      <div class="tag-section">
+        <h2>Tags</h2>
+        <div class="tag-list" id="tag-list"></div>
+      </div>
       <div class="footer">
         <div>Build: <code>python nb-visual/build_nb_graph.py</code></div>
         <div>Data: <code>nb-visual/graph.json</code></div>
@@ -296,13 +372,21 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
   </div>
   <script>
     const graph = __GRAPH_JSON__;
+    const tagsData = __TAGS_JSON__;
     const body = document.body;
     const labelMode = document.getElementById("label-mode");
     const tooltip = document.getElementById("tooltip");
     const stats = document.getElementById("stats");
+    const tagList = document.getElementById("tag-list");
     const svg = d3.select("svg");
     const width = () => svg.node().clientWidth;
     const height = () => svg.node().clientHeight;
+    
+    // Build a lookup from tag to doc_ids for highlighting
+    const tagToDocIds = {};
+    tagsData.tags.forEach(t => {
+      tagToDocIds[t.tag] = new Set(t.doc_ids);
+    });
 
     function fitToViewport(group, nodes) {
       const w = width();
@@ -436,13 +520,78 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       body.classList.add(`labels-${labelMode.value}`);
     });
 
+    function highlightDocsByTag(docIds) {
+      d3.selectAll(".node").each(function(d) {
+        const el = d3.select(this);
+        if (docIds && docIds.has(d.id)) {
+          el.classed("tag-highlight", true);
+        } else {
+          el.classed("tag-highlight", false);
+        }
+      });
+    }
+
+    function renderTagList() {
+      tagList.innerHTML = "";
+      tagsData.tags.forEach(t => {
+        const item = document.createElement("div");
+        item.className = "tag-item";
+        item.innerHTML = `<span class="tag-name">#${t.tag}</span><span class="tag-count">${t.count}</span>`;
+        item.addEventListener("mouseenter", () => {
+          highlightDocsByTag(tagToDocIds[t.tag]);
+        });
+        item.addEventListener("mouseleave", () => {
+          highlightDocsByTag(null);
+        });
+        tagList.appendChild(item);
+      });
+    }
+
     renderGraph(graph);
+    renderTagList();
   </script>
 </body>
 </html>
 """
     html = html.replace("__GRAPH_JSON__", graph_json)
+    html = html.replace("__TAGS_JSON__", tags_json)
     html_path.write_text(html, encoding="utf-8")
+
+
+def build_tags_data(graph: dict) -> dict:
+    """Build tag frequency data from graph nodes.
+    
+    Returns a dict with:
+    - tags: list of {tag, count, doc_ids} sorted by count descending
+    """
+    tag_to_docs: dict[str, list[int]] = {}
+    
+    for node in graph["nodes"]:
+        node_id = node["id"]
+        for tag in node.get("tags", []):
+            tag_lower = tag.lower()
+            if tag_lower not in tag_to_docs:
+                tag_to_docs[tag_lower] = []
+            tag_to_docs[tag_lower].append(node_id)
+    
+    tags_list = []
+    for tag, doc_ids in tag_to_docs.items():
+        tags_list.append({
+            "tag": tag,
+            "count": len(doc_ids),
+            "doc_ids": sorted(doc_ids),
+        })
+    
+    # Sort by count descending, then alphabetically
+    tags_list.sort(key=lambda x: (-x["count"], x["tag"]))
+    
+    return {
+        "tags": tags_list,
+        "metadata": {
+            "total_tags": len(tags_list),
+            "total_tag_usages": sum(t["count"] for t in tags_list),
+        },
+    }
 
 
 def main() -> int:
@@ -459,9 +608,14 @@ def main() -> int:
     graph = build_graph(notebook_path)
     graph_path = out_dir / "graph.json"
     graph_path.write_text(json.dumps(graph, indent=2), encoding="utf-8")
-    write_index_html(out_dir, graph)
+    
+    tags_data = build_tags_data(graph)
+    tags_path = out_dir / "tags.json"
+    tags_path.write_text(json.dumps(tags_data, indent=2), encoding="utf-8")
+    
+    write_index_html(out_dir, graph, tags_data)
 
-    print(f"Wrote {graph_path} and {out_dir / 'index.html'}")
+    print(f"Wrote {graph_path}, {tags_path}, and {out_dir / 'index.html'}")
     return 0
 
 
