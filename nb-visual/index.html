@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NB Graph</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    :root {
+      --bg: #0f151d;
+      --panel: #141c26;
+      --text: #f1f4f8;
+      --muted: #9fb0c6;
+      --accent: #6bd4ff;
+      --edge: #2b3b4d;
+    }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+    }
+    .frame {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      height: 100%;
+    }
+    .panel {
+      background: var(--panel);
+      padding: 20px;
+      border-right: 1px solid #1e2a38;
+      overflow: auto;
+    }
+    .panel h1 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+    .panel p {
+      margin: 6px 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .stats {
+      margin-top: 16px;
+      padding: 12px;
+      background: #10161f;
+      border-radius: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #graph {
+      position: relative;
+    }
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+    .node circle {
+      fill: var(--accent);
+      stroke: #0b1118;
+      stroke-width: 2px;
+    }
+    .node text {
+      pointer-events: none;
+      fill: var(--text);
+      font-size: 11px;
+    }
+    .edge {
+      stroke: var(--edge);
+      stroke-width: 1.2px;
+      opacity: 0.6;
+    }
+    .tooltip {
+      position: absolute;
+      background: #0b1118;
+      border: 1px solid #213245;
+      color: var(--text);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      max-width: 260px;
+    }
+    .footer {
+      margin-top: 18px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .footer code {
+      color: var(--text);
+    }
+    @media (max-width: 900px) {
+      .frame {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+      .panel {
+        border-right: none;
+        border-bottom: 1px solid #1e2a38;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <aside class="panel">
+      <h1>NB Graph</h1>
+      <p>Directed links between nb docs. Reload after running the build script.</p>
+      <div class="stats" id="stats">Loading graph...</div>
+      <div class="footer">
+        <div>Build: <code>python nb-visual/build_nb_graph.py</code></div>
+        <div>Data: <code>nb-visual/graph.json</code></div>
+      </div>
+    </aside>
+    <main id="graph">
+      <div class="tooltip" id="tooltip"></div>
+      <svg></svg>
+    </main>
+  </div>
+  <script>
+    const tooltip = document.getElementById("tooltip");
+    const stats = document.getElementById("stats");
+    const svg = d3.select("svg");
+    const width = () => svg.node().clientWidth;
+    const height = () => svg.node().clientHeight;
+
+    function showTooltip(event, d) {
+      tooltip.style.opacity = 1;
+      tooltip.style.left = `${event.offsetX + 12}px`;
+      tooltip.style.top = `${event.offsetY + 12}px`;
+      tooltip.textContent = `${d.title} (${d.path})`;
+    }
+
+    function hideTooltip() {
+      tooltip.style.opacity = 0;
+    }
+
+    function renderGraph(graph) {
+      stats.textContent = `Nodes: ${graph.nodes.length} | Edges: ${graph.edges.length}`;
+      svg.selectAll("*").remove();
+
+      const simulation = d3.forceSimulation(graph.nodes)
+        .force("link", d3.forceLink(graph.edges).id(d => d.id).distance(80))
+        .force("charge", d3.forceManyBody().strength(-220))
+        .force("center", d3.forceCenter(width() / 2, height() / 2));
+
+      const link = svg.append("g")
+        .attr("stroke-linecap", "round")
+        .selectAll("line")
+        .data(graph.edges)
+        .enter()
+        .append("line")
+        .attr("class", "edge");
+
+      const node = svg.append("g")
+        .selectAll("g")
+        .data(graph.nodes)
+        .enter()
+        .append("g")
+        .attr("class", "node")
+        .call(d3.drag()
+          .on("start", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          })
+          .on("drag", (event, d) => {
+            d.fx = event.x;
+            d.fy = event.y;
+          })
+          .on("end", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          })
+        );
+
+      node.append("circle")
+        .attr("r", 6)
+        .on("mousemove", showTooltip)
+        .on("mouseleave", hideTooltip);
+
+      node.append("text")
+        .attr("x", 10)
+        .attr("y", 4)
+        .text(d => d.title.length > 22 ? d.title.slice(0, 22) + "..." : d.title);
+
+      simulation.on("tick", () => {
+        link
+          .attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
+
+        node.attr("transform", d => `translate(${d.x}, ${d.y})`);
+      });
+
+      window.addEventListener("resize", () => {
+        simulation.force("center", d3.forceCenter(width() / 2, height() / 2));
+        simulation.alpha(0.3).restart();
+      });
+    }
+
+    fetch("graph.json")
+      .then(response => response.json())
+      .then(renderGraph)
+      .catch(error => {
+        stats.textContent = "Failed to load graph.json";
+        console.error(error);
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "title": "NB - Debug - MD Trailer in List",
+      "path": "20260121140130.md"
+    },
+    {
+      "id": 1,
+      "title": "Worklog - Agent 4 - Self-Play Module",
+      "path": "20260122025137.md"
+    },
+    {
+      "id": 2,
+      "title": "Worklog - Agent 5 - TT and Quiescence Search",
+      "path": "20260122030456.md"
+    },
+    {
+      "id": 3,
+      "title": "Worklog - Agent 22 - Cleanup and Rust AI",
+      "path": "20260122064758.md"
+    },
+    {
+      "id": 4,
+      "title": "Worklog - Agent 33 - Endgame Tablebase",
+      "path": "20260122091007.md"
+    },
+    {
+      "id": 5,
+      "title": "NB - Hub",
+      "path": "NB - Hub.md"
+    },
+    {
+      "id": 6,
+      "title": "NB - Onboarding - Repo Notes",
+      "path": "NB_README.llm.md"
+    },
+    {
+      "id": 7,
+      "title": "Codex - Hub",
+      "path": "codex_landing_page.md"
+    },
+    {
+      "id": 8,
+      "title": "Codex - Deprecated",
+      "path": "codex_usage.md"
+    },
+    {
+      "id": 9,
+      "title": "Project/Underchex - Onboarding - Worktrees",
+      "path": "git_worktrees_(underchex).md"
+    },
+    {
+      "id": 10,
+      "title": "NB - Scratch - Hello World",
+      "path": "hello_world.md"
+    },
+    {
+      "id": 11,
+      "title": "Codex - Reference - Config and Debugging",
+      "path": "llm_readme_summary.md"
+    },
+    {
+      "id": 12,
+      "title": "NB - Debug - Remote Set",
+      "path": "nb_-_debug_-_remote_set.md"
+    },
+    {
+      "id": 13,
+      "title": "NB - Decision - Naming and Taxonomy",
+      "path": "nb_-_decision_-_naming_and_taxonomy.md"
+    },
+    {
+      "id": 14,
+      "title": "NB - Guide - Multiline Content via Heredoc",
+      "path": "nb_-_guide_-_multiline_content_via_heredoc.md"
+    },
+    {
+      "id": 15,
+      "title": "NB - Guide - Note Formatting",
+      "path": "nb_-_guide_-_note_formatting.md"
+    },
+    {
+      "id": 16,
+      "title": "NB - Guide - Render Markdown in Browser",
+      "path": "nb_-_guide_-_render_markdown_in_browser.md"
+    },
+    {
+      "id": 17,
+      "title": "OpenCode - Reference - CLI Model Verification",
+      "path": "opencode_-_cli_model_verification.md"
+    },
+    {
+      "id": 18,
+      "title": "NB - Decision - Knowledge Base Structure",
+      "path": "organizing_info_in_nb.md"
+    },
+    {
+      "id": 19,
+      "title": "Worklog - Agent 10 - Cleanup",
+      "path": "worklog_-_agent_10_-_cleanup.md"
+    },
+    {
+      "id": 20,
+      "title": "Worklog - Agent 11 - PVS and Aspiration Windows",
+      "path": "worklog_-_agent_11_-_pvs_and_aspiration_windows.md"
+    },
+    {
+      "id": 21,
+      "title": "Worklog - Agent 12 - Futility Pruning",
+      "path": "worklog_-_agent_12_-_futility_pruning.md"
+    },
+    {
+      "id": 22,
+      "title": "Worklog - Agent 13 - Static Exchange Evaluation",
+      "path": "worklog_-_agent_13_-_static_exchange_evaluation.md"
+    },
+    {
+      "id": 23,
+      "title": "Worklog - Agent 14 - Puzzle Generation",
+      "path": "worklog_-_agent_14_-_puzzle_generation.md"
+    },
+    {
+      "id": 24,
+      "title": "Worklog - Agent 15 - Puzzle Mode Web UI",
+      "path": "worklog_-_agent_15_-_puzzle_mode_web_ui.md"
+    },
+    {
+      "id": 25,
+      "title": "Worklog - Agent 16 - Terminal Play CLI",
+      "path": "worklog_-_agent_16_-_terminal_play_cli.md"
+    },
+    {
+      "id": 26,
+      "title": "Worklog - Agent 17 - Python Implementation",
+      "path": "worklog_-_agent_17_-_python_implementation.md"
+    },
+    {
+      "id": 27,
+      "title": "Worklog - Agent 18 - Cleanup",
+      "path": "worklog_-_agent_18_-_cleanup.md"
+    },
+    {
+      "id": 28,
+      "title": "Worklog - Agent 19 - Cleanup",
+      "path": "worklog_-_agent_19_-_cleanup.md"
+    },
+    {
+      "id": 29,
+      "title": "Worklog - Agent 1 - Core Game Engine",
+      "path": "worklog_-_agent_1_-_core_game_engine.md"
+    },
+    {
+      "id": 30,
+      "title": "Worklog - Agent 20 - Cleanup",
+      "path": "worklog_-_agent_20_-_cleanup.md"
+    },
+    {
+      "id": 31,
+      "title": "Worklog - Agent 21 - Rust WASM Implementation",
+      "path": "worklog_-_agent_21_-_rust_wasm_implementation.md"
+    },
+    {
+      "id": 32,
+      "title": "Worklog - Agent 23 - Kotlin Implementation",
+      "path": "worklog_-_agent_23_-_kotlin_implementation.md"
+    },
+    {
+      "id": 33,
+      "title": "Worklog - Agent 24 - Cleanup",
+      "path": "worklog_-_agent_24_-_cleanup.md"
+    },
+    {
+      "id": 34,
+      "title": "Worklog - Agent 25 - C ncurses Implementation",
+      "path": "worklog_-_agent_25_-_c_ncurses_implementation.md"
+    },
+    {
+      "id": 35,
+      "title": "Worklog - Agent 26 - Elixir Telnet Implementation",
+      "path": "worklog_-_agent_26_-_elixir_telnet_implementation.md"
+    },
+    {
+      "id": 36,
+      "title": "Worklog - Agent 27 - Opening Book",
+      "path": "worklog_-_agent_27_-_opening_book.md"
+    },
+    {
+      "id": 37,
+      "title": "Worklog - Agent 28 - Cross-Implementation Testing",
+      "path": "worklog_-_agent_28_-_cross-implementation_testing.md"
+    },
+    {
+      "id": 38,
+      "title": "Worklog - Agent 29 - Cross-Implementation Testing Extension",
+      "path": "worklog_-_agent_29_-_cross-implementation_testing_extension.md"
+    },
+    {
+      "id": 39,
+      "title": "Worklog - Agent 2 - Web UI and Promotion",
+      "path": "worklog_-_agent_2_-_web_ui_and_promotion.md"
+    },
+    {
+      "id": 40,
+      "title": "Worklog - Agent 30 - Cleanup",
+      "path": "worklog_-_agent_30_-_cleanup.md"
+    },
+    {
+      "id": 41,
+      "title": "Worklog - Agent 31 - Python Opening Book",
+      "path": "worklog_-_agent_31_-_python_opening_book.md"
+    },
+    {
+      "id": 42,
+      "title": "Worklog - Agent 32 - Cleanup",
+      "path": "worklog_-_agent_32_-_cleanup.md"
+    },
+    {
+      "id": 43,
+      "title": "Worklog - Agent 34 - Python Tablebase",
+      "path": "worklog_-_agent_34_-_python_tablebase.md"
+    },
+    {
+      "id": 44,
+      "title": "Worklog - Agent 35 - Rust Tablebase",
+      "path": "worklog_-_agent_35_-_rust_tablebase.md"
+    },
+    {
+      "id": 45,
+      "title": "Worklog - Agent 36 - Cleanup and Tablebase Ports",
+      "path": "worklog_-_agent_36_-_cleanup_and_tablebase_ports.md"
+    },
+    {
+      "id": 46,
+      "title": "Worklog - Agent 37 - Kotlin Tablebase and C Test Fix",
+      "path": "worklog_-_agent_37_-_kotlin_tablebase.md"
+    },
+    {
+      "id": 47,
+      "title": "Worklog - Agent 38 - AI Tablebase Integration",
+      "path": "worklog_-_agent_38_-_ai_tablebase_integration.md"
+    },
+    {
+      "id": 48,
+      "title": "Worklog - Agent 39 - Raw HTML/JS Tablebase",
+      "path": "worklog_-_agent_39_-_raw_html_js_tablebase.md"
+    },
+    {
+      "id": 49,
+      "title": "Worklog - Agent 3 - AI Opponent",
+      "path": "worklog_-_agent_3_-_ai_opponent.md"
+    },
+    {
+      "id": 50,
+      "title": "Worklog - Agent 40 - Cleanup",
+      "path": "worklog_-_agent_40_-_cleanup.md"
+    },
+    {
+      "id": 51,
+      "title": "Worklog - Agent 41 - Cross-Implementation Tablebase Tests",
+      "path": "worklog_-_agent_41_-_cross-implementation_tablebase_tests.md"
+    },
+    {
+      "id": 52,
+      "title": "Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests",
+      "path": "worklog_-_agent_42_-_rust_tablebase_cross-impl_tests.md"
+    },
+    {
+      "id": 53,
+      "title": "Worklog - Agent 43 - C and Elixir Tablebase Tests",
+      "path": "worklog_-_agent_43_-_c_and_elixir_tablebase_tests.md"
+    },
+    {
+      "id": 54,
+      "title": "Worklog - Agent 44 - Cleanup",
+      "path": "worklog_-_agent_44_-_cleanup.md"
+    },
+    {
+      "id": 55,
+      "title": "Worklog - Agent 45 - Cleanup",
+      "path": "worklog_-_agent_45_-_cleanup.md"
+    },
+    {
+      "id": 56,
+      "title": "Worklog - Agent 6 - PST and Zobrist Hashing",
+      "path": "worklog_-_agent_6_-_pst_and_zobrist_hashing.md"
+    },
+    {
+      "id": 57,
+      "title": "Worklog - Agent 7 - NMP and History Heuristic",
+      "path": "worklog_-_agent_7_-_nmp_and_history_heuristic.md"
+    },
+    {
+      "id": 58,
+      "title": "Worklog - Agent 8 - Killer Move Heuristic",
+      "path": "worklog_-_agent_8_-_killer_move_heuristic.md"
+    },
+    {
+      "id": 59,
+      "title": "Worklog - Agent 9 - Late Move Reductions",
+      "path": "worklog_-_agent_9_-_late_move_reductions.md"
+    },
+    {
+      "id": 60,
+      "title": "Worklogs Index",
+      "path": "worklogs_index.md"
+    },
+    {
+      "id": 61,
+      "title": "Worktrees/Direnv - Debug - NB_DIR",
+      "path": "worktree-direnv-debug.md"
+    },
+    {
+      "id": 62,
+      "title": "Worktrees - Guide - Merging to Main",
+      "path": "worktrees_-_guide_-_merging_to_main.md"
+    },
+    {
+      "id": 63,
+      "title": "Worktrees - Hub",
+      "path": "worktrees_hub.md"
+    }
+  ],
+  "edges": [
+    {
+      "source": 0,
+      "target": 13
+    },
+    {
+      "source": 1,
+      "target": 29
+    },
+    {
+      "source": 1,
+      "target": 39
+    },
+    {
+      "source": 1,
+      "target": 49
+    },
+    {
+      "source": 2,
+      "target": 1
+    },
+    {
+      "source": 2,
+      "target": 49
+    },
+    {
+      "source": 3,
+      "target": 31
+    },
+    {
+      "source": 3,
+      "target": 60
+    },
+    {
+      "source": 4,
+      "target": 42
+    },
+    {
+      "source": 4,
+      "target": 60
+    },
+    {
+      "source": 5,
+      "target": 0
+    },
+    {
+      "source": 5,
+      "target": 6
+    },
+    {
+      "source": 5,
+      "target": 12
+    },
+    {
+      "source": 5,
+      "target": 13
+    },
+    {
+      "source": 5,
+      "target": 14
+    },
+    {
+      "source": 5,
+      "target": 15
+    },
+    {
+      "source": 5,
+      "target": 16
+    },
+    {
+      "source": 5,
+      "target": 18
+    },
+    {
+      "source": 6,
+      "target": 5
+    },
+    {
+      "source": 6,
+      "target": 13
+    },
+    {
+      "source": 7,
+      "target": 11
+    },
+    {
+      "source": 8,
+      "target": 7
+    },
+    {
+      "source": 9,
+      "target": 61
+    },
+    {
+      "source": 11,
+      "target": 7
+    },
+    {
+      "source": 14,
+      "target": 15
+    },
+    {
+      "source": 17,
+      "target": 5
+    },
+    {
+      "source": 19,
+      "target": 6
+    },
+    {
+      "source": 20,
+      "target": 19
+    },
+    {
+      "source": 20,
+      "target": 59
+    },
+    {
+      "source": 21,
+      "target": 20
+    },
+    {
+      "source": 22,
+      "target": 21
+    },
+    {
+      "source": 23,
+      "target": 22
+    },
+    {
+      "source": 24,
+      "target": 23
+    },
+    {
+      "source": 25,
+      "target": 24
+    },
+    {
+      "source": 26,
+      "target": 25
+    },
+    {
+      "source": 27,
+      "target": 19
+    },
+    {
+      "source": 27,
+      "target": 26
+    },
+    {
+      "source": 28,
+      "target": 19
+    },
+    {
+      "source": 28,
+      "target": 27
+    },
+    {
+      "source": 30,
+      "target": 28
+    },
+    {
+      "source": 30,
+      "target": 60
+    },
+    {
+      "source": 31,
+      "target": 30
+    },
+    {
+      "source": 31,
+      "target": 60
+    },
+    {
+      "source": 32,
+      "target": 3
+    },
+    {
+      "source": 32,
+      "target": 60
+    },
+    {
+      "source": 33,
+      "target": 5
+    },
+    {
+      "source": 33,
+      "target": 32
+    },
+    {
+      "source": 33,
+      "target": 60
+    },
+    {
+      "source": 34,
+      "target": 33
+    },
+    {
+      "source": 34,
+      "target": 60
+    },
+    {
+      "source": 35,
+      "target": 34
+    },
+    {
+      "source": 35,
+      "target": 60
+    },
+    {
+      "source": 36,
+      "target": 35
+    },
+    {
+      "source": 36,
+      "target": 41
+    },
+    {
+      "source": 36,
+      "target": 60
+    },
+    {
+      "source": 37,
+      "target": 36
+    },
+    {
+      "source": 37,
+      "target": 60
+    },
+    {
+      "source": 38,
+      "target": 37
+    },
+    {
+      "source": 38,
+      "target": 60
+    },
+    {
+      "source": 39,
+      "target": 29
+    },
+    {
+      "source": 40,
+      "target": 38
+    },
+    {
+      "source": 40,
+      "target": 60
+    },
+    {
+      "source": 41,
+      "target": 36
+    },
+    {
+      "source": 41,
+      "target": 40
+    },
+    {
+      "source": 41,
+      "target": 60
+    },
+    {
+      "source": 42,
+      "target": 40
+    },
+    {
+      "source": 42,
+      "target": 60
+    },
+    {
+      "source": 43,
+      "target": 4
+    },
+    {
+      "source": 43,
+      "target": 60
+    },
+    {
+      "source": 44,
+      "target": 43
+    },
+    {
+      "source": 44,
+      "target": 60
+    },
+    {
+      "source": 45,
+      "target": 44
+    },
+    {
+      "source": 45,
+      "target": 60
+    },
+    {
+      "source": 46,
+      "target": 45
+    },
+    {
+      "source": 46,
+      "target": 60
+    },
+    {
+      "source": 47,
+      "target": 60
+    },
+    {
+      "source": 48,
+      "target": 47
+    },
+    {
+      "source": 48,
+      "target": 60
+    },
+    {
+      "source": 49,
+      "target": 29
+    },
+    {
+      "source": 49,
+      "target": 39
+    },
+    {
+      "source": 50,
+      "target": 48
+    },
+    {
+      "source": 50,
+      "target": 60
+    },
+    {
+      "source": 51,
+      "target": 50
+    },
+    {
+      "source": 51,
+      "target": 60
+    },
+    {
+      "source": 52,
+      "target": 51
+    },
+    {
+      "source": 52,
+      "target": 60
+    },
+    {
+      "source": 53,
+      "target": 52
+    },
+    {
+      "source": 53,
+      "target": 60
+    },
+    {
+      "source": 54,
+      "target": 53
+    },
+    {
+      "source": 54,
+      "target": 60
+    },
+    {
+      "source": 55,
+      "target": 54
+    },
+    {
+      "source": 55,
+      "target": 60
+    },
+    {
+      "source": 56,
+      "target": 1
+    },
+    {
+      "source": 56,
+      "target": 2
+    },
+    {
+      "source": 57,
+      "target": 2
+    },
+    {
+      "source": 57,
+      "target": 56
+    },
+    {
+      "source": 58,
+      "target": 56
+    },
+    {
+      "source": 58,
+      "target": 57
+    },
+    {
+      "source": 59,
+      "target": 57
+    },
+    {
+      "source": 59,
+      "target": 58
+    },
+    {
+      "source": 60,
+      "target": 1
+    },
+    {
+      "source": 60,
+      "target": 2
+    },
+    {
+      "source": 60,
+      "target": 3
+    },
+    {
+      "source": 60,
+      "target": 4
+    },
+    {
+      "source": 60,
+      "target": 19
+    },
+    {
+      "source": 60,
+      "target": 20
+    },
+    {
+      "source": 60,
+      "target": 21
+    },
+    {
+      "source": 60,
+      "target": 22
+    },
+    {
+      "source": 60,
+      "target": 23
+    },
+    {
+      "source": 60,
+      "target": 24
+    },
+    {
+      "source": 60,
+      "target": 25
+    },
+    {
+      "source": 60,
+      "target": 26
+    },
+    {
+      "source": 60,
+      "target": 27
+    },
+    {
+      "source": 60,
+      "target": 28
+    },
+    {
+      "source": 60,
+      "target": 29
+    },
+    {
+      "source": 60,
+      "target": 30
+    },
+    {
+      "source": 60,
+      "target": 31
+    },
+    {
+      "source": 60,
+      "target": 32
+    },
+    {
+      "source": 60,
+      "target": 33
+    },
+    {
+      "source": 60,
+      "target": 34
+    },
+    {
+      "source": 60,
+      "target": 35
+    },
+    {
+      "source": 60,
+      "target": 36
+    },
+    {
+      "source": 60,
+      "target": 37
+    },
+    {
+      "source": 60,
+      "target": 38
+    },
+    {
+      "source": 60,
+      "target": 39
+    },
+    {
+      "source": 60,
+      "target": 40
+    },
+    {
+      "source": 60,
+      "target": 41
+    },
+    {
+      "source": 60,
+      "target": 42
+    },
+    {
+      "source": 60,
+      "target": 43
+    },
+    {
+      "source": 60,
+      "target": 44
+    },
+    {
+      "source": 60,
+      "target": 45
+    },
+    {
+      "source": 60,
+      "target": 46
+    },
+    {
+      "source": 60,
+      "target": 47
+    },
+    {
+      "source": 60,
+      "target": 48
+    },
+    {
+      "source": 60,
+      "target": 49
+    },
+    {
+      "source": 60,
+      "target": 50
+    },
+    {
+      "source": 60,
+      "target": 51
+    },
+    {
+      "source": 60,
+      "target": 52
+    },
+    {
+      "source": 60,
+      "target": 53
+    },
+    {
+      "source": 60,
+      "target": 54
+    },
+    {
+      "source": 60,
+      "target": 55
+    },
+    {
+      "source": 60,
+      "target": 56
+    },
+    {
+      "source": 60,
+      "target": 57
+    },
+    {
+      "source": 60,
+      "target": 58
+    },
+    {
+      "source": 60,
+      "target": 59
+    },
+    {
+      "source": 61,
+      "target": 9
+    },
+    {
+      "source": 63,
+      "target": 5
+    },
+    {
+      "source": 63,
+      "target": 9
+    },
+    {
+      "source": 63,
+      "target": 61
+    },
+    {
+      "source": 63,
+      "target": 62
+    }
+  ],
+  "metadata": {
+    "notebook_path": "/Users/bowei/code/underchex/.nb_docs_repo/home",
+    "node_count": 64,
+    "edge_count": 150
+  }
+}
