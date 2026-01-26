@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Visibility and Spacing
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #layout #forces #arrowheads #graph
 
 ## Motivation
 - You asked for clearer arrowheads and more uniform edge lengths, plus tighter clustering without huge separation.
@@ -19,4 +19,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `.distance(140).strength(0.8)`
 - Commits: 10d7639 (arrowhead visibility), 5ff14e7 (layout force tuning), 7c34bb1 (2x link distance)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
