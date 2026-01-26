@@ -206,6 +206,15 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     .node.hover text {
       opacity: 0.95;
     }
+    .labels-hidden .node text {
+      opacity: 0;
+    }
+    .labels-hidden .node.hover text {
+      opacity: 0;
+    }
+    .labels-show .node text {
+      opacity: 0.9;
+    }
     .edge {
       stroke: var(--edge);
       stroke-width: 1.2px;
@@ -232,6 +241,21 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     .footer code {
       color: var(--text);
     }
+    .controls {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      display: grid;
+      gap: 6px;
+    }
+    .controls select {
+      background: #0b1118;
+      color: var(--text);
+      border: 1px solid #213245;
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-size: 12px;
+    }
     @media (max-width: 900px) {
       .frame {
         grid-template-columns: 1fr;
@@ -244,12 +268,20 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     }
   </style>
 </head>
-<body>
+<body class="labels-hover">
   <div class="frame">
     <aside class="panel">
       <h1>NB Graph</h1>
       <p>Directed links between nb docs (arrowheads show direction). Reload after running the build script.</p>
       <p>Zoom: trackpad pinch or scroll. Pan: drag the background. Double-click to re-center.</p>
+      <div class="controls">
+        <label for="label-mode">Labels</label>
+        <select id="label-mode">
+          <option value="hidden">Hide all</option>
+          <option value="hover" selected>Show on hover</option>
+          <option value="show">Show all</option>
+        </select>
+      </div>
       <div class="stats" id="stats">Loading graph...</div>
       <div class="footer">
         <div>Build: <code>python nb-visual/build_nb_graph.py</code></div>
@@ -263,6 +295,8 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
   </div>
   <script>
     const graph = __GRAPH_JSON__;
+    const body = document.body;
+    const labelMode = document.getElementById("label-mode");
     const tooltip = document.getElementById("tooltip");
     const stats = document.getElementById("stats");
     const svg = d3.select("svg");
@@ -394,6 +428,11 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         svg.call(zoom.transform, nextTransform);
       });
     }
+
+    labelMode.addEventListener("change", () => {
+      body.classList.remove("labels-hidden", "labels-hover", "labels-show");
+      body.classList.add(`labels-${labelMode.value}`);
+    });
 
     renderGraph(graph);
   </script>
