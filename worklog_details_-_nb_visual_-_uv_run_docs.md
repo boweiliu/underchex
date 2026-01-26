@@ -16,5 +16,4 @@ Tags: #worklog-details #nb-visual
 - Snippet: `uv run nb-visual/build_nb_graph.py`
 - Commit: 7fa7d4e (README update)
 
-[Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
-
+[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
