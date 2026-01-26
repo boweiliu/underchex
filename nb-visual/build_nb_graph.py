@@ -187,7 +187,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       width: 100%;
       height: 100%;
     }
-    .node circle {
+    .node .dot {
       fill: var(--accent);
       stroke: #0b1118;
       stroke-width: 2px;
@@ -201,6 +201,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
     }
     .hitbox {
       fill: transparent;
+      stroke: none;
       pointer-events: all;
     }
     .node.hover text {
@@ -390,6 +391,7 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
 
       node.append("circle")
         .attr("r", 6)
+        .attr("class", "dot")
         .style("pointer-events", "none");
 
       node.append("text")
