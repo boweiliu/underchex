@@ -12,6 +12,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Ensure hover hitbox does not render and supports hovering over label text.
 - Add another toggle for label visibility and keep nodes visually unchanged.
 - Correct signoff format to “agent #15.3.2 opus via codex” and update prior worklog docs accordingly.
+- Add a doc describing the `graph.json` schema and link it from the worklog details.
 
 ## Worklog Details
 - [[Worklog Details - NB Visual - Graph Builder]]
@@ -22,6 +23,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - [[Worklog Details - NB Visual - Labels and Hover]]
 - [[Worklog Details - NB Visual - Invisible Hitbox]]
 - [[Worklog Details - NB Visual - Constant Node Size]]
+- [[Worklog Details - NB Visual - Graph JSON Format]]
 
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.
@@ -41,9 +43,10 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Faded labels by default, added hover highlight, expanded invisible hitbox, and ensured text hover works.
 - Added label visibility toggle (hide/hover/show) with UI controls and CSS states.
 - Corrected all related worklog signoffs to the requested “agent #15.3.2 opus via codex” format.
+- Added a worklog detail doc describing `graph.json` schema.
 
 ## Notes
 - Several incremental commits were made to keep changes small and traceable.
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
-[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:25:00]
