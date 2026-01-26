@@ -164,8 +164,14 @@
 
       const group = svg.append("g");
       const simulation = d3.forceSimulation(graph.nodes)
-        .force("link", d3.forceLink(graph.edges).id(d => d.id).distance(80))
-        .force("charge", d3.forceManyBody().strength(-220))
+        .force("link", d3.forceLink(graph.edges)
+          .id(d => d.id)
+          .distance(70)
+          .strength(0.8))
+        .force("charge", d3.forceManyBody().strength(-160))
+        .force("collide", d3.forceCollide(10))
+        .force("x", d3.forceX(width() / 2).strength(0.05))
+        .force("y", d3.forceY(height() / 2).strength(0.05))
         .force("center", d3.forceCenter(width() / 2, height() / 2));
 
       const defs = svg.append("defs");
