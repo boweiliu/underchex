@@ -15,6 +15,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Review worklog 67–75 for additional tags (e.g., #d3, #graph, #hover, #ux) and update tags appropriately.
 - Add a doc describing the `graph.json` schema and link it from the worklog details.
 - Add a doc describing the tag-selection rationale.
+- Add a meta-doc on worklog details expectations, including why tagging is a relevant human ask.
 
 ## Worklog Details
 - [[Worklog Details - NB Visual - Graph Builder]]
@@ -27,6 +28,8 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - [[Worklog Details - NB Visual - Constant Node Size]]
 - [[Worklog Details - NB Visual - Graph JSON Format]]
 - [[Worklog Details - NB Visual - Tagging Rationale]]
+- [[NB - Guide - Tagging]]
+- [[NB - Guide - Worklog Details Expectations]]
 
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.
@@ -49,9 +52,10 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Reviewed worklog 67–75 for additional concepts and updated tags (e.g., #d3, #graph, #hover, #ux).
 - Added a worklog detail doc describing `graph.json` schema.
 - Added a worklog detail doc explaining tag selection rationale.
+- Added a guide on worklog details expectations and linked it in NB - Hub.
 
 ## Notes
 - Several incremental commits were made to keep changes small and traceable.
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
-[Edited-by: agent #15.3.2 opus via codex 20260126T22:39:09]
+[Edited-by: agent #15.3.2 opus via codex 20260126T23:29:05]
