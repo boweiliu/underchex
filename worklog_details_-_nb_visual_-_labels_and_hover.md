@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Labels and Hover
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #ux #labels #hover #controls
 
 ## Motivation
 - You wanted less label clutter, larger hover areas, and a label visibility toggle (hide/hover/show).
@@ -21,4 +21,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `body.classList.add(`labels-${labelMode.value}`);`
 - Commits: c9febe3 (fade labels), 8d56d75 (bigger hitbox), 32098f3 (label toggle)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
