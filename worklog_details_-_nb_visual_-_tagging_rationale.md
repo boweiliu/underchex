@@ -24,8 +24,8 @@ Tags: #worklog-details #nb-visual #tags #taxonomy
 - Docs 71–75: interaction/layout tags (hover, labels, zoom/pan, svg) to speed future lookup.
 - Docs 68–70: implementation and tooling tags (python, markdown, uv, cors).
 
-## References
-- Updated tags in docs 67–75 during the tag review request.
+## Related
+- [[NB - Guide - Tagging]]
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:39:09]
-
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:39:09]
