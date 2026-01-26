@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Invisible Hitbox
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #hover #hitbox #ux
 
 ## Motivation
 - You asked for a larger hover hitbox that stays invisible and for hovering label text to work (not just the node dot).
@@ -19,4 +19,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `.attr("class", "hitbox");`
 - Commit: a3baf01 (invisible hitbox + hover behavior adjustment)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
