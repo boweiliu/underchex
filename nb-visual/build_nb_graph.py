@@ -193,11 +193,15 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
       stroke-width: 2px;
     }
     .node text {
-      pointer-events: none;
+      pointer-events: auto;
       fill: var(--text);
       font-size: 11px;
       opacity: 0.15;
       transition: opacity 0.2s ease;
+    }
+    .hitbox {
+      fill: transparent;
+      pointer-events: all;
     }
     .node.hover text {
       opacity: 0.95;
@@ -335,19 +339,24 @@ def write_index_html(out_dir: Path, graph: dict) -> None:
         .data(graph.nodes)
         .enter()
         .append("g")
-        .attr("class", "node");
-
-      node.append("circle")
-        .attr("r", 6)
+        .attr("class", "node")
         .on("mouseenter", function(event, d) {
-          d3.select(this.parentNode).classed("hover", true);
+          d3.select(this).classed("hover", true);
           showTooltip(event, d);
         })
         .on("mousemove", showTooltip)
         .on("mouseleave", function() {
-          d3.select(this.parentNode).classed("hover", false);
+          d3.select(this).classed("hover", false);
           hideTooltip();
         });
+
+      node.append("circle")
+        .attr("r", 24)
+        .attr("class", "hitbox");
+
+      node.append("circle")
+        .attr("r", 6)
+        .style("pointer-events", "none");
 
       node.append("text")
         .attr("x", 10)
