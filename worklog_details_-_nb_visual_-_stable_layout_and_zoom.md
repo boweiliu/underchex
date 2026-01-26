@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Stable Layout and Zoom
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #d3 #layout #zoom #pan #svg
 
 ## Motivation
 - You reported wobble and poor fit; you also asked for zoom/pan and clear direction markers.
@@ -21,4 +21,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `svg.call(zoom).call(zoom.transform, baseTransform);`
 - Commits: 532131e (stable layout), 6e5abae (zoom/pan), b859e8f (arrowheads)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
