@@ -12,6 +12,16 @@ Tags: #worklog #nb #visualization
 - Ensure hover hitbox does not render and supports hovering over label text.
 - Add another toggle for label visibility and keep nodes visually unchanged.
 
+## Worklog Details
+- [[Worklog Details - NB Visual - Graph Builder]]
+- [[Worklog Details - NB Visual - Inline Graph JSON]]
+- [[Worklog Details - NB Visual - uv Run Docs]]
+- [[Worklog Details - NB Visual - Stable Layout and Zoom]]
+- [[Worklog Details - NB Visual - Visibility and Spacing]]
+- [[Worklog Details - NB Visual - Labels and Hover]]
+- [[Worklog Details - NB Visual - Invisible Hitbox]]
+- [[Worklog Details - NB Visual - Constant Node Size]]
+
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.
 - Located nb notebook path via `nb notebooks --names --paths` and repo structure to decide output location.
@@ -34,4 +44,4 @@ Tags: #worklog #nb #visualization
 - Several incremental commits were made to keep changes small and traceable.
 
 [Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:12:37]
-
+[Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260126T22:16:11]
