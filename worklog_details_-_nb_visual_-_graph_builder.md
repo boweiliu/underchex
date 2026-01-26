@@ -1,6 +1,6 @@
 # Worklog Details - NB Visual - Graph Builder
 
-Tags: #worklog-details #nb-visual
+Tags: #worklog-details #nb-visual #python #markdown #wikilinks #graph
 
 ## Motivation
 - You asked for a new `nb-visual/` folder with a Python program that extracts nb hyperlink structure into a serialized directed graph and renders an HTML visualization that updates on rebuild.
@@ -19,4 +19,5 @@ Tags: #worklog-details #nb-visual
 - Snippet: `LINK_RE = re.compile(r"\[\[([^\]]+)\]\]")`
 - Commit: 07a0f63 (initial `nb-visual` graph builder + HTML)
 
-[\1-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
+[Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
