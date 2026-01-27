@@ -6,57 +6,57 @@ The key idea: group everything about one topic together (changes, files, command
 
 Copy the structure below and replace the bracketed sections.
 
----
+```markdown
+# Worklog - Agent N - Title
 
-## Template
-
----
-
-### Summary
+## Summary
 One paragraph: what was accomplished and why.
 
 ---
 
-### [Topic A]
-#### Changes
+## [Topic A]
+### Changes
 - What was done
 
-#### Files
+### Files
 - path/to/file (new/modified)
 
-#### Commands
+### Commands
 command to run
 
 ---
 
-### [Topic B]
-#### Changes
-#### Files
-#### Commands
+## [Topic B]
+### Changes
+### Files
+### Commands
 
 ---
 
-### Results
+## Results
 | Area | Tests | Status |
 |------|-------|--------|
 | ...  | ...   | ...    |
 
 ---
 
-### Decisions
+## Decisions
 - Key choice: rationale
 
 ---
 
-### Handoff
-#### Recommendations
+## Handoff
+### Recommendations
 - What future agents should do next
 
-#### Known Issues
+### Known Issues
 - Outstanding problems or blockers
 
 ---
 
-### Links
+## Links
 - [[Worklogs Index]]
 - [[Project/Underchex - Hub]]
+
+Signed-by: agent #N model via tool date
+```
