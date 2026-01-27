@@ -1,46 +1,86 @@
 {
   "tags": [
     {
-      "tag": "nb-visual",
-      "count": 16,
+      "tag": "worklog-details",
+      "count": 22,
       "doc_ids": [
+        18,
+        22,
+        23,
+        24,
+        25,
         26,
-        59,
-        64,
-        65,
-        66,
-        67,
-        68,
-        69,
-        70,
-        71,
-        72,
-        73,
-        74,
         75,
         76,
-        77
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90
       ]
     },
     {
-      "tag": "worklog-details",
-      "count": 15,
+      "tag": "nb-visual",
+      "count": 20,
       "doc_ids": [
-        18,
-        64,
-        65,
-        66,
+        21,
+        33,
         67,
-        68,
         69,
-        70,
-        71,
-        72,
-        73,
-        74,
         75,
         76,
-        77
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90
+      ]
+    },
+    {
+      "tag": "ux",
+      "count": 9,
+      "doc_ids": [
+        16,
+        33,
+        67,
+        69,
+        79,
+        80,
+        82,
+        85,
+        86
+      ]
+    },
+    {
+      "tag": "hover",
+      "count": 8,
+      "doc_ids": [
+        21,
+        67,
+        69,
+        75,
+        79,
+        80,
+        82,
+        85
       ]
     },
     {
@@ -48,25 +88,24 @@
       "count": 7,
       "doc_ids": [
         17,
-        59,
-        71,
-        72,
-        73,
-        74,
-        75
+        67,
+        84,
+        85,
+        86,
+        87,
+        88
       ]
     },
     {
-      "tag": "ux",
-      "count": 7,
+      "tag": "d3",
+      "count": 6,
       "doc_ids": [
-        16,
-        26,
-        59,
-        68,
+        33,
+        67,
         69,
-        72,
-        73
+        82,
+        83,
+        85
       ]
     },
     {
@@ -78,49 +117,81 @@
         16,
         17,
         18,
-        80
-      ]
-    },
-    {
-      "tag": "hover",
-      "count": 5,
-      "doc_ids": [
-        59,
-        64,
-        68,
-        69,
-        72
+        93
       ]
     },
     {
       "tag": "nb",
-      "count": 5,
+      "count": 6,
       "doc_ids": [
         5,
         6,
         17,
         18,
-        26
+        33,
+        81
       ]
     },
     {
-      "tag": "d3",
+      "tag": "wiki",
+      "count": 6,
+      "doc_ids": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ]
+    },
+    {
+      "tag": "worklog",
+      "count": 5,
+      "doc_ids": [
+        21,
+        27,
+        33,
+        67,
+        69
+      ]
+    },
+    {
+      "tag": "documentation",
       "count": 4,
       "doc_ids": [
-        26,
-        59,
-        70,
-        72
+        18,
+        27,
+        64,
+        68
       ]
     },
     {
       "tag": "graph",
       "count": 4,
       "doc_ids": [
-        26,
-        65,
-        66,
-        77
+        33,
+        76,
+        77,
+        90
+      ]
+    },
+    {
+      "tag": "knowledge-base",
+      "count": 4,
+      "doc_ids": [
+        5,
+        13,
+        20,
+        27
+      ]
+    },
+    {
+      "tag": "cli",
+      "count": 3,
+      "doc_ids": [
+        19,
+        81,
+        89
       ]
     },
     {
@@ -128,8 +199,8 @@
       "count": 3,
       "doc_ids": [
         12,
-        80,
-        81
+        93,
+        94
       ]
     },
     {
@@ -138,16 +209,7 @@
       "doc_ids": [
         5,
         7,
-        81
-      ]
-    },
-    {
-      "tag": "knowledge-base",
-      "count": 3,
-      "doc_ids": [
-        5,
-        13,
-        20
+        94
       ]
     },
     {
@@ -169,20 +231,29 @@
       ]
     },
     {
-      "tag": "worktrees",
+      "tag": "worklogs",
       "count": 3,
       "doc_ids": [
-        79,
-        80,
-        81
+        64,
+        68,
+        91
       ]
     },
     {
-      "tag": "cli",
+      "tag": "worktrees",
+      "count": 3,
+      "doc_ids": [
+        92,
+        93,
+        94
+      ]
+    },
+    {
+      "tag": "checklist",
       "count": 2,
       "doc_ids": [
-        19,
-        76
+        64,
+        68
       ]
     },
     {
@@ -205,32 +276,32 @@
       "tag": "hitbox",
       "count": 2,
       "doc_ids": [
-        64,
-        68
+        75,
+        79
       ]
     },
     {
       "tag": "html",
       "count": 2,
       "doc_ids": [
-        67,
-        73
+        78,
+        86
       ]
     },
     {
       "tag": "json",
       "count": 2,
       "doc_ids": [
-        66,
-        75
+        77,
+        88
       ]
     },
     {
       "tag": "layout",
       "count": 2,
       "doc_ids": [
-        70,
-        77
+        83,
+        90
       ]
     },
     {
@@ -238,23 +309,31 @@
       "count": 2,
       "doc_ids": [
         16,
-        65
+        76
       ]
     },
     {
       "tag": "python",
       "count": 2,
       "doc_ids": [
-        65,
-        71
+        76,
+        84
       ]
     },
     {
       "tag": "svg",
       "count": 2,
       "doc_ids": [
+        75,
+        83
+      ]
+    },
+    {
+      "tag": "tablebase",
+      "count": 2,
+      "doc_ids": [
         64,
-        70
+        68
       ]
     },
     {
@@ -262,22 +341,42 @@
       "count": 2,
       "doc_ids": [
         17,
-        74
+        87
       ]
     },
     {
-      "tag": "worklog",
-      "count": 2,
+      "tag": "agent-48",
+      "count": 1,
       "doc_ids": [
-        26,
-        59
+        21
+      ]
+    },
+    {
+      "tag": "api",
+      "count": 1,
+      "doc_ids": [
+        24
+      ]
+    },
+    {
+      "tag": "architecture",
+      "count": 1,
+      "doc_ids": [
+        23
       ]
     },
     {
       "tag": "arrowheads",
       "count": 1,
       "doc_ids": [
-        77
+        90
+      ]
+    },
+    {
+      "tag": "automation",
+      "count": 1,
+      "doc_ids": [
+        25
       ]
     },
     {
@@ -298,28 +397,35 @@
       "tag": "controls",
       "count": 1,
       "doc_ids": [
-        69
+        80
       ]
     },
     {
       "tag": "cors",
       "count": 1,
       "doc_ids": [
-        67
+        78
+      ]
+    },
+    {
+      "tag": "credentials",
+      "count": 1,
+      "doc_ids": [
+        22
       ]
     },
     {
       "tag": "css",
       "count": 1,
       "doc_ids": [
-        73
+        86
       ]
     },
     {
       "tag": "debugging",
       "count": 1,
       "doc_ids": [
-        79
+        92
       ]
     },
     {
@@ -340,21 +446,14 @@
       "tag": "direnv",
       "count": 1,
       "doc_ids": [
-        79
-      ]
-    },
-    {
-      "tag": "documentation",
-      "count": 1,
-      "doc_ids": [
-        18
+        92
       ]
     },
     {
       "tag": "forces",
       "count": 1,
       "doc_ids": [
-        77
+        90
       ]
     },
     {
@@ -372,17 +471,31 @@
       ]
     },
     {
+      "tag": "kotlin",
+      "count": 1,
+      "doc_ids": [
+        64
+      ]
+    },
+    {
       "tag": "labels",
       "count": 1,
       "doc_ids": [
-        69
+        80
+      ]
+    },
+    {
+      "tag": "latchkey",
+      "count": 1,
+      "doc_ids": [
+        23
       ]
     },
     {
       "tag": "merging",
       "count": 1,
       "doc_ids": [
-        80
+        93
       ]
     },
     {
@@ -390,6 +503,13 @@
       "count": 1,
       "doc_ids": [
         0
+      ]
+    },
+    {
+      "tag": "notion",
+      "count": 1,
+      "doc_ids": [
+        24
       ]
     },
     {
@@ -403,21 +523,28 @@
       "tag": "pan",
       "count": 1,
       "doc_ids": [
-        70
+        83
+      ]
+    },
+    {
+      "tag": "playwright",
+      "count": 1,
+      "doc_ids": [
+        25
       ]
     },
     {
       "tag": "project",
       "count": 1,
       "doc_ids": [
-        78
+        91
       ]
     },
     {
       "tag": "regex",
       "count": 1,
       "doc_ids": [
-        71
+        84
       ]
     },
     {
@@ -428,6 +555,13 @@
       ]
     },
     {
+      "tag": "retro",
+      "count": 1,
+      "doc_ids": [
+        21
+      ]
+    },
+    {
       "tag": "scratch",
       "count": 1,
       "doc_ids": [
@@ -435,10 +569,17 @@
       ]
     },
     {
+      "tag": "security",
+      "count": 1,
+      "doc_ids": [
+        22
+      ]
+    },
+    {
       "tag": "serialization",
       "count": 1,
       "doc_ids": [
-        67
+        78
       ]
     },
     {
@@ -470,10 +611,31 @@
       ]
     },
     {
+      "tag": "terminal",
+      "count": 1,
+      "doc_ids": [
+        26
+      ]
+    },
+    {
       "tag": "testing",
       "count": 1,
       "doc_ids": [
         19
+      ]
+    },
+    {
+      "tag": "tests",
+      "count": 1,
+      "doc_ids": [
+        64
+      ]
+    },
+    {
+      "tag": "tmux",
+      "count": 1,
+      "doc_ids": [
+        26
       ]
     },
     {
@@ -494,47 +656,40 @@
       "tag": "underchex",
       "count": 1,
       "doc_ids": [
-        78
+        91
       ]
     },
     {
       "tag": "uv",
       "count": 1,
       "doc_ids": [
-        76
+        89
       ]
     },
     {
       "tag": "visualization",
       "count": 1,
       "doc_ids": [
-        26
+        33
       ]
     },
     {
       "tag": "wikilinks",
       "count": 1,
       "doc_ids": [
-        65
-      ]
-    },
-    {
-      "tag": "worklogs",
-      "count": 1,
-      "doc_ids": [
-        78
+        76
       ]
     },
     {
       "tag": "zoom",
       "count": 1,
       "doc_ids": [
-        70
+        83
       ]
     }
   ],
   "metadata": {
-    "total_tags": 64,
-    "total_tag_usages": 148
+    "total_tags": 81,
+    "total_tag_usages": 201
   }
 }
