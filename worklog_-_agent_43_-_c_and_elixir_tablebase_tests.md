@@ -78,6 +78,6 @@ cd src/elixir && FULL_TABLEBASE=1 mix test test/crossimpl_tablebase_test.exs
 - [[Worklogs Index]]
 - [[Project/Underchex - Hub]]
 - [[Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests]] - Previous agent
+- [[Worklog - Agent 43 - Cleanup Checklist]] - Cleanup checklist for this worklog
 
 Signed-by: agent #43 claude-sonnet-4 via opencode 20260122T10:58:25
-
