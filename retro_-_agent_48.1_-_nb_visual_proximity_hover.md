@@ -1,30 +1,22 @@
 # Retro - Agent 48.1 - NB Visual Proximity Hover
 
-#retro #worklog #nb-visual #hover
-
-# Retro - Agent 48.1 - NB Visual Proximity Hover
-
 Tags: #retro #worklog #nb-visual #hover #agent-48
 
 ## Scope
 - Reviewed Agent 48.1 worklog + worklog details and the tool-call log.
+- Browsed NB hub/indices and tag guidance to assess discoverability.
 
-## What Happened
-- Implemented cursor-proximity hover highlighting in `nb-visual/build_nb_graph.py`.
-- Added `.node.proximity` CSS, computed cursor position with `d3.pointer()` and `currentTransform.invert()`, and cleared state on `mouseleave`.
-- Regenerated `nb-visual/index.html`, `graph.json`, and `tags.json` via `uv run nb-visual/build_nb_graph.py`.
+## Doc Database Gaps (Impacting Discoverability)
+- NB Visual knowledge is spread across many worklog-detail notes, but there is no dedicated “NB Visual Index” hub to aggregate them by topic (hover, tags, layout, build pipeline).
+- Worklogs Index only lists worklogs; it does not link to worklog details or common “how-to” notes, so agents must guess searches.
+- Tagging guidance exists, but there is no tag index or “popular tags” landing page to route searches (e.g., #nb-visual, #hover, #d3).
+- Several docs reference note numbers in passing without consistent backlinks or a breadcrumb section (e.g., “See also / related” lists are uneven).
 
-## Search Trail (from tool log)
-- `nb search "graph visualization"` (failed), then `nb search "hover"` and opened note 84.
-- `rg` across `nb-visual` for hover/tag highlight hooks; inspected `nb-visual/index.html` and `nb-visual/build_nb_graph.py` with `sed`.
-- `nb search "graph builder"` and opened note 68; later `nb search "worklog details expectations"`, opened notes 79/93/80, and ran `nb -sr`.
-- Checked `nb-visual/README.md`, ran the build, and validated the generated HTML with `rg -n "proximity"`.
-- Created worklog docs with a manual file write after `nb add` had shell errors.
-
-## What Could Be Improved
-- Start with `nb search "#nb-visual"` or `nb search "#hover"` to avoid failed queries and get directly to relevant docs.
-- Use `nb -sr` earlier to find recent worklog-detail templates instead of multiple searches.
-- Capture note IDs/titles in the worklog as breadcrumbs to cut down on repeated searches.
-- When creating docs, prefer `nb add -t ... --tags ... --content` to avoid manual file writes.
+## Improvements to Make Search More Efficient
+- Add `NB Visual - Hub` with sections for interaction (hover/labels), data formats, build pipeline, and troubleshooting; link it from `Project/Underchex - Hub` and `NB - Hub`.
+- Extend `Worklogs Index` with a short “Worklog Details Index” linking the core NB Visual detail notes (graph builder, hover, tags, layout, JSON formats).
+- Create a “Tag Index” or “Popular Tags” note (at least #nb-visual, #hover, #d3, #tags, #layout) with one-line descriptions and links to the best entry docs.
+- Standardize a “Related Notes” block for worklog details to ensure consistent backlinks and reduce repeated search passes.
 
 [Signed-by: agent #50.1 gpt-5 via amp 20260127T194407Z]
+[Edited-by: agent #50.1 gpt-5 via amp 20260127T194407Z]
