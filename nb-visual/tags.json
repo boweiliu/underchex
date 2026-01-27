@@ -2,10 +2,10 @@
   "tags": [
     {
       "tag": "nb-visual",
-      "count": 11,
+      "count": 16,
       "doc_ids": [
         26,
-        63,
+        59,
         64,
         65,
         66,
@@ -14,15 +14,19 @@
         69,
         70,
         71,
-        72
+        72,
+        73,
+        74,
+        75,
+        76,
+        77
       ]
     },
     {
       "tag": "worklog-details",
-      "count": 11,
+      "count": 15,
       "doc_ids": [
         18,
-        63,
         64,
         65,
         66,
@@ -31,7 +35,38 @@
         69,
         70,
         71,
-        72
+        72,
+        73,
+        74,
+        75,
+        76,
+        77
+      ]
+    },
+    {
+      "tag": "tags",
+      "count": 7,
+      "doc_ids": [
+        17,
+        59,
+        71,
+        72,
+        73,
+        74,
+        75
+      ]
+    },
+    {
+      "tag": "ux",
+      "count": 7,
+      "doc_ids": [
+        16,
+        26,
+        59,
+        68,
+        69,
+        72,
+        73
       ]
     },
     {
@@ -43,7 +78,18 @@
         16,
         17,
         18,
-        75
+        80
+      ]
+    },
+    {
+      "tag": "hover",
+      "count": 5,
+      "doc_ids": [
+        59,
+        64,
+        68,
+        69,
+        72
       ]
     },
     {
@@ -58,23 +104,23 @@
       ]
     },
     {
-      "tag": "graph",
+      "tag": "d3",
       "count": 4,
       "doc_ids": [
         26,
-        64,
-        65,
+        59,
+        70,
         72
       ]
     },
     {
-      "tag": "ux",
+      "tag": "graph",
       "count": 4,
       "doc_ids": [
-        16,
         26,
-        67,
-        68
+        65,
+        66,
+        77
       ]
     },
     {
@@ -82,17 +128,8 @@
       "count": 3,
       "doc_ids": [
         12,
-        75,
-        76
-      ]
-    },
-    {
-      "tag": "hover",
-      "count": 3,
-      "doc_ids": [
-        63,
-        67,
-        68
+        80,
+        81
       ]
     },
     {
@@ -101,7 +138,7 @@
       "doc_ids": [
         5,
         7,
-        76
+        81
       ]
     },
     {
@@ -135,9 +172,9 @@
       "tag": "worktrees",
       "count": 3,
       "doc_ids": [
-        74,
-        75,
-        76
+        79,
+        80,
+        81
       ]
     },
     {
@@ -145,7 +182,7 @@
       "count": 2,
       "doc_ids": [
         19,
-        71
+        76
       ]
     },
     {
@@ -154,14 +191,6 @@
       "doc_ids": [
         7,
         8
-      ]
-    },
-    {
-      "tag": "d3",
-      "count": 2,
-      "doc_ids": [
-        26,
-        69
       ]
     },
     {
@@ -176,16 +205,32 @@
       "tag": "hitbox",
       "count": 2,
       "doc_ids": [
-        63,
-        67
+        64,
+        68
+      ]
+    },
+    {
+      "tag": "html",
+      "count": 2,
+      "doc_ids": [
+        67,
+        73
+      ]
+    },
+    {
+      "tag": "json",
+      "count": 2,
+      "doc_ids": [
+        66,
+        75
       ]
     },
     {
       "tag": "layout",
       "count": 2,
       "doc_ids": [
-        69,
-        72
+        70,
+        77
       ]
     },
     {
@@ -193,22 +238,22 @@
       "count": 2,
       "doc_ids": [
         16,
-        64
+        65
+      ]
+    },
+    {
+      "tag": "python",
+      "count": 2,
+      "doc_ids": [
+        65,
+        71
       ]
     },
     {
       "tag": "svg",
       "count": 2,
       "doc_ids": [
-        63,
-        69
-      ]
-    },
-    {
-      "tag": "tags",
-      "count": 2,
-      "doc_ids": [
-        17,
+        64,
         70
       ]
     },
@@ -217,14 +262,22 @@
       "count": 2,
       "doc_ids": [
         17,
-        70
+        74
+      ]
+    },
+    {
+      "tag": "worklog",
+      "count": 2,
+      "doc_ids": [
+        26,
+        59
       ]
     },
     {
       "tag": "arrowheads",
       "count": 1,
       "doc_ids": [
-        72
+        77
       ]
     },
     {
@@ -245,21 +298,28 @@
       "tag": "controls",
       "count": 1,
       "doc_ids": [
-        68
+        69
       ]
     },
     {
       "tag": "cors",
       "count": 1,
       "doc_ids": [
-        66
+        67
+      ]
+    },
+    {
+      "tag": "css",
+      "count": 1,
+      "doc_ids": [
+        73
       ]
     },
     {
       "tag": "debugging",
       "count": 1,
       "doc_ids": [
-        74
+        79
       ]
     },
     {
@@ -280,7 +340,7 @@
       "tag": "direnv",
       "count": 1,
       "doc_ids": [
-        74
+        79
       ]
     },
     {
@@ -294,7 +354,7 @@
       "tag": "forces",
       "count": 1,
       "doc_ids": [
-        72
+        77
       ]
     },
     {
@@ -312,31 +372,17 @@
       ]
     },
     {
-      "tag": "html",
-      "count": 1,
-      "doc_ids": [
-        66
-      ]
-    },
-    {
-      "tag": "json",
-      "count": 1,
-      "doc_ids": [
-        65
-      ]
-    },
-    {
       "tag": "labels",
       "count": 1,
       "doc_ids": [
-        68
+        69
       ]
     },
     {
       "tag": "merging",
       "count": 1,
       "doc_ids": [
-        75
+        80
       ]
     },
     {
@@ -357,21 +403,21 @@
       "tag": "pan",
       "count": 1,
       "doc_ids": [
-        69
+        70
       ]
     },
     {
       "tag": "project",
       "count": 1,
       "doc_ids": [
-        73
+        78
       ]
     },
     {
-      "tag": "python",
+      "tag": "regex",
       "count": 1,
       "doc_ids": [
-        64
+        71
       ]
     },
     {
@@ -392,7 +438,7 @@
       "tag": "serialization",
       "count": 1,
       "doc_ids": [
-        66
+        67
       ]
     },
     {
@@ -448,14 +494,14 @@
       "tag": "underchex",
       "count": 1,
       "doc_ids": [
-        73
+        78
       ]
     },
     {
       "tag": "uv",
       "count": 1,
       "doc_ids": [
-        71
+        76
       ]
     },
     {
@@ -469,33 +515,26 @@
       "tag": "wikilinks",
       "count": 1,
       "doc_ids": [
-        64
-      ]
-    },
-    {
-      "tag": "worklog",
-      "count": 1,
-      "doc_ids": [
-        26
+        65
       ]
     },
     {
       "tag": "worklogs",
       "count": 1,
       "doc_ids": [
-        73
+        78
       ]
     },
     {
       "tag": "zoom",
       "count": 1,
       "doc_ids": [
-        69
+        70
       ]
     }
   ],
   "metadata": {
-    "total_tags": 62,
-    "total_tag_usages": 121
+    "total_tags": 64,
+    "total_tag_usages": 148
   }
 }

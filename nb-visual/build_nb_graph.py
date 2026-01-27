@@ -74,6 +74,41 @@ def extract_tags(text: str) -> list[str]:
     return list(set(tags))  # dedupe
 
 
+def fetch_nb_ids() -> dict[str, int]:
+    """Fetch nb numeric IDs by parsing 'nb list' output.
+    
+    Returns a dict mapping filename (without path) to nb ID.
+    """
+    filename_to_nb_id: dict[str, int] = {}
+    try:
+        output = subprocess.check_output(
+            ["nb", "list", "--no-color", "--paths", "-n", "9999"],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        )
+        # Parse lines like: [84] /path/to/file.md
+        for line in output.splitlines():
+            line = line.strip()
+            if not line or not line.startswith("["):
+                continue
+            # Extract [ID] and path
+            bracket_end = line.find("]")
+            if bracket_end == -1:
+                continue
+            try:
+                nb_id = int(line[1:bracket_end])
+            except ValueError:
+                continue
+            # Extract filename from path
+            path_part = line[bracket_end + 1:].strip()
+            if path_part:
+                filename = Path(path_part).name
+                filename_to_nb_id[filename] = nb_id
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+    return filename_to_nb_id
+
+
 def build_graph(notebook_path: Path) -> dict:
     files: list[Path] = []
     for path in notebook_path.rglob("*.md"):
@@ -82,6 +117,9 @@ def build_graph(notebook_path: Path) -> dict:
         files.append(path)
 
     files.sort()
+
+    # Fetch nb IDs for all files
+    nb_ids = fetch_nb_ids()
 
     nodes = []
     title_to_ids: dict[str, list[int]] = {}
@@ -101,11 +139,13 @@ def build_graph(notebook_path: Path) -> dict:
         lines = text.splitlines()
         title = extract_title(lines, default_title)
         tags = extract_tags(text)
+        nb_id = nb_ids.get(path.name)  # Get nb ID from filename
         node = {
             "id": idx,
             "title": title,
             "path": rel_posix,
             "tags": tags,
+            "nb_id": nb_id,  # nb numeric ID (e.g., 84)
         }
         nodes.append(node)
         title_to_ids.setdefault(title, []).append(idx)
@@ -408,7 +448,8 @@ def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
       tooltip.style.opacity = 1;
       tooltip.style.left = `${event.offsetX + 12}px`;
       tooltip.style.top = `${event.offsetY + 12}px`;
-      tooltip.textContent = `${d.title} (${d.path})`;
+      const nbIdStr = d.nb_id != null ? `[${d.nb_id}] ` : "";
+      tooltip.textContent = `${nbIdStr}${d.title} (${d.path})`;
     }
 
     function hideTooltip() {
@@ -481,7 +522,12 @@ def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
       node.append("text")
         .attr("x", 10)
         .attr("y", 4)
-        .text(d => d.title.length > 22 ? d.title.slice(0, 22) + "..." : d.title);
+        .text(d => {
+          const prefix = d.nb_id != null ? `[${d.nb_id}] ` : "";
+          const maxLen = 22 - prefix.length;
+          const title = d.title.length > maxLen ? d.title.slice(0, maxLen) + "..." : d.title;
+          return prefix + title;
+        });
 
       simulation.stop();
       for (let i = 0; i < 240; i += 1) {
