@@ -263,10 +263,21 @@ def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
     .node.hover text {
       opacity: 0.95;
     }
+    .node.proximity .dot {
+      fill: #9be8ff;
+      stroke: #e6faff;
+      stroke-width: 2.5px;
+    }
+    .node.proximity text {
+      opacity: 0.85;
+    }
     .labels-hidden .node text {
       opacity: 0;
     }
     .labels-hidden .node.hover text {
+      opacity: 0;
+    }
+    .labels-hidden .node.proximity text {
       opacity: 0;
     }
     .labels-show .node text {
@@ -543,9 +554,25 @@ def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
       node.attr("transform", d => `translate(${d.x}, ${d.y})`);
 
       const baseTransform = fitToViewport(group, graph.nodes);
+      const proximityRadius = 60;
+      let currentTransform = baseTransform;
+      const proximityRadiusSq = proximityRadius * proximityRadius;
+      const clearProximityHighlight = () => {
+        node.classed("proximity", false);
+      };
+      const updateProximityHighlight = (event) => {
+        const [sx, sy] = d3.pointer(event, svg.node());
+        const [x, y] = currentTransform.invert([sx, sy]);
+        node.classed("proximity", d => {
+          const dx = d.x - x;
+          const dy = d.y - y;
+          return (dx * dx + dy * dy) <= proximityRadiusSq;
+        });
+      };
       const zoom = d3.zoom()
         .scaleExtent([0.2, 4])
         .on("zoom", (event) => {
+          currentTransform = event.transform;
           group.attr("transform", event.transform);
         });
 
@@ -554,6 +581,8 @@ def write_index_html(out_dir: Path, graph: dict, tags_data: dict) -> None:
       svg.on("dblclick", () => {
         svg.transition().duration(250).call(zoom.transform, baseTransform);
       });
+      svg.on("mousemove", updateProximityHighlight);
+      svg.on("mouseleave", clearProximityHighlight);
 
       window.addEventListener("resize", () => {
         const nextTransform = fitToViewport(group, graph.nodes);
