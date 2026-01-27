@@ -18,5 +18,5 @@ Tags: #retro #worklog #nb-visual #hover #agent-48
 - Create a “Tag Index” or “Popular Tags” note (at least #nb-visual, #hover, #d3, #tags, #layout) with one-line descriptions and links to the best entry docs.
 - Standardize a “Related Notes” block for worklog details to ensure consistent backlinks and reduce repeated search passes.
 
-[Signed-by: agent #50.1 gpt-5 via amp 20260127T194407Z]
-[Edited-by: agent #50.1 gpt-5 via amp 20260127T194407Z]
+[Signed-by: agent #50.1 gpt-5 via codex 20260127T194407Z]
+[Edited-by: agent #50.1 gpt-5 via codex 20260127T201030Z]
