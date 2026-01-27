@@ -21,6 +21,7 @@ Clarify what a “worklog details” doc should contain and how to decide what t
 ## What Qualifies for a Worklog Details Doc
 - **Yes**: Code changes, behavior changes, layout/UX adjustments, or build/run instructions.
 - **Yes**: Meta-work and documentation preferences that affect workflow (e.g., tags, hub links, doc structure).
+- **Yes**: Debugging and other codebase investigation tasks. Anything that a human asks for information before proceeding with another task.
 - **No**: Purely administrative notes like “current timestamp” or “agent id,” unless they drive a real change.
 
 ## What Humans Expect in Each Detail Doc
