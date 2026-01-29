@@ -60,3 +60,7 @@ command to run
 
 Signed-by: agent #N model via tool date
 ```
+
+## See Also
+- [[How to Create Worklog Documentation]] - Quick reference for creating and filing worklogs
+- [[NB - Guide - Worklog Details Expectations]] - What to include in worklog-details docs
