@@ -1,0 +1,42 @@
+We're interested in deciding on a concise yet information-rich format for agents to log their tool calls, in order to share this information for other reflections doing post-session reflection and data extraction.
+
+Go through the transcripts in beads/.agent_A.*.log.txt and underchex/.agent_toolcall_*.txt. Note that some of them were created from opus and some from codex.
+
+Using those examples, we want to produce 3 different proposals for "markdown-based tool use log formats". Save them into "./ccode_7" as prop1.md, prop2.md, prop3.md, etc. 
+
+I have already done the following thinking, please incorporate:
+* 2-part format: index followed by optional details.
+* index format should be 1-liner, `|`-delimited, with a header to explain meaning
+* details format should be largely freeform
+* Haven't decided which of these cols should be index vs. details but here they are:
+ - idx (1,2,3...)
+ - No need for timestamp. LLMs have trouble determining this anyways.
+ - Which tool (grep/read), or `THINKING` if thinking
+ - ARGS as a single field with a variable number of subfields. 
+  // for grep - include regex, path/dir/target
+  // for file read - include target file(s), line ranges or `*` for full file
+  // for thinking - what are you thinking about
+  // for subagent - prompt and any data.
+  // Truncate to 100 ch.
+ - exit_code: numeric shell exit code, if present, or the literals `ok`/`fail` otherwise
+ - duration_ms
+ - results // Textual description of what was done or found
+ - why // describe intent/purpose
+ - token_count // approximate token estimate of this step (NOT cumulative), or a t-shirt size if the LLM can't estimate tokens.
+
+In each of those writeups, please explain your reasoning and what factors you considered. Don't just judge based on what you see the most frequent format; in fact, feel free to make suggestions that are not present in any of the examples but that you have judged to be good ideas that those agents missed out on.
+
+At the bottom of the writeup, please make sure to include examples for:
+* recursive grep
+* read/write a file
+* shell out to nb
+* shell out to running a test
+* web search
+* subagent call
+* thinking block
+
+Be sure to make most of the examples have empty details, to make it clear the semantics that details are not always needed. Include at least one example with rather verbose details.
+
+For each of those writeups, after making those examples, reconsider and rereview each proposal, and make any edits as necessary if you find the writeups don't make sense with the examples.
+
+Remember our purpose - we are optimizing for information and token density for LLM agents to consume. The "byte layout order" is less important than the semantic schema of what to include and how. It also doesnt have to be structured - nosql over sql is our philosophy.

@@ -5,9 +5,9 @@
       "title": "NB - Debug - MD Trailer in List",
       "path": "20260121140130.md",
       "tags": [
-        "tag2",
-        "debug",
         "tag1",
+        "debug",
+        "tag2",
         "naming"
       ],
       "nb_id": 13
@@ -46,8 +46,8 @@
       "path": "NB - Hub.md",
       "tags": [
         "knowledge-base",
-        "nb",
-        "hub"
+        "hub",
+        "nb"
       ],
       "nb_id": 12
     },
@@ -56,10 +56,10 @@
       "title": "NB - Onboarding - Repo Notes",
       "path": "NB_README.llm.md",
       "tags": [
+        "workflow",
         "commands",
         "onboarding",
-        "nb",
-        "workflow"
+        "nb"
       ],
       "nb_id": 6
     },
@@ -69,8 +69,8 @@
       "path": "codex_landing_page.md",
       "tags": [
         "onboarding",
-        "codex",
-        "hub"
+        "hub",
+        "codex"
       ],
       "nb_id": 5
     },
@@ -79,8 +79,8 @@
       "title": "Codex - Deprecated",
       "path": "codex_usage.md",
       "tags": [
-        "codex",
-        "deprecated"
+        "deprecated",
+        "codex"
       ],
       "nb_id": 3
     },
@@ -112,9 +112,9 @@
       "title": "NB - Debug - Remote Set",
       "path": "nb_-_debug_-_remote_set.md",
       "tags": [
-        "remote",
         "git",
-        "debug"
+        "debug",
+        "remote"
       ],
       "nb_id": 11
     },
@@ -123,9 +123,9 @@
       "title": "NB - Decision - Naming and Taxonomy",
       "path": "nb_-_decision_-_naming_and_taxonomy.md",
       "tags": [
+        "workflow",
         "decision",
-        "knowledge-base",
-        "workflow"
+        "knowledge-base"
       ],
       "nb_id": 10
     },
@@ -134,10 +134,10 @@
       "title": "NB - Guide - Multiline Content via Heredoc",
       "path": "nb_-_guide_-_multiline_content_via_heredoc.md",
       "tags": [
-        "topic",
-        "subtopic",
-        "heredoc",
         "shell",
+        "heredoc",
+        "subtopic",
+        "topic",
         "guide"
       ],
       "nb_id": 17
@@ -147,8 +147,8 @@
       "title": "NB - Guide - Note Formatting",
       "path": "nb_-_guide_-_note_formatting.md",
       "tags": [
-        "guide",
-        "formatting"
+        "formatting",
+        "guide"
       ],
       "nb_id": 14
     },
@@ -157,9 +157,9 @@
       "title": "NB - Guide - Render Markdown in Browser",
       "path": "nb_-_guide_-_render_markdown_in_browser.md",
       "tags": [
-        "guide",
-        "ux",
         "markdown",
+        "ux",
+        "guide",
         "browser"
       ],
       "nb_id": 16
@@ -169,8 +169,8 @@
       "title": "NB - Guide - Tagging",
       "path": "nb_-_guide_-_tagging.md",
       "tags": [
-        "guide",
         "taxonomy",
+        "guide",
         "tags",
         "nb"
       ],
@@ -182,8 +182,8 @@
       "path": "nb_-_guide_-_worklog_details_expectations.md",
       "tags": [
         "guide",
-        "documentation",
         "worklog-details",
+        "documentation",
         "nb"
       ],
       "nb_id": 79
@@ -193,10 +193,10 @@
       "title": "OpenCode - Reference - CLI Model Verification",
       "path": "opencode_-_cli_model_verification.md",
       "tags": [
+        "testing",
         "tooling",
         "cli",
-        "opencode",
-        "testing"
+        "opencode"
       ],
       "nb_id": 20
     },
@@ -205,9 +205,9 @@
       "title": "NB - Decision - Knowledge Base Structure",
       "path": "organizing_info_in_nb.md",
       "tags": [
+        "workflow",
         "onboarding",
-        "knowledge-base",
-        "workflow"
+        "knowledge-base"
       ],
       "nb_id": 7
     },
@@ -216,11 +216,11 @@
       "title": "Retro - Agent 48.1 - NB Visual Proximity Hover",
       "path": "retro_-_agent_48.1_-_nb_visual_proximity_hover.md",
       "tags": [
-        "hover",
+        "agent-48",
         "retro",
+        "hover",
         "nb-visual",
-        "worklog",
-        "agent-48"
+        "worklog"
       ],
       "nb_id": 97
     },
@@ -229,10 +229,10 @@
       "title": "worklog-47.1-detail-credentials",
       "path": "worklog-47.1-detail-credentials.md",
       "tags": [
+        "wiki",
         "credentials",
         "worklog-details",
-        "security",
-        "wiki"
+        "security"
       ],
       "nb_id": 90
     },
@@ -241,10 +241,10 @@
       "title": "worklog-47.1-detail-latchkey",
       "path": "worklog-47.1-detail-latchkey.md",
       "tags": [
-        "worklog-details",
-        "architecture",
         "wiki",
-        "latchkey"
+        "latchkey",
+        "worklog-details",
+        "architecture"
       ],
       "nb_id": 89
     },
@@ -253,10 +253,10 @@
       "title": "worklog-47.1-detail-notion-api",
       "path": "worklog-47.1-detail-notion-api.md",
       "tags": [
-        "notion",
-        "worklog-details",
         "wiki",
-        "api"
+        "api",
+        "worklog-details",
+        "notion"
       ],
       "nb_id": 88
     },
@@ -265,9 +265,9 @@
       "title": "worklog-47.1-detail-playwright",
       "path": "worklog-47.1-detail-playwright.md",
       "tags": [
-        "automation",
-        "worklog-details",
         "wiki",
+        "worklog-details",
+        "automation",
         "playwright"
       ],
       "nb_id": 91
@@ -277,10 +277,10 @@
       "title": "worklog-47.1-detail-tmux",
       "path": "worklog-47.1-detail-tmux.md",
       "tags": [
-        "worklog-details",
-        "tmux",
         "wiki",
-        "terminal"
+        "terminal",
+        "worklog-details",
+        "tmux"
       ],
       "nb_id": 92
     },
@@ -289,9 +289,9 @@
       "title": "worklog-47.1-wiki-consolidation",
       "path": "worklog-47.1-wiki-consolidation.md",
       "tags": [
+        "wiki",
         "worklog",
         "documentation",
-        "wiki",
         "knowledge-base"
       ],
       "nb_id": 87
@@ -336,13 +336,13 @@
       "title": "Worklog - Agent 15.3.2 - NB Visual Graph",
       "path": "worklog_-_agent_15.3.2_-_nb_visual_graph.md",
       "tags": [
-        "nb",
-        "nb-visual",
-        "visualization",
+        "graph",
         "ux",
-        "worklog",
+        "visualization",
+        "nb-visual",
+        "nb",
         "d3",
-        "graph"
+        "worklog"
       ],
       "nb_id": 67
     },
@@ -561,12 +561,12 @@
       "title": "Worklog - Agent 43 - Cleanup Checklist",
       "path": "worklog_-_agent_43_-_cleanup_checklist.md",
       "tags": [
-        "checklist",
-        "tests",
-        "documentation",
-        "worklogs",
         "tablebase",
-        "kotlin"
+        "tests",
+        "kotlin",
+        "worklogs",
+        "checklist",
+        "documentation"
       ],
       "nb_id": 86
     },
@@ -590,11 +590,11 @@
       "path": "worklog_-_agent_46.1_-_nb_visual_tag_list.md",
       "tags": [
         "hover",
-        "nb-visual",
         "ux",
-        "worklog",
         "tags",
-        "d3"
+        "d3",
+        "nb-visual",
+        "worklog"
       ],
       "nb_id": 80
     },
@@ -603,284 +603,341 @@
       "title": "Worklog - Agent 46 - Checklist Update",
       "path": "worklog_-_agent_46_-_checklist_update.md",
       "tags": [
-        "documentation",
-        "checklist",
+        "tablebase",
         "worklogs",
-        "tablebase"
+        "checklist",
+        "documentation"
       ],
       "nb_id": 94
     },
     {
       "id": 69,
+      "title": "Worklog - Agent 46 - Worklog Template",
+      "path": "worklog_-_agent_46_-_worklog_template.md",
+      "tags": [],
+      "nb_id": 100
+    },
+    {
+      "id": 70,
       "title": "Worklog - Agent 48.1 - NB Visual Proximity Hover",
       "path": "worklog_-_agent_48.1_-_nb_visual_proximity_hover.md",
       "tags": [
         "hover",
-        "nb-visual",
         "ux",
-        "worklog",
-        "d3"
+        "d3",
+        "nb-visual",
+        "worklog"
       ],
       "nb_id": 96
     },
     {
-      "id": 70,
+      "id": 71,
+      "title": "Worklog - Agent 49.1 - NB Visual Proximity Hover Investigation",
+      "path": "worklog_-_agent_49.1_-_nb_visual_proximity_hover_investigation.md",
+      "tags": [
+        "investigation",
+        "hover",
+        "nb-visual",
+        "git",
+        "worklog"
+      ],
+      "nb_id": 99
+    },
+    {
+      "id": 72,
+      "title": "Worklog - Agent 50.1 - Retro on NB Visual Search",
+      "path": "worklog_-_agent_50.1_-_retro_on_nb_visual_search.md",
+      "tags": [
+        "worklog",
+        "retro",
+        "nb-visual",
+        "documentation"
+      ],
+      "nb_id": 102
+    },
+    {
+      "id": 73,
       "title": "Worklog - Agent 6 - PST and Zobrist Hashing",
       "path": "worklog_-_agent_6_-_pst_and_zobrist_hashing.md",
       "tags": [],
       "nb_id": 26
     },
     {
-      "id": 71,
+      "id": 74,
       "title": "Worklog - Agent 7 - NMP and History Heuristic",
       "path": "worklog_-_agent_7_-_nmp_and_history_heuristic.md",
       "tags": [],
       "nb_id": 27
     },
     {
-      "id": 72,
+      "id": 75,
       "title": "Worklog - Agent 8 - Killer Move Heuristic",
       "path": "worklog_-_agent_8_-_killer_move_heuristic.md",
       "tags": [],
       "nb_id": 28
     },
     {
-      "id": 73,
+      "id": 76,
       "title": "Worklog - Agent 9 - Late Move Reductions",
       "path": "worklog_-_agent_9_-_late_move_reductions.md",
       "tags": [],
       "nb_id": 29
     },
     {
-      "id": 74,
+      "id": 77,
       "title": "Worklog - Template - Topic-Based",
       "path": "worklog_-_template_-_topic-based.md",
       "tags": [],
       "nb_id": 93
     },
     {
-      "id": 75,
+      "id": 78,
+      "title": "Worklog Details - Doc DB Discoverability for NB Visual",
+      "path": "worklog_details_-_doc_db_discoverability_for_nb_visual.md",
+      "tags": [
+        "search",
+        "worklog-details",
+        "nb-visual",
+        "documentation"
+      ],
+      "nb_id": 101
+    },
+    {
+      "id": 79,
       "title": "Worklog Details - NB Visual - Constant Node Size",
       "path": "worklog_details_-_nb_visual_-_constant_node_size.md",
       "tags": [
-        "hover",
-        "svg",
-        "nb-visual",
         "worklog-details",
-        "hitbox"
+        "svg",
+        "hover",
+        "hitbox",
+        "nb-visual"
       ],
       "nb_id": 75
     },
     {
-      "id": 76,
+      "id": 80,
       "title": "Worklog Details - NB Visual - Graph Builder",
       "path": "worklog_details_-_nb_visual_-_graph_builder.md",
       "tags": [
-        "markdown",
-        "nb-visual",
+        "graph",
         "worklog-details",
         "wikilinks",
-        "graph",
-        "python"
+        "python",
+        "nb-visual",
+        "markdown"
       ],
       "nb_id": 68
     },
     {
-      "id": 77,
+      "id": 81,
       "title": "Worklog Details - NB Visual - Graph JSON Format",
       "path": "worklog_details_-_nb_visual_-_graph_json_format.md",
       "tags": [
         "json",
-        "worklog-details",
         "graph",
+        "worklog-details",
         "nb-visual"
       ],
       "nb_id": 76
     },
     {
-      "id": 78,
+      "id": 82,
       "title": "Worklog Details - NB Visual - Inline Graph JSON",
       "path": "worklog_details_-_nb_visual_-_inline_graph_json.md",
       "tags": [
-        "nb-visual",
         "worklog-details",
-        "cors",
         "serialization",
+        "cors",
+        "nb-visual",
         "html"
       ],
       "nb_id": 69
     },
     {
-      "id": 79,
+      "id": 83,
       "title": "Worklog Details - NB Visual - Invisible Hitbox",
       "path": "worklog_details_-_nb_visual_-_invisible_hitbox.md",
       "tags": [
-        "hover",
-        "nb-visual",
-        "ux",
         "worklog-details",
-        "hitbox"
+        "hover",
+        "ux",
+        "hitbox",
+        "nb-visual"
       ],
       "nb_id": 74
     },
     {
-      "id": 80,
+      "id": 84,
       "title": "Worklog Details - NB Visual - Labels and Hover",
       "path": "worklog_details_-_nb_visual_-_labels_and_hover.md",
       "tags": [
-        "controls",
-        "hover",
-        "nb-visual",
-        "ux",
         "worklog-details",
-        "labels"
+        "hover",
+        "ux",
+        "labels",
+        "controls",
+        "nb-visual"
       ],
       "nb_id": 73
     },
     {
-      "id": 81,
+      "id": 85,
       "title": "Worklog Details - NB Visual - NB Numeric IDs",
       "path": "worklog_details_-_nb_visual_-_nb_numeric_ids.md",
       "tags": [
         "cli",
         "worklog-details",
-        "nb",
-        "nb-visual"
+        "nb-visual",
+        "nb"
       ],
       "nb_id": 85
     },
     {
-      "id": 82,
+      "id": 86,
       "title": "Worklog Details - NB Visual - Proximity Hover Highlighting",
       "path": "worklog_details_-_nb_visual_-_proximity_hover_highlighting.md",
       "tags": [
-        "hover",
-        "nb-visual",
-        "ux",
         "worklog-details",
-        "d3"
+        "hover",
+        "ux",
+        "d3",
+        "nb-visual"
       ],
       "nb_id": 95
     },
     {
-      "id": 83,
+      "id": 87,
       "title": "Worklog Details - NB Visual - Stable Layout and Zoom",
       "path": "worklog_details_-_nb_visual_-_stable_layout_and_zoom.md",
       "tags": [
-        "svg",
-        "nb-visual",
         "worklog-details",
-        "d3",
+        "svg",
+        "zoom",
         "pan",
-        "layout",
-        "zoom"
+        "d3",
+        "nb-visual",
+        "layout"
       ],
       "nb_id": 71
     },
     {
-      "id": 84,
+      "id": 88,
       "title": "Worklog Details - NB Visual - Tag Extraction",
       "path": "worklog_details_-_nb_visual_-_tag_extraction.md",
       "tags": [
-        "python",
-        "nb-visual",
         "worklog-details",
         "tags",
-        "regex"
+        "python",
+        "regex",
+        "nb-visual"
       ],
       "nb_id": 81
     },
     {
-      "id": 85,
+      "id": 89,
       "title": "Worklog Details - NB Visual - Tag Hover Highlighting",
       "path": "worklog_details_-_nb_visual_-_tag_hover_highlighting.md",
       "tags": [
-        "hover",
-        "nb-visual",
-        "ux",
         "worklog-details",
+        "hover",
+        "ux",
         "tags",
-        "d3"
+        "d3",
+        "nb-visual"
       ],
       "nb_id": 84
     },
     {
-      "id": 86,
+      "id": 90,
       "title": "Worklog Details - NB Visual - Tag List UI",
       "path": "worklog_details_-_nb_visual_-_tag_list_ui.md",
       "tags": [
-        "css",
-        "nb-visual",
-        "ux",
         "worklog-details",
+        "css",
+        "ux",
         "tags",
+        "nb-visual",
         "html"
       ],
       "nb_id": 83
     },
     {
-      "id": 87,
+      "id": 91,
       "title": "Worklog Details - NB Visual - Tagging Rationale",
       "path": "worklog_details_-_nb_visual_-_tagging_rationale.md",
       "tags": [
-        "worklog-details",
-        "tags",
         "taxonomy",
+        "tags",
+        "worklog-details",
         "nb-visual"
       ],
       "nb_id": 77
     },
     {
-      "id": 88,
+      "id": 92,
       "title": "Worklog Details - NB Visual - Tags JSON Format",
       "path": "worklog_details_-_nb_visual_-_tags_json_format.md",
       "tags": [
         "json",
-        "worklog-details",
         "tags",
+        "worklog-details",
         "nb-visual"
       ],
       "nb_id": 82
     },
     {
-      "id": 89,
+      "id": 93,
+      "title": "Worklog Details - NB Visual - Uncommitted Proximity Hover",
+      "path": "worklog_details_-_nb_visual_-_uncommitted_proximity_hover.md",
+      "tags": [
+        "worklog-details",
+        "hover",
+        "nb-visual",
+        "git",
+        "investigation"
+      ],
+      "nb_id": 98
+    },
+    {
+      "id": 94,
       "title": "Worklog Details - NB Visual - uv Run Docs",
       "path": "worklog_details_-_nb_visual_-_uv_run_docs.md",
       "tags": [
-        "cli",
-        "worklog-details",
         "uv",
-        "nb-visual"
+        "worklog-details",
+        "nb-visual",
+        "cli"
       ],
       "nb_id": 70
     },
     {
-      "id": 90,
+      "id": 95,
       "title": "Worklog Details - NB Visual - Visibility and Spacing",
       "path": "worklog_details_-_nb_visual_-_visibility_and_spacing.md",
       "tags": [
-        "nb-visual",
-        "arrowheads",
-        "forces",
-        "worklog-details",
         "graph",
-        "layout"
+        "worklog-details",
+        "arrowheads",
+        "nb-visual",
+        "layout",
+        "forces"
       ],
       "nb_id": 72
     },
     {
-      "id": 91,
+      "id": 96,
       "title": "Worklogs Index",
       "path": "worklogs_index.md",
       "tags": [
+        "worklogs",
         "underchex",
-        "project",
-        "worklogs"
+        "project"
       ],
       "nb_id": 40
     },
     {
-      "id": 92,
+      "id": 97,
       "title": "Worktrees/Direnv - Debug - NB_DIR",
       "path": "worktree-direnv-debug.md",
       "tags": [
@@ -891,25 +948,25 @@
       "nb_id": 9
     },
     {
-      "id": 93,
+      "id": 98,
       "title": "Worktrees - Guide - Merging to Main",
       "path": "worktrees_-_guide_-_merging_to_main.md",
       "tags": [
-        "guide",
         "git",
-        "merging",
-        "worktrees"
+        "guide",
+        "worktrees",
+        "merging"
       ],
       "nb_id": 19
     },
     {
-      "id": 94,
+      "id": 99,
       "title": "Worktrees - Hub",
       "path": "worktrees_hub.md",
       "tags": [
-        "hub",
         "git",
-        "worktrees"
+        "worktrees",
+        "hub"
       ],
       "nb_id": 18
     }
@@ -945,7 +1002,7 @@
     },
     {
       "source": 3,
-      "target": 91
+      "target": 96
     },
     {
       "source": 4,
@@ -953,7 +1010,7 @@
     },
     {
       "source": 4,
-      "target": 91
+      "target": 96
     },
     {
       "source": 5,
@@ -1013,7 +1070,7 @@
     },
     {
       "source": 9,
-      "target": 92
+      "target": 97
     },
     {
       "source": 11,
@@ -1025,7 +1082,7 @@
     },
     {
       "source": 17,
-      "target": 87
+      "target": 91
     },
     {
       "source": 19,
@@ -1061,7 +1118,7 @@
     },
     {
       "source": 29,
-      "target": 73
+      "target": 76
     },
     {
       "source": 30,
@@ -1085,22 +1142,6 @@
     },
     {
       "source": 33,
-      "target": 75
-    },
-    {
-      "source": 33,
-      "target": 76
-    },
-    {
-      "source": 33,
-      "target": 77
-    },
-    {
-      "source": 33,
-      "target": 78
-    },
-    {
-      "source": 33,
       "target": 79
     },
     {
@@ -1109,7 +1150,19 @@
     },
     {
       "source": 33,
+      "target": 81
+    },
+    {
+      "source": 33,
+      "target": 82
+    },
+    {
+      "source": 33,
       "target": 83
+    },
+    {
+      "source": 33,
+      "target": 84
     },
     {
       "source": 33,
@@ -1117,11 +1170,15 @@
     },
     {
       "source": 33,
-      "target": 89
+      "target": 91
     },
     {
       "source": 33,
-      "target": 90
+      "target": 94
+    },
+    {
+      "source": 33,
+      "target": 95
     },
     {
       "source": 34,
@@ -1157,7 +1214,7 @@
     },
     {
       "source": 40,
-      "target": 91
+      "target": 96
     },
     {
       "source": 41,
@@ -1165,7 +1222,7 @@
     },
     {
       "source": 41,
-      "target": 91
+      "target": 96
     },
     {
       "source": 42,
@@ -1173,7 +1230,7 @@
     },
     {
       "source": 42,
-      "target": 91
+      "target": 96
     },
     {
       "source": 43,
@@ -1185,7 +1242,7 @@
     },
     {
       "source": 43,
-      "target": 91
+      "target": 96
     },
     {
       "source": 44,
@@ -1193,7 +1250,7 @@
     },
     {
       "source": 44,
-      "target": 91
+      "target": 96
     },
     {
       "source": 45,
@@ -1201,7 +1258,7 @@
     },
     {
       "source": 45,
-      "target": 91
+      "target": 96
     },
     {
       "source": 46,
@@ -1213,7 +1270,7 @@
     },
     {
       "source": 46,
-      "target": 91
+      "target": 96
     },
     {
       "source": 47,
@@ -1221,7 +1278,7 @@
     },
     {
       "source": 47,
-      "target": 91
+      "target": 96
     },
     {
       "source": 48,
@@ -1229,7 +1286,7 @@
     },
     {
       "source": 48,
-      "target": 91
+      "target": 96
     },
     {
       "source": 49,
@@ -1241,7 +1298,7 @@
     },
     {
       "source": 50,
-      "target": 91
+      "target": 96
     },
     {
       "source": 51,
@@ -1253,7 +1310,7 @@
     },
     {
       "source": 51,
-      "target": 91
+      "target": 96
     },
     {
       "source": 52,
@@ -1261,7 +1318,7 @@
     },
     {
       "source": 52,
-      "target": 91
+      "target": 96
     },
     {
       "source": 53,
@@ -1269,7 +1326,7 @@
     },
     {
       "source": 53,
-      "target": 91
+      "target": 96
     },
     {
       "source": 54,
@@ -1277,7 +1334,7 @@
     },
     {
       "source": 54,
-      "target": 91
+      "target": 96
     },
     {
       "source": 55,
@@ -1285,7 +1342,7 @@
     },
     {
       "source": 55,
-      "target": 91
+      "target": 96
     },
     {
       "source": 56,
@@ -1293,11 +1350,11 @@
     },
     {
       "source": 56,
-      "target": 91
+      "target": 96
     },
     {
       "source": 57,
-      "target": 91
+      "target": 96
     },
     {
       "source": 58,
@@ -1305,7 +1362,7 @@
     },
     {
       "source": 58,
-      "target": 91
+      "target": 96
     },
     {
       "source": 59,
@@ -1321,7 +1378,7 @@
     },
     {
       "source": 60,
-      "target": 91
+      "target": 96
     },
     {
       "source": 61,
@@ -1329,7 +1386,7 @@
     },
     {
       "source": 61,
-      "target": 91
+      "target": 96
     },
     {
       "source": 62,
@@ -1337,7 +1394,7 @@
     },
     {
       "source": 62,
-      "target": 91
+      "target": 96
     },
     {
       "source": 63,
@@ -1349,7 +1406,7 @@
     },
     {
       "source": 63,
-      "target": 91
+      "target": 96
     },
     {
       "source": 64,
@@ -1357,7 +1414,7 @@
     },
     {
       "source": 64,
-      "target": 91
+      "target": 96
     },
     {
       "source": 65,
@@ -1365,7 +1422,7 @@
     },
     {
       "source": 65,
-      "target": 91
+      "target": 96
     },
     {
       "source": 66,
@@ -1373,15 +1430,7 @@
     },
     {
       "source": 66,
-      "target": 91
-    },
-    {
-      "source": 67,
-      "target": 81
-    },
-    {
-      "source": 67,
-      "target": 84
+      "target": 96
     },
     {
       "source": 67,
@@ -1389,11 +1438,19 @@
     },
     {
       "source": 67,
-      "target": 86
+      "target": 88
     },
     {
       "source": 67,
-      "target": 88
+      "target": 89
+    },
+    {
+      "source": 67,
+      "target": 90
+    },
+    {
+      "source": 67,
+      "target": 92
     },
     {
       "source": 68,
@@ -1409,256 +1466,284 @@
     },
     {
       "source": 68,
-      "target": 91
+      "target": 96
     },
     {
       "source": 69,
-      "target": 82
-    },
-    {
-      "source": 70,
-      "target": 1
-    },
-    {
-      "source": 70,
-      "target": 2
-    },
-    {
-      "source": 71,
-      "target": 2
-    },
-    {
-      "source": 71,
-      "target": 70
-    },
-    {
-      "source": 72,
-      "target": 70
-    },
-    {
-      "source": 72,
-      "target": 71
-    },
-    {
-      "source": 73,
-      "target": 71
-    },
-    {
-      "source": 73,
-      "target": 72
-    },
-    {
-      "source": 74,
-      "target": 91
-    },
-    {
-      "source": 87,
-      "target": 17
-    },
-    {
-      "source": 91,
-      "target": 1
-    },
-    {
-      "source": 91,
-      "target": 2
-    },
-    {
-      "source": 91,
-      "target": 3
-    },
-    {
-      "source": 91,
-      "target": 4
-    },
-    {
-      "source": 91,
-      "target": 28
-    },
-    {
-      "source": 91,
-      "target": 29
-    },
-    {
-      "source": 91,
-      "target": 30
-    },
-    {
-      "source": 91,
-      "target": 31
-    },
-    {
-      "source": 91,
-      "target": 32
-    },
-    {
-      "source": 91,
-      "target": 34
-    },
-    {
-      "source": 91,
-      "target": 35
-    },
-    {
-      "source": 91,
-      "target": 36
-    },
-    {
-      "source": 91,
-      "target": 37
-    },
-    {
-      "source": 91,
-      "target": 38
-    },
-    {
-      "source": 91,
-      "target": 39
-    },
-    {
-      "source": 91,
-      "target": 40
-    },
-    {
-      "source": 91,
-      "target": 41
-    },
-    {
-      "source": 91,
-      "target": 42
-    },
-    {
-      "source": 91,
-      "target": 43
-    },
-    {
-      "source": 91,
-      "target": 44
-    },
-    {
-      "source": 91,
-      "target": 45
-    },
-    {
-      "source": 91,
-      "target": 46
-    },
-    {
-      "source": 91,
-      "target": 47
-    },
-    {
-      "source": 91,
-      "target": 48
-    },
-    {
-      "source": 91,
-      "target": 49
-    },
-    {
-      "source": 91,
-      "target": 50
-    },
-    {
-      "source": 91,
-      "target": 51
-    },
-    {
-      "source": 91,
-      "target": 52
-    },
-    {
-      "source": 91,
-      "target": 53
-    },
-    {
-      "source": 91,
-      "target": 54
-    },
-    {
-      "source": 91,
-      "target": 55
-    },
-    {
-      "source": 91,
-      "target": 56
-    },
-    {
-      "source": 91,
-      "target": 57
-    },
-    {
-      "source": 91,
-      "target": 58
-    },
-    {
-      "source": 91,
-      "target": 59
-    },
-    {
-      "source": 91,
-      "target": 60
-    },
-    {
-      "source": 91,
-      "target": 61
-    },
-    {
-      "source": 91,
-      "target": 62
-    },
-    {
-      "source": 91,
-      "target": 63
-    },
-    {
-      "source": 91,
-      "target": 65
-    },
-    {
-      "source": 91,
       "target": 66
     },
     {
-      "source": 91,
-      "target": 70
+      "source": 69,
+      "target": 77
     },
     {
-      "source": 91,
-      "target": 71
+      "source": 69,
+      "target": 96
     },
     {
-      "source": 91,
-      "target": 72
+      "source": 70,
+      "target": 86
     },
     {
-      "source": 91,
+      "source": 71,
+      "target": 93
+    },
+    {
+      "source": 72,
+      "target": 78
+    },
+    {
+      "source": 73,
+      "target": 1
+    },
+    {
+      "source": 73,
+      "target": 2
+    },
+    {
+      "source": 74,
+      "target": 2
+    },
+    {
+      "source": 74,
       "target": 73
     },
     {
-      "source": 92,
+      "source": 75,
+      "target": 73
+    },
+    {
+      "source": 75,
+      "target": 74
+    },
+    {
+      "source": 76,
+      "target": 74
+    },
+    {
+      "source": 76,
+      "target": 75
+    },
+    {
+      "source": 77,
+      "target": 96
+    },
+    {
+      "source": 91,
+      "target": 17
+    },
+    {
+      "source": 93,
+      "target": 70
+    },
+    {
+      "source": 93,
+      "target": 86
+    },
+    {
+      "source": 96,
+      "target": 1
+    },
+    {
+      "source": 96,
+      "target": 2
+    },
+    {
+      "source": 96,
+      "target": 3
+    },
+    {
+      "source": 96,
+      "target": 4
+    },
+    {
+      "source": 96,
+      "target": 28
+    },
+    {
+      "source": 96,
+      "target": 29
+    },
+    {
+      "source": 96,
+      "target": 30
+    },
+    {
+      "source": 96,
+      "target": 31
+    },
+    {
+      "source": 96,
+      "target": 32
+    },
+    {
+      "source": 96,
+      "target": 34
+    },
+    {
+      "source": 96,
+      "target": 35
+    },
+    {
+      "source": 96,
+      "target": 36
+    },
+    {
+      "source": 96,
+      "target": 37
+    },
+    {
+      "source": 96,
+      "target": 38
+    },
+    {
+      "source": 96,
+      "target": 39
+    },
+    {
+      "source": 96,
+      "target": 40
+    },
+    {
+      "source": 96,
+      "target": 41
+    },
+    {
+      "source": 96,
+      "target": 42
+    },
+    {
+      "source": 96,
+      "target": 43
+    },
+    {
+      "source": 96,
+      "target": 44
+    },
+    {
+      "source": 96,
+      "target": 45
+    },
+    {
+      "source": 96,
+      "target": 46
+    },
+    {
+      "source": 96,
+      "target": 47
+    },
+    {
+      "source": 96,
+      "target": 48
+    },
+    {
+      "source": 96,
+      "target": 49
+    },
+    {
+      "source": 96,
+      "target": 50
+    },
+    {
+      "source": 96,
+      "target": 51
+    },
+    {
+      "source": 96,
+      "target": 52
+    },
+    {
+      "source": 96,
+      "target": 53
+    },
+    {
+      "source": 96,
+      "target": 54
+    },
+    {
+      "source": 96,
+      "target": 55
+    },
+    {
+      "source": 96,
+      "target": 56
+    },
+    {
+      "source": 96,
+      "target": 57
+    },
+    {
+      "source": 96,
+      "target": 58
+    },
+    {
+      "source": 96,
+      "target": 59
+    },
+    {
+      "source": 96,
+      "target": 60
+    },
+    {
+      "source": 96,
+      "target": 61
+    },
+    {
+      "source": 96,
+      "target": 62
+    },
+    {
+      "source": 96,
+      "target": 63
+    },
+    {
+      "source": 96,
+      "target": 65
+    },
+    {
+      "source": 96,
+      "target": 66
+    },
+    {
+      "source": 96,
+      "target": 73
+    },
+    {
+      "source": 96,
+      "target": 74
+    },
+    {
+      "source": 96,
+      "target": 75
+    },
+    {
+      "source": 96,
+      "target": 76
+    },
+    {
+      "source": 97,
       "target": 9
     },
     {
-      "source": 94,
+      "source": 99,
       "target": 5
     },
     {
-      "source": 94,
+      "source": 99,
       "target": 9
     },
     {
-      "source": 94,
-      "target": 92
+      "source": 99,
+      "target": 97
     },
     {
-      "source": 94,
-      "target": 93
+      "source": 99,
+      "target": 98
     }
   ],
   "metadata": {
     "notebook_path": "/Users/bowei/code/underchex/.nb_docs_repo/home",
-    "node_count": 95,
-    "edge_count": 185
+    "node_count": 100,
+    "edge_count": 192
   }
 }
