@@ -1,7 +1,5 @@
 # NB Visual - Build Pipeline Quick Reference
 
-# NB Visual - Build Pipeline Quick Reference
-
 Purpose: A fast reminder of how to regenerate the nb-visual graph and which files are produced.
 
 ## Build
@@ -33,3 +31,4 @@ Purpose: A fast reminder of how to regenerate the nb-visual graph and which file
 
 [Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:54:39]
 [Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:56:34]
+[Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:58:19]
