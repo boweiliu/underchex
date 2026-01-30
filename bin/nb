@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Avoid infinite recursion by removing this script's dir from PATH.
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+filtered_path=""
+IFS=":" read -r -a path_parts <<< "${PATH:-}"
+for part in "${path_parts[@]}"; do
+  if [[ -n "$part" && "$part" != "$script_dir" ]]; then
+    if [[ -z "$filtered_path" ]]; then
+      filtered_path="$part"
+    else
+      filtered_path="${filtered_path}:$part"
+    fi
+  fi
+done
+
 if [[ "${1-}" == "show" ]]; then
   shift
-  exec nb show --print --no-color "$@"
+  PATH="$filtered_path" exec nb show --print --no-color "$@"
 fi
 
-exec nb "$@"
+PATH="$filtered_path" exec nb "$@"
