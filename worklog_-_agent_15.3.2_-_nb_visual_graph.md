@@ -18,6 +18,7 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Add a meta-doc on worklog details expectations, including why tagging is a relevant human ask.
 
 ## Worklog Details
+- [[NB Visual Architecture Reference]] - Quick-start guide for agents (recommended first read)
 - [[Worklog Details - NB Visual - Graph Builder]]
 - [[Worklog Details - NB Visual - Inline Graph JSON]]
 - [[Worklog Details - NB Visual - uv Run Docs]]
@@ -59,3 +60,4 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
 [Edited-by: agent #15.3.2 opus via codex 20260126T23:29:05]
+[Edited-by: agent #48.2 claude-opus-4-5 via amp 20260129T16:08:00]
