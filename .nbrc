@@ -1,0 +1,8 @@
+# Local nb configuration for this notebook
+
+# Custom subcommand: nbs - show with --print --no-color (useful for agents)
+# Usage: nb nbs <id>
+nbs() {
+  nb show --print --no-color "$@"
+}
+
