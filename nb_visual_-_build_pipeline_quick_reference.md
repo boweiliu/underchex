@@ -22,6 +22,7 @@ Purpose: A fast reminder of how to regenerate the nb-visual graph and which file
 ## Related docs
 - [[Worklog Details - NB Visual - uv Run Docs]]
 - [[Retro - Agent 52.1 - Memoizing Agent Knowledge Discovery]]
+- [[NB Visual Architecture Reference]]
 
 ## Triggers
 - Task mentions: rebuild, regenerate, update visualization, or nb-visual build output.
@@ -32,3 +33,4 @@ Purpose: A fast reminder of how to regenerate the nb-visual graph and which file
 [Signed-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:54:39]
 [Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:56:34]
 [Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:58:19]
+[Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:58:46]
