@@ -1,0 +1,60 @@
+name: Sync Documentation
+
+# This workflow syncs markdown files from the docs/nb branch (nb notes) to docs/docs/
+# and prepares them for Mintlify documentation site.
+#
+# Trigger: Runs on push to main or manual trigger
+# Process:
+#   1. Checkout main branch
+#   2. Checkout docs/nb branch to temporary directory (.nb_docs_repo/home/)
+#   3. Sync markdown files from docs/nb to docs/docs/
+#   4. Clean wikilinks and convert to Mintlify-compatible markdown
+#   5. Update docs.json navigation with all pages
+#   6. Commit and push changes to main
+#   7. Mintlify auto-deploys when changes are pushed to main (no manual trigger needed)
+
+on:
+  push:
+    branches:
+      - main
+      - docs/mintlify-v2
+  workflow_dispatch:
+
+jobs:
+  sync-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout docs/nb branch to temp directory
+        uses: actions/checkout@v4
+        with:
+          ref: docs/nb
+          path: .nb_docs_repo/home
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Sync markdown files from docs/nb branch
+        run: node docs/scripts/sync-nb-docs.js
+
+      - name: Clean markdown files (convert wikilinks)
+        run: node docs/scripts/clean-markdown.js
+
+      - name: Update docs navigation
+        run: node docs/scripts/update-docs-nav.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/docs/ docs/docs.json
+          git diff --staged --quiet || git commit -m "chore: sync documentation from .nb_docs_repo"
+          git push
