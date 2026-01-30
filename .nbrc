@@ -3,7 +3,7 @@
 # Custom subcommand: nbs - show with --print --no-color (useful for agents)
 # Usage: nb sr <id>
 sr() {
-  nb show --print --no-color "$@"
+  _show --print --no-color "$@"
 }
 
 # nb subcommands add sr
