@@ -179,15 +179,26 @@ def main():
     total_changes = 0
     files_changed = 0
     
-    for md_file in nb_docs_path.glob("**/*.md"):
-        changes = process_file(md_file, title_to_id, args.apply)
+    # Process all markdown files (with .md extension)
+    all_files = list(nb_docs_path.glob("**/*.md"))
+    
+    # Also process files without .md extension in subfolders (like Project/)
+    # These are nb docs that don't have the extension
+    for subdir in nb_docs_path.iterdir():
+        if subdir.is_dir() and not subdir.name.startswith('.'):
+            for f in subdir.iterdir():
+                if f.is_file() and not f.name.startswith('.') and not f.suffix:
+                    all_files.append(f)
+    
+    for doc_file in all_files:
+        changes = process_file(doc_file, title_to_id, args.apply)
         if changes:
             # Filter out warnings for reporting
             actual_changes = [c for c in changes if not c.startswith("  WARNING")]
             if actual_changes:
                 files_changed += 1
                 total_changes += len(actual_changes)
-                print(f"\n{md_file.name}:")
+                print(f"\n{doc_file.name}:")
                 for change in changes:
                     print(change)
     
