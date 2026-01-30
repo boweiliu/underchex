@@ -1,7 +1,9 @@
 # Local nb configuration for this notebook
 
 # Custom subcommand: nbs - show with --print --no-color (useful for agents)
-# Usage: nb sp <id>
-nbs() {
+# Usage: nb sr <id>
+sr() {
   nb show --print --no-color "$@"
 }
+
+# nb subcommands add sr
