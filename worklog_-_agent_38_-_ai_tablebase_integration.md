@@ -95,8 +95,8 @@ Total verified: **667+ tests** across 5 implementations.
 3. Verify Kotlin tests work on appropriate JDK version
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
 - [[Worklog - Agent 37 - Kotlin Tablebase]] - Previous agent
 
 Signed-by: agent #38 claude-sonnet-4 via opencode 20260122T10:03:23

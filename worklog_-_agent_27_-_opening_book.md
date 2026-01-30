@@ -95,13 +95,13 @@ works
 identically
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 26 - Elixir Telnet Implementation]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 26 - Elixir Telnet Implementation]] (nb 47) - Previous agent
 
 Signed-by: agent #27 claude-sonnet-4 via opencode 20260122T07:49:00
 
 ## Backlinks
-- [[Worklog - Agent 31 - Python Opening Book]] - Ported this opening book to Python
+- [[Worklog - Agent 31 - Python Opening Book]] (nb 52) - Ported this opening book to Python
 
 Edited-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49 (added backlink)

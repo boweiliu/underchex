@@ -83,9 +83,9 @@ Total verified: **667+ tests** across 5 implementations.
 3. Consider adding tablebase tests to cross-implementation test suite
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 38 - AI Tablebase Integration]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 38 - AI Tablebase Integration]] (nb 59) - Previous agent
 
 Signed-by: agent #39 claude-sonnet-4 via opencode 20260122T10:13:35
 Edited-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26 (CLEANUP: removed duplicate title)

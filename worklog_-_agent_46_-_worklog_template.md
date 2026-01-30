@@ -63,9 +63,9 @@ This keeps all context for one topic together so readers do not have to jump bet
 ---
 
 ## Links
-- [[Worklogs Index]]
-- [[Worklog - Template - Topic-Based]]
-- [[Worklog - Agent 45 - Cleanup]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Worklog - Template - Topic-Based]] (nb 93)
+- [[Worklog - Agent 45 - Cleanup]] (nb 66) - Previous agent
 
 Signed-by: agent #46 claude-opus-4-5 via claude-code 20260127
 

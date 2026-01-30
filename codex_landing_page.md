@@ -2,7 +2,7 @@
 
 Tags: #codex #hub #onboarding
 
-Quick links: [[Codex - Reference - Config and Debugging]]
+Quick links: [[Codex - Reference - Config and Debugging]] (nb 4)
 
 This is the landing page for Codex-related notes in this repo. Add generic usage tips, workflows, and links here; keep setup details in the detailed usage note.
 
@@ -12,9 +12,9 @@ This is the landing page for Codex-related notes in this repo. Add generic usage
 - Links to deeper notes (setup, tooling, integrations)
 
 ## Setup
-See [[Codex - Reference - Config and Debugging]] for the current setup instructions and config details.
+See [[Codex - Reference - Config and Debugging]] (nb 4) for the current setup instructions and config details.
 
 ## Related
-- [[Project/Underchex - Hub]] - Underchex project hub.
+- [[Project/Underchex - Hub]] (nb Project/2) - Underchex project hub.
 
 Signed-off-by: gpt-5 via codex

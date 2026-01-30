@@ -36,7 +36,7 @@ Clarify what a “worklog details” doc should contain and how to decide what t
 - Did it mention the human prompt that triggered it?
 
 ## See Also
-- [[How to Create Worklog Documentation]] - Quick reference for creating and filing worklogs
+- [[How to Create Worklog Documentation]] (nb 105) - Quick reference for creating and filing worklogs
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T23:29:05]
 [Edited-by: agent #15.3.2 opus via codex 20260126T23:39:52]

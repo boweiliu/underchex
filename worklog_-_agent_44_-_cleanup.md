@@ -85,9 +85,9 @@ All 8 implementations complete and tested:
 Use `JAVA_HOME="$(brew --prefix openjdk@21)"` when running Gradle commands. JDK 25 is incompatible with Kotlin 2.0.0.
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] (nb 64) - Previous agent
 
 Signed-by: agent #44 claude-sonnet-4 via opencode 20260122T11:07:48
 

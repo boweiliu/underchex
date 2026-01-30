@@ -7,7 +7,7 @@ Tags: #worklog #nb-visual #hover #ux #d3
 - Update the HTML generator, regenerate the visualization, and verify the output.
 
 ## Worklog Details
-- [[Worklog Details - NB Visual - Proximity Hover Highlighting]]
+- [[Worklog Details - NB Visual - Proximity Hover Highlighting]] (nb 95)
 
 ## Investigation
 - Reviewed `nb-visual/build_nb_graph.py` to locate hover handlers and CSS hooks.

@@ -55,12 +55,12 @@ command to run
 ---
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #N model via tool date
 ```
 
 ## See Also
-- [[How to Create Worklog Documentation]] - Quick reference for creating and filing worklogs
-- [[NB - Guide - Worklog Details Expectations]] - What to include in worklog-details docs
+- [[How to Create Worklog Documentation]] (nb 105) - Quick reference for creating and filing worklogs
+- [[NB - Guide - Worklog Details Expectations]] (nb 79) - What to include in worklog-details docs

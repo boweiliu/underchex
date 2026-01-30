@@ -13,7 +13,7 @@ Tags: #worklog #retro #documentation #nb-visual
 - Use `nb show 79` and write a worklog + worklog details.
 
 ## Worklog Details
-- [[Worklog Details - Doc DB Discoverability for NB Visual]]
+- [[Worklog Details - Doc DB Discoverability for NB Visual]] (nb 101)
 
 ## Investigation
 - Read Agent 48.1 worklog and worklog-details notes (docs 96, 95) plus toolcall log `.agent_toolcall_48.1.txt`.

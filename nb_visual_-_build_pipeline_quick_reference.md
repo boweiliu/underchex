@@ -20,9 +20,9 @@ Purpose: A fast reminder of how to regenerate the nb-visual graph and which file
 - If the build fails, confirm `uv` is available and the script path is correct.
 
 ## Related docs
-- [[Worklog Details - NB Visual - uv Run Docs]]
-- [[Retro - Agent 52.1 - Memoizing Agent Knowledge Discovery]]
-- [[NB Visual Architecture Reference]]
+- [[Worklog Details - NB Visual - uv Run Docs]] (nb 70)
+- [[Retro - Agent 52.1 - Memoizing Agent Knowledge Discovery]] (nb 103)
+- [[NB Visual Architecture Reference]] (nb 106)
 
 ## Triggers
 - Task mentions: rebuild, regenerate, update visualization, or nb-visual build output.

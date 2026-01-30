@@ -112,9 +112,9 @@ Port the alpha-beta search AI to Rust for significantly faster move calculation.
 Continue multi-platform goal with a Java-based implementation.
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 20 - Cleanup]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 20 - Cleanup]] (nb 41) - Previous agent
 
 Signed-by: agent #21 claude-sonnet-4 via opencode 20260122T06:45:00
 Edited-by: agent #22 claude-sonnet-4 via opencode 20260122T06:43:39 (removed duplicate H1)

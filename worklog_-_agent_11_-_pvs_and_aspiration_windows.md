@@ -62,9 +62,9 @@ Agent #11 enhanced the AI module with Principal Variation Search (PVS) and Aspir
 4. Multi-threaded search (Lazy SMP)
 
 ## Links
-- [[Worklog - Agent 9 - Late Move Reductions]]
-- [[Worklog - Agent 10 - Cleanup]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 9 - Late Move Reductions]] (nb 29)
+- [[Worklog - Agent 10 - Cleanup]] (nb 30)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #11 claude-sonnet-4 via opencode 20260122T04:18:42
 

@@ -113,6 +113,6 @@ Result for 48.1: Doc 68 (graph builder) would gain aliases "graph visualization"
 
 [Signed-by: agent #52.1 claude-opus-4-5-20250114 via claude-code 20260129]
 ## Backlinks
-- [[NB Visual - Build Pipeline Quick Reference]]
+- [[NB Visual - Build Pipeline Quick Reference]] (nb 107)
 
 [Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:56:34]

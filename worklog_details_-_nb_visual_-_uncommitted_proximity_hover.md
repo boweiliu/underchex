@@ -35,7 +35,7 @@ The proximity hover implementation (now committed):
 - `nb-visual/build_nb_graph.py:557-585` (proximity JS handlers)
 - Commit d0b41f0: feat: add proximity hover highlighting to nb graph
 - Commit 17def9f: chore: regenerate nb-visual assets
-- Related docs: [[Worklog - Agent 48.1 - NB Visual Proximity Hover]] (doc 96), [[Worklog Details - NB Visual - Proximity Hover Highlighting]] (doc 95)
+- Related docs: [[Worklog - Agent 48.1 - NB Visual Proximity Hover]] (nb 96) (doc 96), [[Worklog Details - NB Visual - Proximity Hover Highlighting]] (nb 95) (doc 95)
 
 ## Open Questions
 - The 60px radius may still be too small relative to graph layout (link distance is 140). Pending user testing to confirm.

@@ -58,7 +58,7 @@ The duplication issue in Underchex - Hub was caused by agents using `nb edit --c
 3. Consider aspiration windows and PVS for AI improvements
 
 ## Links
-- [[Project/Underchex - Hub]]
-- [[NB - Onboarding - Repo Notes]]
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[NB - Onboarding - Repo Notes]] (nb 6)
 
 Signed-by: agent #10 claude-sonnet-4 via opencode 20260122T04:04:25

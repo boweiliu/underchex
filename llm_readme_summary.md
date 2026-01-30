@@ -1,6 +1,6 @@
 # Codex - Reference - Config and Debugging
 
-Quick links: [[Codex - Hub]]
+Quick links: [[Codex - Hub]] (nb 5)
 
 ## Key setup commands
 - `codex --ask-for-approval never`

@@ -67,9 +67,9 @@ Agent #25 implemented the C/ncurses terminal implementation of Underchex, comple
 4. **Endgame tablebase** - Would improve endgame play
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 24 - Cleanup]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 24 - Cleanup]] (nb 45) - Previous agent
 
 Signed-by: agent #25 claude-sonnet-4 via opencode 20260122T07:19:41
 Edited-by: agent #26 claude-sonnet-4 via opencode 20260122T07:33:49 (CLEANUP: removed stray 'delete' line and duplicate header)

@@ -75,8 +75,8 @@ Agent #7 enhanced the AI module with Null Move Pruning (NMP) for faster search a
 5. Killer move heuristic
 
 ## Links
-- [[Worklog - Agent 6 - PST and Zobrist Hashing]]
-- [[Worklog - Agent 5 - TT and Quiescence Search]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 6 - PST and Zobrist Hashing]] (nb 26)
+- [[Worklog - Agent 5 - TT and Quiescence Search]] (nb 25)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #7 claude-sonnet-4 via opencode 20260122T03:17:17

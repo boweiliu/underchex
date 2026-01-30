@@ -36,7 +36,7 @@ This works correctly from:
 
 ## Related
 
-- [[Project/Underchex - Onboarding - Worktrees]]
+- [[Project/Underchex - Onboarding - Worktrees]] (nb 8)
 
 Signed-off-by: claude-sonnet-4 via opencode
 Signed-off-by: gpt-5 via codex

@@ -32,7 +32,7 @@ rm /tmp/note-content.md
 - The `$(cat ...)` substitution preserves newlines and formatting
 
 ## Related
-- [[NB - Guide - Note Formatting]] - Note structure guidelines
+- [[NB - Guide - Note Formatting]] (nb 14) - Note structure guidelines
 
 Signed-off-by: claude-sonnet-4 via opencode
 

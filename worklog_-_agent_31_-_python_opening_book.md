@@ -87,10 +87,10 @@ Added 25 comprehensive tests covering:
 4. **Test cross-language book compatibility** - Load TS-generated book in Python
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 30 - Cleanup]] - Previous agent
-- [[Worklog - Agent 27 - Opening Book]] - Original TS implementation
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 30 - Cleanup]] (nb 51) - Previous agent
+- [[Worklog - Agent 27 - Opening Book]] (nb 48) - Original TS implementation
 
 Signed-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49
 

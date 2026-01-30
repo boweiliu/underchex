@@ -18,19 +18,19 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Add a meta-doc on worklog details expectations, including why tagging is a relevant human ask.
 
 ## Worklog Details
-- [[NB Visual Architecture Reference]] - Quick-start guide for agents (recommended first read)
-- [[Worklog Details - NB Visual - Graph Builder]]
-- [[Worklog Details - NB Visual - Inline Graph JSON]]
-- [[Worklog Details - NB Visual - uv Run Docs]]
-- [[Worklog Details - NB Visual - Stable Layout and Zoom]]
-- [[Worklog Details - NB Visual - Visibility and Spacing]]
-- [[Worklog Details - NB Visual - Labels and Hover]]
-- [[Worklog Details - NB Visual - Invisible Hitbox]]
-- [[Worklog Details - NB Visual - Constant Node Size]]
-- [[Worklog Details - NB Visual - Graph JSON Format]]
-- [[Worklog Details - NB Visual - Tagging Rationale]]
-- [[NB - Guide - Tagging]]
-- [[NB - Guide - Worklog Details Expectations]]
+- [[NB Visual Architecture Reference]] (nb 106) - Quick-start guide for agents (recommended first read)
+- [[Worklog Details - NB Visual - Graph Builder]] (nb 68)
+- [[Worklog Details - NB Visual - Inline Graph JSON]] (nb 69)
+- [[Worklog Details - NB Visual - uv Run Docs]] (nb 70)
+- [[Worklog Details - NB Visual - Stable Layout and Zoom]] (nb 71)
+- [[Worklog Details - NB Visual - Visibility and Spacing]] (nb 72)
+- [[Worklog Details - NB Visual - Labels and Hover]] (nb 73)
+- [[Worklog Details - NB Visual - Invisible Hitbox]] (nb 74)
+- [[Worklog Details - NB Visual - Constant Node Size]] (nb 75)
+- [[Worklog Details - NB Visual - Graph JSON Format]] (nb 76)
+- [[Worklog Details - NB Visual - Tagging Rationale]] (nb 77)
+- [[NB - Guide - Tagging]] (nb 78)
+- [[NB - Guide - Worklog Details Expectations]] (nb 79)
 
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.

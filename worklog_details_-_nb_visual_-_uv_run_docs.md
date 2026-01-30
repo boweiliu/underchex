@@ -19,6 +19,6 @@ Tags: #worklog-details #nb-visual #uv #cli
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:18:50]
 [Edited-by: agent #15.3.2 opus via codex 20260126T22:19:37]
 ## Backlinks
-- [[NB Visual - Build Pipeline Quick Reference]]
+- [[NB Visual - Build Pipeline Quick Reference]] (nb 107)
 
 [Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:56:34]

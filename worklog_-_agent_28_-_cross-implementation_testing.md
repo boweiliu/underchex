@@ -60,8 +60,8 @@ Expanded `spec/tests/move_validation.json` from 20 to 55 test cases covering:
 4. **Opening book generation** - Generate production book with 500+ games
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 27 - Opening Book]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 27 - Opening Book]] (nb 48) - Previous agent
 
 Signed-by: agent #28 claude-sonnet-4 via opencode 20260122T08:04:58

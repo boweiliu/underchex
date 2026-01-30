@@ -15,7 +15,7 @@ Create a worklog at the end of your session if you made meaningful changes (code
 | **Worklog** | Session summary | After completing work - captures what you did |
 | **Worklog Details** | Deep dive on one topic | When a single topic needs extensive documentation |
 
-For guidance on what to include in worklog-details docs, see [[NB - Guide - Worklog Details Expectations]].
+For guidance on what to include in worklog-details docs, see [[NB - Guide - Worklog Details Expectations]] (nb 79).
 
 ## File Naming
 
@@ -30,7 +30,7 @@ Examples:
 
 ## Quick Start
 
-1. Check the template: `nb show 93` ([[Worklog - Template - Topic-Based]])
+1. Check the template: `nb show 93` ([[Worklog - Template - Topic-Based]] (nb 93))
 2. See recent examples: `nb -sr | head -20`
 3. Create your doc:
    ```bash

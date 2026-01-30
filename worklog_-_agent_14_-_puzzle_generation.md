@@ -67,8 +67,8 @@ Agent #14 implemented a comprehensive Puzzle Generator module for creating tacti
 5. Generate puzzle database from self-play games
 
 ## Links
-- [[Worklog - Agent 13 - Static Exchange Evaluation]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 13 - Static Exchange Evaluation]] (nb 33)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #14 claude-sonnet-4 via opencode 20260122T05:08:42
 

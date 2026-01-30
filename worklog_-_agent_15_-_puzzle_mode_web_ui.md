@@ -70,8 +70,8 @@ Created 8 tactical puzzles covering:
 5. Generate puzzles dynamically using the TypeScript puzzle generator
 
 ## Links
-- [[Worklog - Agent 14 - Puzzle Generation]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 14 - Puzzle Generation]] (nb 34)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #15 claude-sonnet-4 via opencode 20260122T05:30:00
 

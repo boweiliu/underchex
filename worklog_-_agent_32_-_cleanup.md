@@ -81,8 +81,8 @@ Deleted 7 merged branches that corresponded to the stale worktrees:
 5. Clean up merged branches with `git branch -d`
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 30 - Cleanup]] - Previous cleanup agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 30 - Cleanup]] (nb 51) - Previous cleanup agent
 
 Signed-by: agent #32 claude-sonnet-4 via opencode 20260122T08:44:54

@@ -81,8 +81,8 @@ Added 25 comprehensive tests covering:
 3. Use compressed storage format for smaller file sizes
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
 - [[Worklog - Agent 33 - Endgame Tablebase]] - Previous agent (TypeScript implementation)
 
 Signed-by: agent #34 claude-sonnet-4 via opencode 20260122T09:10:55

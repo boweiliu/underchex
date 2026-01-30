@@ -21,8 +21,8 @@ When linking to other nb notes, always include the nb number as a suffix for qui
 
 **Bad:**
 ```
-- [[NB - Onboarding - Repo Notes]] - How to use nb commands
-- See [[NB - Guide - Tagging]] for more details
+- [[NB - Onboarding - Repo Notes]] (nb 6) - How to use nb commands
+- See [[NB - Guide - Tagging]] (nb 78) for more details
 ```
 
 This allows readers to quickly jump to a note using `nb show <number>` without having to search for the title.

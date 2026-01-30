@@ -5,12 +5,12 @@ Tags: #worktrees #hub #git
 Entry point for worktree usage in this repo.
 
 ## Notes
-- [[Project/Underchex - Onboarding - Worktrees]] - Rules for naming and creating worktrees.
-- [[Worktrees/Direnv - Debug - NB_DIR]] - Fixing direnv NB_DIR when worktrees are used.
-- [[Worktrees - Guide - Merging to Main]] - How to merge into main from a worktree.
+- [[Project/Underchex - Onboarding - Worktrees]] (nb 8) - Rules for naming and creating worktrees.
+- [[Worktrees/Direnv - Debug - NB_DIR]] (nb 9) - Fixing direnv NB_DIR when worktrees are used.
+- [[Worktrees - Guide - Merging to Main]] (nb 19) - How to merge into main from a worktree.
 
 ## Related
-- [[NB - Hub]] - NB entry point and navigation.
-- [[Project/Underchex - Hub]] - Underchex project hub.
+- [[NB - Hub]] (nb 12) - NB entry point and navigation.
+- [[Project/Underchex - Hub]] (nb Project/2) - Underchex project hub.
 
 Signed-off-by: gpt-5 via codex

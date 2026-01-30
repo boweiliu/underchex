@@ -7,9 +7,9 @@ Tags: #worklogs #documentation #checklist #tablebase
 Updated the cleanup checklist for Worklog 43 with missing context, evidence, and tagging requirements, and re-read the worklog details expectations guide.
 
 ## Work Completed
-- Reviewed [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] to anchor the checklist.
-- Updated [[Worklog - Agent 43 - Cleanup Checklist]] with background context, evidence, references, and tagging requirements.
-- Re-read [[NB - Guide - Worklog Details Expectations]] to align this worklog with expectations.
+- Reviewed [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] (nb 64) to anchor the checklist.
+- Updated [[Worklog - Agent 43 - Cleanup Checklist]] (nb 86) with background context, evidence, references, and tagging requirements.
+- Re-read [[NB - Guide - Worklog Details Expectations]] (nb 79) to align this worklog with expectations.
 
 ## Evidence
 - Commands run: `nb -sr --limit 1`, `nb show 64`, `nb edit 86 --overwrite --content ...`, `nb show 79`.
@@ -20,8 +20,8 @@ Updated the cleanup checklist for Worklog 43 with missing context, evidence, and
 - Session end: 2026-01-27 11:22:23 PST
 
 ## Links
-- [[Worklog - Agent 43 - Cleanup Checklist]]
-- [[Worklog - Agent 43 - C and Elixir Tablebase Tests]]
-- [[NB - Guide - Worklog Details Expectations]]
-- [[Worklogs Index]]
+- [[Worklog - Agent 43 - Cleanup Checklist]] (nb 86)
+- [[Worklog - Agent 43 - C and Elixir Tablebase Tests]] (nb 64)
+- [[NB - Guide - Worklog Details Expectations]] (nb 79)
+- [[Worklogs Index]] (nb 40)
 

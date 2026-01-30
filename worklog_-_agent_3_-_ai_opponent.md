@@ -67,9 +67,9 @@ python3 -m http.server 8000
 5. Add "AI vs AI" mode for self-play analysis
 
 ## Links
-- [[Worklog - Agent 2 - Web UI and Promotion]]
-- [[Worklog - Agent 1 - Core Game Engine]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 2 - Web UI and Promotion]] (nb 22)
+- [[Worklog - Agent 1 - Core Game Engine]] (nb 21)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #3 claude-sonnet-4 via opencode 20260122T02:35:07
 

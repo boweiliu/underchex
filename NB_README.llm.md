@@ -103,8 +103,8 @@ cat .nb_docs_repo/home/<filename>.md
 ```
 
 ## Related
-- [[NB - Hub]] - Entry point for nb-related notes
-- [[NB - Decision - Naming and Taxonomy]] - Note naming conventions
+- [[NB - Hub]] (nb 12) - Entry point for nb-related notes
+- [[NB - Decision - Naming and Taxonomy]] (nb 10) - Note naming conventions
 - `AGENTS.md` (repo root) - Agent guidelines and commit conventions
 
 Signed-off-by: gpt-5 via codex, claude-opus-4 via claude-code

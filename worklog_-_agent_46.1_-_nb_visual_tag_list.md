@@ -9,11 +9,11 @@ Tags: #worklog #nb-visual #tags #d3 #ux #hover
 - Add nb doc numeric IDs to the visualization (labels and tooltips)
 
 ## Worklog Details
-- [[Worklog Details - NB Visual - Tag Extraction]]
-- [[Worklog Details - NB Visual - Tags JSON Format]]
-- [[Worklog Details - NB Visual - Tag List UI]]
-- [[Worklog Details - NB Visual - Tag Hover Highlighting]]
-- [[Worklog Details - NB Visual - NB Numeric IDs]]
+- [[Worklog Details - NB Visual - Tag Extraction]] (nb 81)
+- [[Worklog Details - NB Visual - Tags JSON Format]] (nb 82)
+- [[Worklog Details - NB Visual - Tag List UI]] (nb 83)
+- [[Worklog Details - NB Visual - Tag Hover Highlighting]] (nb 84)
+- [[Worklog Details - NB Visual - NB Numeric IDs]] (nb 85)
 
 ## Investigation
 - Ran `nb search nb-visual` to find existing docs and understand the project structure

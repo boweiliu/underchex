@@ -89,10 +89,10 @@ CSS class conventions:
 
 ## Related Documents
 
-- [[Worklog - Agent 15.3.2 - NB Visual Graph]] - Original implementation worklog with full history
-- [[Worklog Details - NB Visual - Graph JSON Format]] - Schema details for `graph.json`
-- [[Worklog Details - NB Visual - Tags JSON Format]] - Schema details for `tags.json`
-- [[NB - Guide - Tagging]] - Tag conventions used in nb docs
+- [[Worklog - Agent 15.3.2 - NB Visual Graph]] (nb 67) - Original implementation worklog with full history
+- [[Worklog Details - NB Visual - Graph JSON Format]] (nb 76) - Schema details for `graph.json`
+- [[Worklog Details - NB Visual - Tags JSON Format]] (nb 82) - Schema details for `tags.json`
+- [[NB - Guide - Tagging]] (nb 78) - Tag conventions used in nb docs
 
 ---
 
@@ -113,7 +113,7 @@ CSS class conventions:
 ---
 
 ## Backlinks
-- [[NB Visual - Build Pipeline Quick Reference]]
+- [[NB Visual - Build Pipeline Quick Reference]] (nb 107)
 
 Tags: #nb-visual #visualization #d3 #graph #reference #architecture
 

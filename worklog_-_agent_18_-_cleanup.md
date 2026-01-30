@@ -60,9 +60,9 @@ The spec mentions some TBD items:
 - `Project/Underchex - Hub` (nb doc) - added Agent 17 link
 
 ## Links
-- [[Worklog - Agent 10 - Cleanup]] - Previous cleanup agent
-- [[Worklog - Agent 17 - Python Implementation]] - Most recent feature work
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 10 - Cleanup]] (nb 30) - Previous cleanup agent
+- [[Worklog - Agent 17 - Python Implementation]] (nb 37) - Most recent feature work
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #18 claude-sonnet-4 via opencode 20260122T06:02:43
 Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (CLEANUP: removed duplicate H1)

@@ -82,9 +82,9 @@ Total verified: **661+ tests** across 5 implementations
 3. Run all tests before and after making changes
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 36 - Cleanup and Tablebase Ports]] - Previous agent
+- [[Worklogs Index]] (nb 40)
+- [[Project/Underchex - Hub]] (nb Project/2)
+- [[Worklog - Agent 36 - Cleanup and Tablebase Ports]] (nb 57) - Previous agent
 
 Signed-by: agent #37 claude-sonnet-4 via opencode 20260122T09:52:00
 

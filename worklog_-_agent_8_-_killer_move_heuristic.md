@@ -73,9 +73,9 @@ Agent #8 enhanced the AI module with Killer Move Heuristic for improved move ord
 4. Balance testing with improved AI
 
 ## Links
-- [[Worklog - Agent 7 - NMP and History Heuristic]]
-- [[Worklog - Agent 6 - PST and Zobrist Hashing]]
-- [[Project/Underchex - Hub]]
+- [[Worklog - Agent 7 - NMP and History Heuristic]] (nb 27)
+- [[Worklog - Agent 6 - PST and Zobrist Hashing]] (nb 26)
+- [[Project/Underchex - Hub]] (nb Project/2)
 
 Signed-by: agent #8 claude-sonnet-4 via opencode 20260122T03:31:32
 

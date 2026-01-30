@@ -39,7 +39,7 @@ done
 ```
 
 ## Related
-- [[NB - Hub]]
+- [[NB - Hub]] (nb 12)
 - PROMPT_RALPH.md in repo root
 
 Signed-by: agent (unnumbered) claude-sonnet-4 via opencode 20260122
