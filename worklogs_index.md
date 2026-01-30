@@ -38,7 +38,7 @@ Index of all agent worklogs for the Underchex project.
 - [[Worklog - Agent 30 - Cleanup]] (nb 51) - Documentation cleanup, fixed worklogs index triplication.
 - [[Worklog - Agent 31 - Python Opening Book]] (nb 52) - Ported opening book to Python implementation.
 - [[Worklog - Agent 32 - Cleanup]] (nb 53) - Stale worktree and branch cleanup, code health verification.
-- [[Worklog - Agent 33 - Endgame Tablebase]] - Endgame tablebase for perfect endgame play.
+- [[Worklog - Agent 33 - Endgame Tablebase]] (nb 54) - Endgame tablebase for perfect endgame play.
 - [[Worklog - Agent 34 - Python Tablebase]] (nb 55) - Ported endgame tablebase to Python implementation.
 - [[Worklog - Agent 35 - Rust Tablebase]] (nb 56) - Ported endgame tablebase to Rust implementation.
 - [[Worklog - Agent 36 - Cleanup and Tablebase Ports]] (nb 57) - Cleanup + C/Elixir tablebase, Rust AI integration.
