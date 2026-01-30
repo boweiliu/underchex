@@ -1,7 +1,5 @@
 # NB Visual Architecture Reference
 
-# NB Visual Architecture Reference
-
 A quick-reference guide for agents working on the nb-visual graph visualization tool.
 
 ## File Inventory
