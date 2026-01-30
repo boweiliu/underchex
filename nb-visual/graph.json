@@ -6,9 +6,9 @@
       "path": "20260121140130.md",
       "tags": [
         "debug",
-        "tag2",
         "naming",
-        "tag1"
+        "tag1",
+        "tag2"
       ],
       "nb_id": 13
     },
@@ -45,8 +45,8 @@
       "title": "NB - Hub",
       "path": "NB - Hub.md",
       "tags": [
-        "hub",
         "knowledge-base",
+        "hub",
         "nb"
       ],
       "nb_id": 12
@@ -57,9 +57,9 @@
       "path": "NB_README.llm.md",
       "tags": [
         "onboarding",
+        "commands",
         "workflow",
-        "nb",
-        "commands"
+        "nb"
       ],
       "nb_id": 6
     },
@@ -68,9 +68,9 @@
       "title": "Codex - Hub",
       "path": "codex_landing_page.md",
       "tags": [
-        "hub",
         "onboarding",
-        "codex"
+        "codex",
+        "hub"
       ],
       "nb_id": 5
     },
@@ -79,8 +79,8 @@
       "title": "Codex - Deprecated",
       "path": "codex_usage.md",
       "tags": [
-        "deprecated",
-        "codex"
+        "codex",
+        "deprecated"
       ],
       "nb_id": 3
     },
@@ -104,7 +104,12 @@
       "id": 11,
       "title": "How to Create Worklog Documentation",
       "path": "how_to_create_worklog_documentation.md",
-      "tags": [],
+      "tags": [
+        "howto",
+        "agent-guide",
+        "worklog",
+        "documentation"
+      ],
       "nb_id": 105
     },
     {
@@ -120,8 +125,8 @@
       "path": "nb_-_debug_-_remote_set.md",
       "tags": [
         "debug",
-        "remote",
-        "git"
+        "git",
+        "remote"
       ],
       "nb_id": 11
     },
@@ -131,8 +136,8 @@
       "path": "nb_-_decision_-_naming_and_taxonomy.md",
       "tags": [
         "knowledge-base",
-        "workflow",
-        "decision"
+        "decision",
+        "workflow"
       ],
       "nb_id": 10
     },
@@ -142,9 +147,9 @@
       "path": "nb_-_guide_-_multiline_content_via_heredoc.md",
       "tags": [
         "heredoc",
+        "subtopic",
         "topic",
         "guide",
-        "subtopic",
         "shell"
       ],
       "nb_id": 17
@@ -154,8 +159,8 @@
       "title": "NB - Guide - Note Formatting",
       "path": "nb_-_guide_-_note_formatting.md",
       "tags": [
-        "formatting",
-        "guide"
+        "guide",
+        "formatting"
       ],
       "nb_id": 14
     },
@@ -164,10 +169,10 @@
       "title": "NB - Guide - Render Markdown in Browser",
       "path": "nb_-_guide_-_render_markdown_in_browser.md",
       "tags": [
-        "ux",
-        "markdown",
+        "browser",
         "guide",
-        "browser"
+        "markdown",
+        "ux"
       ],
       "nb_id": 16
     },
@@ -176,10 +181,10 @@
       "title": "NB - Guide - Tagging",
       "path": "nb_-_guide_-_tagging.md",
       "tags": [
-        "tags",
+        "taxonomy",
         "guide",
-        "nb",
-        "taxonomy"
+        "tags",
+        "nb"
       ],
       "nb_id": 78
     },
@@ -188,10 +193,10 @@
       "title": "NB - Guide - Worklog Details Expectations",
       "path": "nb_-_guide_-_worklog_details_expectations.md",
       "tags": [
+        "worklog-details",
         "guide",
         "documentation",
-        "nb",
-        "worklog-details"
+        "nb"
       ],
       "nb_id": 79
     },
@@ -212,9 +217,9 @@
       "title": "NB - Decision - Knowledge Base Structure",
       "path": "organizing_info_in_nb.md",
       "tags": [
+        "onboarding",
         "knowledge-base",
-        "workflow",
-        "onboarding"
+        "workflow"
       ],
       "nb_id": 7
     },
@@ -232,9 +237,9 @@
       "tags": [
         "worklog",
         "hover",
-        "retro",
+        "nb-visual",
         "agent-48",
-        "nb-visual"
+        "retro"
       ],
       "nb_id": 97
     },
@@ -243,11 +248,11 @@
       "title": "Retro - Agent 52.1 - Memoizing Agent Knowledge Discovery",
       "path": "retro_-_agent_52.1_-_memoizing_agent_knowledge_discovery.md",
       "tags": [
+        "knowledge-management",
         "agent-efficiency",
         "documentation",
-        "retro",
-        "knowledge-management",
-        "nb-visual"
+        "nb-visual",
+        "retro"
       ],
       "nb_id": 103
     },
@@ -256,9 +261,9 @@
       "title": "worklog-47.1-detail-credentials",
       "path": "worklog-47.1-detail-credentials.md",
       "tags": [
-        "credentials",
         "security",
         "wiki",
+        "credentials",
         "worklog-details"
       ],
       "nb_id": 90
@@ -268,10 +273,10 @@
       "title": "worklog-47.1-detail-latchkey",
       "path": "worklog-47.1-detail-latchkey.md",
       "tags": [
-        "latchkey",
         "architecture",
         "wiki",
-        "worklog-details"
+        "worklog-details",
+        "latchkey"
       ],
       "nb_id": 89
     },
@@ -280,10 +285,10 @@
       "title": "worklog-47.1-detail-notion-api",
       "path": "worklog-47.1-detail-notion-api.md",
       "tags": [
-        "api",
-        "notion",
         "wiki",
-        "worklog-details"
+        "worklog-details",
+        "notion",
+        "api"
       ],
       "nb_id": 88
     },
@@ -293,9 +298,9 @@
       "path": "worklog-47.1-detail-playwright.md",
       "tags": [
         "playwright",
-        "automation",
         "wiki",
-        "worklog-details"
+        "worklog-details",
+        "automation"
       ],
       "nb_id": 91
     },
@@ -304,10 +309,10 @@
       "title": "worklog-47.1-detail-tmux",
       "path": "worklog-47.1-detail-tmux.md",
       "tags": [
-        "tmux",
-        "terminal",
         "wiki",
-        "worklog-details"
+        "worklog-details",
+        "tmux",
+        "terminal"
       ],
       "nb_id": 92
     },
@@ -317,9 +322,9 @@
       "path": "worklog-47.1-wiki-consolidation.md",
       "tags": [
         "knowledge-base",
-        "documentation",
+        "wiki",
         "worklog",
-        "wiki"
+        "documentation"
       ],
       "nb_id": 87
     },
@@ -363,13 +368,13 @@
       "title": "Worklog - Agent 15.3.2 - NB Visual Graph",
       "path": "worklog_-_agent_15.3.2_-_nb_visual_graph.md",
       "tags": [
-        "visualization",
         "graph",
         "worklog",
-        "d3",
-        "nb",
         "ux",
-        "nb-visual"
+        "d3",
+        "visualization",
+        "nb-visual",
+        "nb"
       ],
       "nb_id": 67
     },
@@ -589,11 +594,11 @@
       "path": "worklog_-_agent_43_-_cleanup_checklist.md",
       "tags": [
         "kotlin",
-        "tablebase",
-        "documentation",
-        "checklist",
         "worklogs",
-        "tests"
+        "tablebase",
+        "tests",
+        "documentation",
+        "checklist"
       ],
       "nb_id": 86
     },
@@ -616,12 +621,12 @@
       "title": "Worklog - Agent 46.1 - NB Visual Tag List",
       "path": "worklog_-_agent_46.1_-_nb_visual_tag_list.md",
       "tags": [
+        "tags",
         "worklog",
         "hover",
-        "tags",
         "d3",
-        "ux",
-        "nb-visual"
+        "nb-visual",
+        "ux"
       ],
       "nb_id": 80
     },
@@ -630,10 +635,10 @@
       "title": "Worklog - Agent 46 - Checklist Update",
       "path": "worklog_-_agent_46_-_checklist_update.md",
       "tags": [
-        "tablebase",
-        "documentation",
         "checklist",
-        "worklogs"
+        "tablebase",
+        "worklogs",
+        "documentation"
       ],
       "nb_id": 94
     },
@@ -652,8 +657,8 @@
         "worklog",
         "hover",
         "d3",
-        "ux",
-        "nb-visual"
+        "nb-visual",
+        "ux"
       ],
       "nb_id": 96
     },
@@ -662,11 +667,11 @@
       "title": "Worklog - Agent 49.1 - NB Visual Proximity Hover Investigation",
       "path": "worklog_-_agent_49.1_-_nb_visual_proximity_hover_investigation.md",
       "tags": [
-        "worklog",
-        "investigation",
-        "hover",
         "git",
-        "nb-visual"
+        "worklog",
+        "hover",
+        "nb-visual",
+        "investigation"
       ],
       "nb_id": 99
     },
@@ -675,10 +680,10 @@
       "title": "Worklog - Agent 50.1 - Retro on NB Visual Search",
       "path": "worklog_-_agent_50.1_-_retro_on_nb_visual_search.md",
       "tags": [
+        "nb-visual",
         "retro",
-        "documentation",
         "worklog",
-        "nb-visual"
+        "documentation"
       ],
       "nb_id": 102
     },
@@ -722,10 +727,10 @@
       "title": "Worklog Details - Doc DB Discoverability for NB Visual",
       "path": "worklog_details_-_doc_db_discoverability_for_nb_visual.md",
       "tags": [
-        "nb-visual",
-        "documentation",
         "search",
-        "worklog-details"
+        "nb-visual",
+        "worklog-details",
+        "documentation"
       ],
       "nb_id": 101
     },
@@ -734,11 +739,11 @@
       "title": "Worklog Details - NB Visual - Constant Node Size",
       "path": "worklog_details_-_nb_visual_-_constant_node_size.md",
       "tags": [
+        "hitbox",
         "hover",
         "svg",
-        "hitbox",
-        "worklog-details",
-        "nb-visual"
+        "nb-visual",
+        "worklog-details"
       ],
       "nb_id": 75
     },
@@ -747,12 +752,12 @@
       "title": "Worklog Details - NB Visual - Graph Builder",
       "path": "worklog_details_-_nb_visual_-_graph_builder.md",
       "tags": [
-        "graph",
-        "markdown",
-        "worklog-details",
         "python",
+        "graph",
         "wikilinks",
-        "nb-visual"
+        "nb-visual",
+        "worklog-details",
+        "markdown"
       ],
       "nb_id": 68
     },
@@ -762,9 +767,9 @@
       "path": "worklog_details_-_nb_visual_-_graph_json_format.md",
       "tags": [
         "nb-visual",
+        "worklog-details",
         "json",
-        "graph",
-        "worklog-details"
+        "graph"
       ],
       "nb_id": 76
     },
@@ -773,11 +778,11 @@
       "title": "Worklog Details - NB Visual - Inline Graph JSON",
       "path": "worklog_details_-_nb_visual_-_inline_graph_json.md",
       "tags": [
-        "html",
         "cors",
-        "worklog-details",
         "serialization",
-        "nb-visual"
+        "html",
+        "nb-visual",
+        "worklog-details"
       ],
       "nb_id": 69
     },
@@ -786,11 +791,11 @@
       "title": "Worklog Details - NB Visual - Invisible Hitbox",
       "path": "worklog_details_-_nb_visual_-_invisible_hitbox.md",
       "tags": [
-        "hover",
         "hitbox",
+        "hover",
+        "nb-visual",
         "worklog-details",
-        "ux",
-        "nb-visual"
+        "ux"
       ],
       "nb_id": 74
     },
@@ -799,12 +804,12 @@
       "title": "Worklog Details - NB Visual - Labels and Hover",
       "path": "worklog_details_-_nb_visual_-_labels_and_hover.md",
       "tags": [
-        "hover",
-        "controls",
-        "worklog-details",
-        "ux",
         "labels",
-        "nb-visual"
+        "controls",
+        "hover",
+        "nb-visual",
+        "worklog-details",
+        "ux"
       ],
       "nb_id": 73
     },
@@ -813,10 +818,10 @@
       "title": "Worklog Details - NB Visual - NB Numeric IDs",
       "path": "worklog_details_-_nb_visual_-_nb_numeric_ids.md",
       "tags": [
-        "nb-visual",
         "cli",
-        "nb",
-        "worklog-details"
+        "nb-visual",
+        "worklog-details",
+        "nb"
       ],
       "nb_id": 85
     },
@@ -827,9 +832,9 @@
       "tags": [
         "hover",
         "d3",
+        "nb-visual",
         "worklog-details",
-        "ux",
-        "nb-visual"
+        "ux"
       ],
       "nb_id": 95
     },
@@ -838,13 +843,13 @@
       "title": "Worklog Details - NB Visual - Stable Layout and Zoom",
       "path": "worklog_details_-_nb_visual_-_stable_layout_and_zoom.md",
       "tags": [
-        "zoom",
-        "d3",
-        "layout",
         "svg",
         "pan",
+        "zoom",
+        "d3",
+        "nb-visual",
         "worklog-details",
-        "nb-visual"
+        "layout"
       ],
       "nb_id": 71
     },
@@ -853,11 +858,11 @@
       "title": "Worklog Details - NB Visual - Tag Extraction",
       "path": "worklog_details_-_nb_visual_-_tag_extraction.md",
       "tags": [
+        "python",
         "tags",
         "regex",
-        "worklog-details",
-        "python",
-        "nb-visual"
+        "nb-visual",
+        "worklog-details"
       ],
       "nb_id": 81
     },
@@ -866,12 +871,12 @@
       "title": "Worklog Details - NB Visual - Tag Hover Highlighting",
       "path": "worklog_details_-_nb_visual_-_tag_hover_highlighting.md",
       "tags": [
-        "hover",
         "tags",
+        "hover",
         "d3",
+        "nb-visual",
         "worklog-details",
-        "ux",
-        "nb-visual"
+        "ux"
       ],
       "nb_id": 84
     },
@@ -880,12 +885,12 @@
       "title": "Worklog Details - NB Visual - Tag List UI",
       "path": "worklog_details_-_nb_visual_-_tag_list_ui.md",
       "tags": [
-        "css",
         "tags",
+        "css",
         "html",
+        "nb-visual",
         "worklog-details",
-        "ux",
-        "nb-visual"
+        "ux"
       ],
       "nb_id": 83
     },
@@ -894,10 +899,10 @@
       "title": "Worklog Details - NB Visual - Tagging Rationale",
       "path": "worklog_details_-_nb_visual_-_tagging_rationale.md",
       "tags": [
-        "nb-visual",
         "taxonomy",
-        "tags",
-        "worklog-details"
+        "nb-visual",
+        "worklog-details",
+        "tags"
       ],
       "nb_id": 77
     },
@@ -907,9 +912,9 @@
       "path": "worklog_details_-_nb_visual_-_tags_json_format.md",
       "tags": [
         "nb-visual",
+        "worklog-details",
         "json",
-        "tags",
-        "worklog-details"
+        "tags"
       ],
       "nb_id": 82
     },
@@ -918,11 +923,11 @@
       "title": "Worklog Details - NB Visual - Uncommitted Proximity Hover",
       "path": "worklog_details_-_nb_visual_-_uncommitted_proximity_hover.md",
       "tags": [
-        "investigation",
-        "hover",
-        "worklog-details",
         "git",
-        "nb-visual"
+        "hover",
+        "nb-visual",
+        "worklog-details",
+        "investigation"
       ],
       "nb_id": 98
     },
@@ -931,8 +936,8 @@
       "title": "Worklog Details - NB Visual - uv Run Docs",
       "path": "worklog_details_-_nb_visual_-_uv_run_docs.md",
       "tags": [
-        "nb-visual",
         "cli",
+        "nb-visual",
         "worklog-details",
         "uv"
       ],
@@ -944,11 +949,11 @@
       "path": "worklog_details_-_nb_visual_-_visibility_and_spacing.md",
       "tags": [
         "graph",
-        "layout",
         "forces",
-        "worklog-details",
         "arrowheads",
-        "nb-visual"
+        "nb-visual",
+        "worklog-details",
+        "layout"
       ],
       "nb_id": 72
     },
@@ -957,9 +962,9 @@
       "title": "Worklogs Index",
       "path": "worklogs_index.md",
       "tags": [
-        "underchex",
         "project",
-        "worklogs"
+        "worklogs",
+        "underchex"
       ],
       "nb_id": 40
     },
@@ -980,8 +985,8 @@
       "path": "worktrees_-_guide_-_merging_to_main.md",
       "tags": [
         "git",
-        "merging",
         "guide",
+        "merging",
         "worktrees"
       ],
       "nb_id": 19
@@ -991,8 +996,8 @@
       "title": "Worktrees - Hub",
       "path": "worktrees_hub.md",
       "tags": [
-        "hub",
         "git",
+        "hub",
         "worktrees"
       ],
       "nb_id": 18
@@ -1098,6 +1103,22 @@
     {
       "source": 9,
       "target": 100
+    },
+    {
+      "source": 11,
+      "target": 19
+    },
+    {
+      "source": 11,
+      "target": 72
+    },
+    {
+      "source": 11,
+      "target": 80
+    },
+    {
+      "source": 11,
+      "target": 99
     },
     {
       "source": 12,
@@ -1783,6 +1804,6 @@
   "metadata": {
     "notebook_path": "/Users/bowei/code/underchex/.nb_docs_repo/home",
     "node_count": 103,
-    "edge_count": 195
+    "edge_count": 199
   }
 }

@@ -1,10 +1,10 @@
 You are a helpful coding assistant which also is good at planning at reading and writing docs.
 
-In this project we use the `nb` tool to record knowledge base docs and notes. nb is unrelated to jupyter/ipynb. See `[12] NB - Hub` or `nb show 12`.
+In this project we use the `nb` tool to record knowledge base docs and notes. nb is unrelated to jupyter/ipynb. See `nb show 12`.
 
-1. Before searching the codebase for context - **ALWAYS** use a `nb search #keyword` command to find if past agents have left useful docs or already solved this problem. Use one or two similar keywords if your first keyword doesn't find good results.
+1. Before searching the codebase for context - **ALWAYS** use a `nb search #keyword | head` command to find if past agents have left useful docs or already solved this problem. Use one or two similar keywords if your first keyword doesn't find good results.
 
-2. To list all notes, use `nb -sr` (sorted reverse) instead of `nb list` - it provides a more useful view with titles and sorted by recency.
+2. To list all notes, use `nb list -sr | head -n ...` instead of `nb list` - it provides a more useful view with titles and sorted by recency.
 
 ## Committing
 

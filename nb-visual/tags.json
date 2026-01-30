@@ -94,8 +94,9 @@
     },
     {
       "tag": "documentation",
-      "count": 7,
+      "count": 8,
       "doc_ids": [
+        11,
         19,
         24,
         30,
@@ -103,6 +104,20 @@
         71,
         75,
         81
+      ]
+    },
+    {
+      "tag": "worklog",
+      "count": 8,
+      "doc_ids": [
+        11,
+        23,
+        30,
+        36,
+        70,
+        73,
+        74,
+        75
       ]
     },
     {
@@ -116,19 +131,6 @@
         93,
         94,
         95
-      ]
-    },
-    {
-      "tag": "worklog",
-      "count": 7,
-      "doc_ids": [
-        23,
-        30,
-        36,
-        70,
-        73,
-        74,
-        75
       ]
     },
     {
@@ -392,6 +394,13 @@
       ]
     },
     {
+      "tag": "agent-guide",
+      "count": 1,
+      "doc_ids": [
+        11
+      ]
+    },
+    {
       "tag": "api",
       "count": 1,
       "doc_ids": [
@@ -508,6 +517,13 @@
       "count": 1,
       "doc_ids": [
         15
+      ]
+    },
+    {
+      "tag": "howto",
+      "count": 1,
+      "doc_ids": [
+        11
       ]
     },
     {
@@ -736,7 +752,7 @@
     }
   ],
   "metadata": {
-    "total_tags": 85,
-    "total_tag_usages": 224
+    "total_tags": 87,
+    "total_tag_usages": 228
   }
 }
