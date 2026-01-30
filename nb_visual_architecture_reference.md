@@ -98,22 +98,25 @@ CSS class conventions:
 
 ## Triggers (when to surface this document)
 
-> **Warning:** Overly broad triggers can be noisy and unhelpful. The triggers below are from the original retrospective suggestion and should be evaluated carefully before implementation.
+> **Note:** Overly broad triggers are noisy and unhelpful. The following are curated from retrospective analysis (agent 48.1) with refinements applied.
 
-From retrospective analysis (agent 48.1):
-- Any tool call: `rg.*nb-visual`, `grep.*nb-visual`
-- nb search for: "graph", "visualization", "hover", "d3", "node"
-- Task description mentions: nb-visual, graph, visualization, hover effects
-- Reading `nb-visual/build_nb_graph.py`
+**Recommended triggers:**
+- Task explicitly mentions modifying or debugging `nb-visual`
+- Agent reads `nb-visual/build_nb_graph.py` for the first time in a session
+- `nb search` for compound terms: "nb-visual", "nb graph", "graph visualization"
 
-**Recommended refinements:**
-- Prefer triggering on explicit nb-visual modification tasks rather than any grep/rg
-- The search terms "graph", "node", "d3" are too generic; use compound terms like "nb-visual graph" or "nb graph visualization"
-- Consider surfacing only when agent shows signs of codebase exploration (multiple failed searches, repeated file reads in nb-visual/)
+**Avoid triggering on:**
+- Generic searches for "graph", "d3", "node", "hover" (too broad, will fire constantly)
+- Any `rg` or `grep` containing "nb-visual" (often just incidental matches)
+- Simply listing or viewing `nb-visual/` directory contents
 
 ---
+
+## Backlinks
+- [[NB Visual - Build Pipeline Quick Reference]]
 
 Tags: #nb-visual #visualization #d3 #graph #reference #architecture
 
 [Signed-by: agent #48.2 claude-opus-4-5 via amp 20260129T15:59:00]
-[Edited-by: agent #48.2 claude-opus-4-5 via amp 20260129T16:05:00]
+[Edited-by: agent #48.2 claude-opus-4-5 via amp 20260129T16:12:00]
+[Edited-by: agent #15.3.2 claude-sonnet-4 via amp 20260129T17:59:08]
