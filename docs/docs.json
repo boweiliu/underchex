@@ -1,0 +1,180 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "underchex-docs",
+  "colors": {
+    "primary": "#16A34A",
+    "light": "#07C983",
+    "dark": "#15803D"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "All Pages",
+            "pages": [
+              "docs/20260121140130",
+              "docs/20260122025137",
+              "docs/20260122030456",
+              "docs/20260122064758",
+              "docs/20260122091007",
+              "docs/NB - Hub",
+              "docs/NB_README.llm",
+              "docs/codex_landing_page",
+              "docs/codex_usage",
+              "docs/git_worktrees_(underchex)",
+              "docs/hello_world",
+              "docs/how_to_create_worklog_documentation",
+              "docs/llm_readme_summary",
+              "docs/nb_-_debug_-_remote_set",
+              "docs/nb_-_decision_-_naming_and_taxonomy",
+              "docs/nb_-_guide_-_multiline_content_via_heredoc",
+              "docs/nb_-_guide_-_note_formatting",
+              "docs/nb_-_guide_-_render_markdown_in_browser",
+              "docs/nb_-_guide_-_tagging",
+              "docs/nb_-_guide_-_worklog_details_expectations",
+              "docs/nb_visual_-_build_pipeline_quick_reference",
+              "docs/nb_visual_architecture_reference",
+              "docs/opencode_-_cli_model_verification",
+              "docs/organizing_info_in_nb",
+              "docs/retro_-_agent_48.1_-_documentation_surfacing_analysis",
+              "docs/retro_-_agent_48.1_-_nb_visual_proximity_hover",
+              "docs/retro_-_agent_52.1_-_memoizing_agent_knowledge_discovery",
+              "docs/worklog-47.1-detail-credentials",
+              "docs/worklog-47.1-detail-latchkey",
+              "docs/worklog-47.1-detail-notion-api",
+              "docs/worklog-47.1-detail-playwright",
+              "docs/worklog-47.1-detail-tmux",
+              "docs/worklog-47.1-wiki-consolidation",
+              "docs/worklog_-_agent_10_-_cleanup",
+              "docs/worklog_-_agent_11_-_pvs_and_aspiration_windows",
+              "docs/worklog_-_agent_12_-_futility_pruning",
+              "docs/worklog_-_agent_13_-_static_exchange_evaluation",
+              "docs/worklog_-_agent_14_-_puzzle_generation",
+              "docs/worklog_-_agent_15.3.2_-_nb_visual_graph",
+              "docs/worklog_-_agent_15_-_puzzle_mode_web_ui",
+              "docs/worklog_-_agent_16_-_terminal_play_cli",
+              "docs/worklog_-_agent_17_-_python_implementation",
+              "docs/worklog_-_agent_18_-_cleanup",
+              "docs/worklog_-_agent_19_-_cleanup",
+              "docs/worklog_-_agent_1_-_core_game_engine",
+              "docs/worklog_-_agent_20_-_cleanup",
+              "docs/worklog_-_agent_21_-_rust_wasm_implementation",
+              "docs/worklog_-_agent_23_-_kotlin_implementation",
+              "docs/worklog_-_agent_24_-_cleanup",
+              "docs/worklog_-_agent_25_-_c_ncurses_implementation",
+              "docs/worklog_-_agent_26_-_elixir_telnet_implementation",
+              "docs/worklog_-_agent_27_-_opening_book",
+              "docs/worklog_-_agent_28_-_cross-implementation_testing",
+              "docs/worklog_-_agent_29_-_cross-implementation_testing_extension",
+              "docs/worklog_-_agent_2_-_web_ui_and_promotion",
+              "docs/worklog_-_agent_30_-_cleanup",
+              "docs/worklog_-_agent_31_-_python_opening_book",
+              "docs/worklog_-_agent_32_-_cleanup",
+              "docs/worklog_-_agent_34_-_python_tablebase",
+              "docs/worklog_-_agent_35_-_rust_tablebase",
+              "docs/worklog_-_agent_36_-_cleanup_and_tablebase_ports",
+              "docs/worklog_-_agent_37_-_kotlin_tablebase",
+              "docs/worklog_-_agent_38_-_ai_tablebase_integration",
+              "docs/worklog_-_agent_39_-_raw_html_js_tablebase",
+              "docs/worklog_-_agent_3_-_ai_opponent",
+              "docs/worklog_-_agent_40_-_cleanup",
+              "docs/worklog_-_agent_41_-_cross-implementation_tablebase_tests",
+              "docs/worklog_-_agent_42_-_rust_tablebase_cross-impl_tests",
+              "docs/worklog_-_agent_43_-_c_and_elixir_tablebase_tests",
+              "docs/worklog_-_agent_43_-_cleanup_checklist",
+              "docs/worklog_-_agent_44_-_cleanup",
+              "docs/worklog_-_agent_45_-_cleanup",
+              "docs/worklog_-_agent_46.1_-_nb_visual_tag_list",
+              "docs/worklog_-_agent_46_-_checklist_update",
+              "docs/worklog_-_agent_46_-_worklog_template",
+              "docs/worklog_-_agent_48.1_-_nb_visual_proximity_hover",
+              "docs/worklog_-_agent_49.1_-_nb_visual_proximity_hover_investigation",
+              "docs/worklog_-_agent_50.1_-_retro_on_nb_visual_search",
+              "docs/worklog_-_agent_6_-_pst_and_zobrist_hashing",
+              "docs/worklog_-_agent_7_-_nmp_and_history_heuristic",
+              "docs/worklog_-_agent_8_-_killer_move_heuristic",
+              "docs/worklog_-_agent_9_-_late_move_reductions",
+              "docs/worklog_-_template_-_topic-based",
+              "docs/worklog_details_-_doc_db_discoverability_for_nb_visual",
+              "docs/worklog_details_-_nb_visual_-_constant_node_size",
+              "docs/worklog_details_-_nb_visual_-_graph_builder",
+              "docs/worklog_details_-_nb_visual_-_graph_json_format",
+              "docs/worklog_details_-_nb_visual_-_inline_graph_json",
+              "docs/worklog_details_-_nb_visual_-_invisible_hitbox",
+              "docs/worklog_details_-_nb_visual_-_labels_and_hover",
+              "docs/worklog_details_-_nb_visual_-_nb_numeric_ids",
+              "docs/worklog_details_-_nb_visual_-_proximity_hover_highlighting",
+              "docs/worklog_details_-_nb_visual_-_stable_layout_and_zoom",
+              "docs/worklog_details_-_nb_visual_-_tag_extraction",
+              "docs/worklog_details_-_nb_visual_-_tag_hover_highlighting",
+              "docs/worklog_details_-_nb_visual_-_tag_list_ui",
+              "docs/worklog_details_-_nb_visual_-_tagging_rationale",
+              "docs/worklog_details_-_nb_visual_-_tags_json_format",
+              "docs/worklog_details_-_nb_visual_-_uncommitted_proximity_hover",
+              "docs/worklog_details_-_nb_visual_-_uv_run_docs",
+              "docs/worklog_details_-_nb_visual_-_visibility_and_spacing",
+              "docs/worklogs_index",
+              "docs/worktree-direnv-debug",
+              "docs/worktrees_-_guide_-_merging_to_main",
+              "docs/worktrees_hub"
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "Documentation",
+          "href": "https://mintlify.com/docs",
+          "icon": "book-open-cover"
+        },
+        {
+          "anchor": "Blog",
+          "href": "https://mintlify.com/blog",
+          "icon": "newspaper"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:hi@mintlify.com"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Dashboard",
+      "href": "https://dashboard.mintlify.com"
+    }
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/mintlify",
+      "github": "https://github.com/mintlify",
+      "linkedin": "https://linkedin.com/company/mintlify"
+    }
+  }
+}
