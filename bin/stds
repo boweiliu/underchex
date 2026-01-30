@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${1-}" == "show" ]]; then
+  shift
+  exec nb show --print --no-color "$@"
+fi
+
+exec nb "$@"
