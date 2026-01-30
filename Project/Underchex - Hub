@@ -5,16 +5,16 @@ Tags: #project #underchex #hub
 Entry point for Underchex project notes.
 
 ## Notes
-- [[Project/Underchex - Reference - Structure]] - Repo layout and conventions.
-- [[Project/Underchex - Onboarding - Worktrees]] - Worktree setup and naming.
+- [[Project/Underchex - Reference - Structure]] (nb Project/1) - Repo layout and conventions.
+- [[Project/Underchex - Onboarding - Worktrees]] (nb 8) - Worktree setup and naming.
 
 ## Hubs
-- [[NB - Hub]] - NB entry point and navigation.
-- [[Codex - Hub]] - Codex tooling notes.
-- [[Worktrees - Hub]] - Worktree usage notes.
+- [[NB - Hub]] (nb 12) - NB entry point and navigation.
+- [[Codex - Hub]] (nb 5) - Codex tooling notes.
+- [[Worktrees - Hub]] (nb 18) - Worktree usage notes.
 
 ## Worklogs
-See [[Worklogs Index]] for full list of agent worklogs.
+See [[Worklogs Index]] (nb 40) for full list of agent worklogs.
 
 Signed-off-by: gpt-5 via codex
 Edited-by: agent #20 claude-sonnet-4 via opencode 20260122T06:25:00 (CLEANUP: moved worklogs to separate index doc)
