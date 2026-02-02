@@ -7,6 +7,7 @@ When invoked:
 3. Read the file and check the frontmatter:
    - If `completed: false` or `completed` is not present, DO NOT write a skill. Exit gracefully.
    - If `skillwritten: true`, DO NOT write a skill (already done). Exit gracefully, tell user why you exited. 
+   - If there is NO frontmatter, but it is an md file and it is in the right location, you can write in the frontmatter as `completed: true` `skillwritten: false`. 
    - Only proceed if `completed: true` AND `skillwritten` is not `true`.
 
 ## Writing Skills from Retros
