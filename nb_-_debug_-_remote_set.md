@@ -1,3 +1,8 @@
+---
+completed: true
+skillwritten: true
+---
+
 # NB - Debug - Remote Set
 
 Tags: #debug #git #remote
