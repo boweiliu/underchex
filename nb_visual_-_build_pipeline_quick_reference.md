@@ -1,3 +1,7 @@
+---
+completed: true
+skillwritten: true
+---
 # NB Visual - Build Pipeline Quick Reference
 
 Purpose: A fast reminder of how to regenerate the nb-visual graph and which files are produced.
