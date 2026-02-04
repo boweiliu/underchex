@@ -1,3 +1,8 @@
+---
+completed: true
+skillwritten: true
+---
+
 # Agent Diary: Session 7.0.0
 
 # Agent Diary: Session 7.0.0
