@@ -24,3 +24,4 @@ src/rust/target/
 src/c/test_crossimpl_tablebase
 
 .DS_STORE
+.docs
