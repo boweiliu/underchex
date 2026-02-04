@@ -6,6 +6,23 @@ Latest status and major updates for UNDERCHEX. Newest entries at top.
 
 ---
 
+## 2026-02-04: Proto-01 Started #proto-01
+
+**Status: In progress**
+
+Started proto01 with TypeScript + HTML. Made rendering decision (functional stateless, option 2b).
+
+**Next steps:** [[Proto-01 Next Steps]] (nb 159)
+
+**Key docs:**
+- [[PROTO-01 Breakdown]] (nb 145) - task breakdown
+- [[Rendering Approaches]] (nb 147) - options explored
+- [[Functional Stateless Rendering]] (nb 153) - chosen approach
+
+Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:25:00Z
+
+---
+
 ## 2026-02-04: NUKE AND REFACTOR #refactor #warning
 
 **Status: EVERYTHING HERE IS TRASH AND NEEDS TO BE REWRITTEN**
