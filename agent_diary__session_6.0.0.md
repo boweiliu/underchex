@@ -3,6 +3,8 @@ completed: true
 skillwritten: true
 ---
 
+> **Warning:** This diary does not conform to the standard template. See [[142]] for the correct format.
+
 # Agent Diary: Session 6.0.0
 
 # Agent Diary: Session 6.0.0
