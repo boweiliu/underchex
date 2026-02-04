@@ -70,11 +70,37 @@
 
 ---
 
+## Request 6: Create Refactor Plan
+
+**User prompt:** "this transposing operation is a fairly big refactor - start a doc on which parts of the codebase depend on this assumption"
+
+**What I did:**
+- Used Explore agent to find all hex-related code in codebase
+- Created [[179]] with TODO list of all files/lines needing changes
+- Listed open questions: doubled-width vs doubled-height, direction names
+
+---
+
+## Request 7: Resolve Open Questions
+
+**User prompt:** "think through the open questions first. you should be able to consult old docs... readme already specifies the 6 correct directions"
+
+**What I did:**
+- Read README.md — found directions are N/S/NE/NW/SE/SW (no E/W)
+- Worked through the math: odd-q needs doubled-HEIGHT not doubled-width
+- Updated [[170]] with correct formula: `drow = row * 2 + (col & 1)`
+- Updated [[179]] with resolved questions and corrected TODO list
+- New constant offsets: N(0,-2), S(0,+2), NE(+1,-1), NW(-1,-1), SE(+1,+1), SW(-1,+1)
+
+---
+
 ## Key Learnings
 
 1. **Don't assume orientation from offset type** — flat-top can use either odd-r or odd-q
 2. **Ask for reasoning, not just mechanics** — the "why" matters for documentation
 3. **Migrate related decisions** — when superseding a doc, bring forward relevant prior work
+4. **Consult source docs** — README.md had the direction names all along
+5. **Doubled axis depends on offset type** — odd-r doubles width, odd-q doubles height
 
 ---
 
@@ -83,9 +109,11 @@
 | File | Change |
 |------|--------|
 | [[166]] | Created, then edited 3x for orientation corrections |
-| [[170]] | Created, then edited 2x (pointy→flat, added doubled-width) |
+| [[170]] | Created, then edited 4x (pointy→flat, doubled-width→height, directions) |
 | [[146]] | Added correction note |
+| [[179]] | Created refactor plan, then resolved open questions |
 
 ---
 
 Signed-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:45:00Z
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:18:00Z
