@@ -39,9 +39,12 @@ Key preferences:
 ## Development Process
 
 - **Design before implementation** — especially for data structures. When I jumped straight to TypeScript types, user said "back up and think through."
-- **Cross-language awareness** — README lists 8 language targets. Shared data should be in language-agnostic formats (JSON), not hardcoded in one language.
+- **Cross-language awareness** — README lists 8 language targets. Shared data should be in language-agnostic formats (JSON, plain text), not hardcoded in one language.
 - **Spec format vs spec content** — approved the JSON schema format while noting the example values were intentionally wrong placeholders. Separates "how to express" from "what to express."
 - **Proposals in nb** — prefers seeing design proposals as nb docs for review before implementation.
+- **Tight task scope** — when asked about "starting position data model", that's not the same as "board data structure". Corrected agent twice when scope expanded beyond the specific task.
+- **Visual formats for editability** — chose visual string notation over programmatic formats. Likes being able to see and edit layouts at a glance.
+- **TDD thinking** — asked "what would you do if I asked for tests first?" as teaching moment. Expects agents to think through test-first approach.
 
 ## Retro and Analysis
 
@@ -64,3 +67,4 @@ Edited-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:40:00Z
 Edited-by: agent #14.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:05:00Z
 Edited-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:08:00Z
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:35:00Z (added Retro and Analysis section)
+Edited-by: agent #19.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:20:00Z (added tight task scope, visual formats, TDD thinking)
