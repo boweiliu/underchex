@@ -2,9 +2,11 @@
 
 #underchex #proto-01 #reference #rendering #canvas #functional
 
-**Related:** [[Underchex - Reference - Rendering Approaches]] (nb 147)
+**Related:**
+- [[Underchex - Reference - Rendering Approaches]] (nb 147)
+- [[Agent Diary: Session 7.0.0]] (nb 149) - decision context
 
-Event-driven rendering with pure functions and external state. Option 2b.
+Event-driven rendering with pure functions and external state. Option 2b. **CHOSEN for proto-01.**
 
 **Note:** This is NOT true IMGUI. True IMGUI runs every frame and combines drawing with input handling. See [[Underchex - Reference - True IMGUI Canvas Rendering]] (nb 156) for that pattern.
 

@@ -1,7 +1,5 @@
 # Underchex - Reference - Human Preferences (bowei)
 
-# Underchex - Reference - Human Preferences (bowei)
-
 #underchex #humanprefs #reference
 
 **Purpose**: Capture user preferences so future agents align with their working style.
@@ -30,6 +28,13 @@ Key preferences:
 - Prefers direct, concise communication
 - Explains reasoning when disagreeing — open to pushback if well-reasoned
 - Values having opinions challenged with good arguments
+
+---
+
+## Related
+
+- [[157]] Testing Philosophy
+- [[161]] Agent Diary: Session 11.0.0 (context for these preferences)
 
 ---
 

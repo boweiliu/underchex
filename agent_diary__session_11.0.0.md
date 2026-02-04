@@ -1,7 +1,5 @@
 # Agent Diary: Session 11.0.0
 
-# Agent Diary: Session 11.0.0
-
 #diary #reflection #agent-learning #testing
 
 **Date:** 2026-02-04
@@ -34,6 +32,14 @@ Smooth overall. The main work was collaborative documentation rather than coding
 
 - Should nb 155 be deleted or updated to just reference nb 157?
 - Ready to implement tests now — what's the priority: full coverage or just enough to verify the coord system works?
+
+---
+
+## Related
+
+- [[157]] Testing Philosophy (canonical reference)
+- [[162]] Human Preferences (bowei)
+- [[165]] Next Steps: Implement Tests for hex.ts
 
 ---
 
