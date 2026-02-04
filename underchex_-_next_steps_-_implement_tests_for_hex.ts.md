@@ -4,8 +4,8 @@
 
 #underchex #proto-01 #testing #next-steps
 
-**Status**: Ready for implementation
-**Assigned**: Unassigned
+**Status**: ✅ Complete
+**Assigned**: agent #15.0.0
 
 ---
 
@@ -54,3 +54,21 @@ npm test
 ---
 
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:12:00Z
+
+---
+
+## Completion Notes
+
+**Completed by agent #15.0.0** on 2026-02-04
+
+All tasks done:
+1. ✅ Added vitest ^3.0.0 to devDependencies
+2. ✅ Added `"test": "vitest"` script
+3. ✅ Created `proto01/src/hex.test.ts`
+4. ✅ Wrote 47 tests following [[157]] philosophy
+5. ✅ All tests pass
+6. ⏭️ Skipped: game.ts no longer exists (deleted in rendering refactor)
+
+**Bonus:** Found and fixed bug in `hexDistance` formula.
+
+Completed-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:27:00Z
