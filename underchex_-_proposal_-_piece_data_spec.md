@@ -1,120 +1,143 @@
-# Underchex - Proposal - Piece Data Spec
+# Underchex - Proposal - Piece Movement Spec
 
-# Underchex - Proposal - Piece Data Spec
-
-#underchex #proposal #spec #pieces #proto-01
+#underchex #proposal #spec #pieces #movement #proto-01
 
 **Task**: PROTO-01.4 Piece types
-**Goal**: Define piece types in language-agnostic JSON for cross-implementation use.
+**Goal**: Define piece movement rules in language-agnostic JSON.
 
 ---
 
-## Recommendation: Minimal Flat Schema
+## Core Concepts
+
+**Directions** (6-way hex adjacency):
+- `N`, `S` - vertical
+- `NE`, `NW`, `SE`, `SW` - diagonals
+
+**Movement types**:
+- **Step**: Move exactly 1 square (King)
+- **Ride**: Move any number of squares in a line (Queen, Lance, Chariot)
+- **Leap**: Jump to specific offset, ignoring intervening squares (Knight)
+
+**Move vs Capture**: Some pieces move and capture differently (Pawn).
+
+---
+
+## Recommendation: Direction-Based Schema
 
 ```json
 {
-  "$schema": "pieces.schema.json",
   "version": "0.1",
-  "pieces": [
-    { "id": "king",    "symbol": "K", "name": "King" },
-    { "id": "queen",   "symbol": "Q", "name": "Queen" },
-    { "id": "pawn",    "symbol": "P", "name": "Pawn" },
-    { "id": "knight",  "symbol": "N", "name": "Knight",  "variants": ["A", "B", "C"] },
-    { "id": "lance",   "symbol": "L", "name": "Lance",   "variants": ["A", "B"] },
-    { "id": "chariot", "symbol": "C", "name": "Chariot" }
-  ]
-}
-```
-
-**Why this approach:**
-- Array preserves ordering (useful for UI, serialization)
-- String IDs are readable in JSON game states: `{"piece": "knight", "variant": "A"}`
-- `variants` only present when needed (null/absent = no variants)
-- Minimal fields - movement rules go in separate file later (PROTO-03)
-- Version field for future schema evolution
-
-**A piece on the board would reference this as:**
-```json
-{ "piece": "knight", "variant": "A", "owner": "white" }
-```
-
----
-
-## Alternative A: Numeric IDs
-
-```json
-{
-  "pieces": [
-    { "id": 0, "key": "king",   "symbol": "K", "name": "King" },
-    { "id": 1, "key": "queen",  "symbol": "Q", "name": "Queen" },
-    { "id": 2, "key": "pawn",   "symbol": "P", "name": "Pawn" },
-    { "id": 3, "key": "knight", "symbol": "N", "name": "Knight", "variants": ["A", "B", "C"] },
-    { "id": 4, "key": "lance",  "symbol": "L", "name": "Lance",  "variants": ["A", "B"] },
-    { "id": 5, "key": "chariot","symbol": "C", "name": "Chariot" }
-  ]
-}
-```
-
-**Pros:** Compact board state (just numbers), fast comparisons
-**Cons:** Less readable, need lookup table everywhere
-
----
-
-## Alternative B: Object Map (not array)
-
-```json
-{
+  "directions": ["N", "S", "NE", "NW", "SE", "SW"],
   "pieces": {
-    "king":    { "symbol": "K", "name": "King" },
-    "queen":   { "symbol": "Q", "name": "Queen" },
-    "knight":  { "symbol": "N", "name": "Knight", "variants": ["A", "B", "C"] }
+    "king": {
+      "moves": [
+        { "type": "step", "dirs": ["N", "S", "NE", "NW", "SE", "SW"] }
+      ]
+    },
+    "queen": {
+      "moves": [
+        { "type": "ride", "dirs": ["N", "S", "NE", "NW", "SE", "SW"] }
+      ]
+    },
+    "pawn": {
+      "moves": [
+        { "type": "step", "dirs": ["N"], "mode": "move" },
+        { "type": "step", "dirs": ["N", "NE", "NW"], "mode": "capture" }
+      ]
+    },
+    "knight": {
+      "variants": {
+        "A": { "moves": [{ "type": "leap", "offsets": ["N+NW", "S+SE"] }] },
+        "B": { "moves": [{ "type": "leap", "offsets": ["N+NE", "S+SW"] }] },
+        "C": { "moves": [{ "type": "leap", "offsets": ["NW+SW", "NE+SE"] }] }
+      }
+    },
+    "lance": {
+      "variants": {
+        "A": { "moves": [{ "type": "ride", "dirs": ["N", "S", "NW", "SE"] }] },
+        "B": { "moves": [{ "type": "ride", "dirs": ["N", "S", "NE", "SW"] }] }
+      }
+    },
+    "chariot": {
+      "moves": [
+        { "type": "ride", "dirs": ["NE", "NW", "SE", "SW"] }
+      ]
+    }
   }
 }
 ```
 
-**Pros:** Direct key lookup
-**Cons:** No guaranteed order (matters for UI lists, canonical serialization)
+**Key points:**
+- `type`: step (1 square), ride (any distance), leap (specific offset)
+- `dirs`: which of the 6 directions
+- `mode`: "move", "capture", or "both" (default)
+- `variants`: pieces with color-locked movement get nested definitions
+- Knight offsets like `"N+NW"` mean "go N then NW" (the elephant leap)
 
 ---
 
-## Alternative C: Rich Variant Descriptions
+## Alternative A: Offset-Based (More Explicit)
 
 ```json
 {
-  "pieces": [
-    {
-      "id": "knight",
-      "symbol": "N",
-      "name": "Knight",
-      "variants": {
-        "A": { "name": "Knight-Alpha", "description": "Moves on N-NW / S-SE diagonal axis" },
-        "B": { "name": "Knight-Beta",  "description": "Moves on N-NE / S-SW diagonal axis" },
-        "C": { "name": "Knight-Gamma", "description": "Moves on NW-SW / NE-SE axis" }
-      }
+  "pieces": {
+    "king": {
+      "moves": [
+        { "offset": [0, -1], "range": 1 },
+        { "offset": [0, +1], "range": 1 },
+        { "offset": [+1, -1], "range": 1 },
+        { "offset": [-1, -1], "range": 1 },
+        { "offset": [+1, +1], "range": 1 },
+        { "offset": [-1, +1], "range": 1 }
+      ]
+    },
+    "queen": {
+      "moves": [
+        { "offset": [0, -1], "range": "unlimited" },
+        { "offset": [+1, -1], "range": "unlimited" }
+      ]
     }
-  ]
+  }
 }
 ```
 
-**Pros:** Self-documenting, UI can show descriptions
-**Cons:** More complex, movement info arguably belongs in movement spec
+**Pros:** Unambiguous, works for any coordinate system
+**Cons:** Verbose, harder to read, tied to specific coord representation
+
+---
+
+## Alternative B: Fairy Chess Betza Notation
+
+```json
+{
+  "pieces": {
+    "king": "K",
+    "queen": "Q",
+    "pawn": "fW/fcF",
+    "knight": { "A": "A(N-NW)", "B": "A(N-NE)", "C": "A(E-W)" },
+    "lance": { "A": "R(N,S,NW,SE)", "B": "R(N,S,NE,SW)" },
+    "chariot": "B"
+  }
+}
+```
+
+**Pros:** Compact, familiar to chess variant designers
+**Cons:** Requires parser, learning curve, less self-documenting
 
 ---
 
 ## Open Questions
 
-1. **Variants as letters or numbers?** `["A", "B", "C"]` vs `[0, 1, 2]`
-   - Letters more readable, numbers more compact
+1. **Knight leap representation**: `"N+NW"` vs explicit offsets `[dcol, drow]`?
+   - String is readable but needs parsing
+   - Offsets are unambiguous but verbose
 
-2. **Owner in piece spec or separate?**
-   - Recommend separate: piece spec defines types, board state defines ownership
+2. **Move/capture separation**: Inline `mode` field vs separate `moves`/`captures` arrays?
 
-3. **Include movement here or separate file?**
-   - Recommend separate `movement.json` for PROTO-03
-   - Keeps piece identity separate from behavior
+3. **How to handle promotion?** Pawns reaching far rank - separate spec or inline?
 
-4. **File location:** `spec/pieces.json` at repo root?
+4. **Special moves**: Any castling/en-passant equivalents? Defer for now.
 
 ---
 
-Drafted-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:45:00Z
+Drafted-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:50:00Z
