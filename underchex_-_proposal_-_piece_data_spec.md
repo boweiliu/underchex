@@ -24,6 +24,8 @@
 
 ## Recommendation: Direction-Based Schema
 
+> **NOTE**: The movesets below are ILLUSTRATIVE EXAMPLES ONLY. The actual piece movements for Underchex are not yet finalized and these values are intentionally wrong. This section demonstrates the schema format, not the game rules.
+
 ```json
 {
   "version": "0.1",
@@ -78,6 +80,8 @@
 
 ## Alternative A: Offset-Based (More Explicit)
 
+> **NOTE**: Example movesets only - not actual game rules.
+
 ```json
 {
   "pieces": {
@@ -107,6 +111,8 @@
 ---
 
 ## Alternative B: Fairy Chess Betza Notation
+
+> **NOTE**: Example movesets only - not actual game rules.
 
 ```json
 {
@@ -141,3 +147,4 @@
 ---
 
 Drafted-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:50:00Z
+Edited-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:55:00Z
