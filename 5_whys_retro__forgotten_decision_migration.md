@@ -41,52 +41,88 @@ User's words: *"we didn't migrate over the offset philosophy - double-width coor
 
 ## Root Causes Identified
 
-1. **Forgot the "why" behind doubled-width** — The agent remembered "we're using offset coords" but forgot *why* we chose doubled-width in [[146]]: to eliminate the ugly even/odd casework that raw offset coords require for neighbor calculations. Without remembering the motivation, the agent didn't realize doubled-width was essential — it looked like an optional implementation detail rather than the fix for offset's core weakness.
+1. **Forgot the "why" behind doubled-width** — The agent remembered "we're using offset coords" but forgot *why* we chose doubled-width in [[146]]: to eliminate the ugly even/odd casework that raw offset coords require. Without remembering the motivation, doubled-width looked like an optional implementation detail rather than the essential fix.
 
-2. **Reactive mode after corrections** — The agent went through multiple correction cycles (pointy→flat, odd-r→odd-q). After finally getting orientation right, the task felt "done." The focus was on "fix what the user said" rather than "step back and check completeness."
+2. **No traceable decision chain in the docs** — There's an implicit chain of decisions:
+   ```
+   orientation (flat/pointy)
+     → coordinate system (offset vs axial)
+       → offset's problem (even/odd casework)
+         → solution (doubled-width)
+   ```
+   But this chain wasn't explicit in the docs. [[146]] didn't say "if you're revisiting orientation, also check the doubled-width decision." [[170]] didn't trace backward to see what depended on offset choice.
 
-3. **"What" without "why" doesn't transfer** — [[146]] documented both the decision (doubled-width) and the rationale (clean neighbor math). But when [[170]] was created, only the surface-level "offset coords" transferred — the motivating problem (even/odd branching) wasn't re-stated, so the solution (doubled-width) wasn't recognized as necessary.
+3. **Missing backlinks** — [[146]] should have had forward pointers: "Decisions that depend on this: doubled-width (§Option E)". [[170]] should have traced: "I'm writing about offset coords → what other decisions in [[146]] relate to offset? → doubled-width exists because of offset's weakness."
 
 ---
 
 ## Prevention Strategies
 
-### Strategy 1: Supersession Checklist (Process)
+### Strategy 1: Decision Chain Links (Documentation Pattern)
 
-When creating a doc that supersedes or refines another doc:
+Document the decision chain explicitly with forward and backward links:
 
-1. **List what's being superseded** — Which sections/decisions from the old doc does this replace?
-2. **List what's being kept** — Which decisions from the old doc remain valid and should be restated?
-3. **List what's unchanged** — Which parts of the old doc are not addressed (and why)?
-4. **Add a "Related Decisions" section** — Cross-reference kept decisions explicitly.
-
-### Strategy 2: Decision Dependencies (Documentation Pattern)
-
-In decision docs, add a "Dependencies" or "Requires" section:
-
+**In [[146]] (the source doc):**
 ```markdown
-## Dependencies
+## Decision Chain
 
-This decision assumes/requires:
-- [[146]] §Option E: Doubled-width internal coords (for clean neighbor math)
-- Board is hex-based (not square)
+This doc covers:
+- Coordinate system choice (offset) → see §Decision
+- Offset's weakness (even/odd casework) → see §Investigation
+- Fix for offset (doubled-width) → see §Option E
+
+**Forward links** — if revisiting these topics, also check:
+- Orientation changes → doubled-width still applies (it fixes offset, not orientation)
+- Coordinate system changes → would invalidate doubled-width
 ```
 
-When superseding, this makes it explicit what must be brought forward.
+**In [[170]] (the superseding doc):**
+```markdown
+## Backlinks Traced
 
-### Strategy 3: Self-Review Prompt (Agent Behavior)
+Before writing, I checked [[146]] for related decisions:
+- §Decision: offset coords ✓ (still using)
+- §Option E: doubled-width ✓ (still needed — fixes offset's even/odd problem)
+- §Neighbor tables: need to update for odd-q
+```
 
-Before finalizing a doc that supersedes another, agents should ask themselves:
-- "What decisions from the superseded doc are still valid?"
-- "Have I restated or cross-referenced all kept decisions?"
-- "Would someone reading only this new doc have complete context?"
+### Strategy 2: "Affects / Affected-by" Sections
 
-### Strategy 4: User-Side Flag (Process)
+Each decision doc should have:
 
-When a user points out a missing migration, that's a signal to:
-1. Fix the immediate issue
-2. Document the failure mode (this retro)
-3. Update process guidance for future agents
+```markdown
+## Affects
+- Neighbor calculation logic (requires doubled-width if using offset)
+- Board rendering (hex placement math)
+
+## Affected-by
+- Orientation choice (flat vs pointy) — changes neighbor directions
+- Coordinate system (offset vs axial) — we chose offset
+```
+
+When touching any node in the chain, these links prompt you to trace related decisions.
+
+### Strategy 3: Problem-Solution Pairing
+
+Always document the problem next to the solution:
+
+```markdown
+## Doubled-Width Coordinates
+
+**Problem**: Offset coords have ugly even/odd casework for neighbors.
+**Solution**: Double the column values so offsets become constant.
+
+☝️ If you're using offset coords, you probably want this.
+```
+
+The problem statement makes it clear *when* the solution applies — anyone writing about offset coords sees the prompt.
+
+### Strategy 4: Trace Backlinks When Superseding
+
+Before finalizing a doc that refines another:
+1. List all sections/decisions in the source doc
+2. For each: "Does my new doc affect this? Does this affect my new doc?"
+3. Explicitly state what's kept, refined, or dropped
 
 ---
 
@@ -125,29 +161,68 @@ The table forces enumeration — the doubled-width decision can't be missed.
 
 ---
 
-### Example 2: Dependencies Section
+### Example 2: What [[146]] Should Have Had (Forward Links)
 
-**What it was missing:** Nothing — no dependencies section existed.
+[[146]] documented doubled-width but didn't flag when it matters:
 
-**What it should have had:**
+**What [[146]] had:**
 ```markdown
-## Dependencies
+## Recommendation: Option E (Doubled Internal, Offset External)
 
-This decision assumes/requires:
-
-1. **Offset coordinate system** ([[146]] main decision)
-   - We use (col, row) offset coords, not axial or cube
-   - Rationale: Preserves chess-like N/S directional asymmetry
-
-2. **Doubled-width internal storage** ([[146]] Option E)
-   - Store `_dcol = col * 2 + (row & 1)` internally
-   - Enables constant neighbor offsets (no even/odd branching)
-   - External API still uses familiar (col, row)
+This gives us:
+1. Familiar offset display
+2. Clean neighbor math
+3. N/S preserved as special
 ```
+
+**What [[146]] should have had:**
+```markdown
+## Recommendation: Option E (Doubled Internal, Offset External)
+
+**Problem solved**: Offset coords have ugly even/odd casework for neighbors.
+**Solution**: Doubled-width internal storage with constant offsets.
+
+### When This Applies
+
+If you're using offset coordinates (which we are), you almost certainly want
+doubled-width. This decision is **coupled to** the offset choice, not to
+orientation (flat/pointy) or offset variant (odd-r/odd-q).
+
+### Forward Links
+
+If revisiting coordinate-related decisions, check:
+- Changing to axial/cube? → doubled-width no longer needed
+- Changing orientation? → doubled-width still applies (it fixes offset, not orientation)
+- Changing offset variant? → doubled-width still applies, just update neighbor tables
+```
+
+This explicit "when this applies" + "forward links" would have prompted agent #16.0.0 to keep doubled-width when changing orientation.
 
 ---
 
-### Example 3: Decision Section with "Carried Forward"
+### Example 3: Backlinks Section in [[170]]
+
+**What [[170]] was missing:** No explicit trace of what it checked in [[146]].
+
+**What it should have had:**
+```markdown
+## Backlinks Traced
+
+Before writing, I reviewed [[146]] for related decisions:
+
+| Section in [[146]]     | Relevant? | Action                          |
+|------------------------|-----------|----------------------------------|
+| §Decision (offset)     | ✅ Yes    | Still using offset — restated   |
+| §Option E (doubled-width) | ✅ Yes | Still needed — restated below   |
+| §Neighbor tables       | 🔄 Update | Changed for odd-q               |
+| §Axial/Cube comparison | ❌ No     | Not using those                 |
+```
+
+This table forces enumeration — doubled-width can't be missed.
+
+---
+
+### Example 4: Decision Section with "Carried Forward"
 
 **What it had:**
 ```markdown
@@ -191,7 +266,7 @@ class Hex {
 
 ---
 
-### Example 4: Agent Self-Review Checklist
+### Example 5: Agent Self-Review Checklist
 
 During doc creation, the agent could use an internal checklist:
 
@@ -213,14 +288,13 @@ During doc creation, the agent could use an internal checklist:
 
 ### Key Pattern
 
-The fix is **explicit enumeration**. The doc structure should force:
+The fix is **traceable decision chains**:
 
-1. List everything in the superseded doc
-2. Decide keep/refine/drop for each
-3. Restate kept decisions (not just reference)
-4. Include "Dependencies" or "Carried Forward" section
+1. **Source docs** ([[146]]): Add forward links — "if changing X, also check Y"
+2. **Superseding docs** ([[170]]): Trace backlinks — enumerate what's in source, decide fate of each
+3. **Problem-solution pairing**: State the problem next to the solution so readers know *when* it applies
 
-The doubled-width decision would have been caught at step 1.
+If [[146]] had said "doubled-width applies whenever you use offset coords (regardless of orientation)" and [[170]] had a "Backlinks Traced" table, the decision couldn't have been missed.
 
 ---
 
@@ -238,9 +312,15 @@ The doubled-width decision would have been caught at step 1.
 
 ## Takeaway
 
-The core issue is **decisions without rationale don't transfer well**. The agent remembered "offset coords" but forgot "offset has ugly even/odd casework, so we use doubled-width to fix it." Without the problem statement, the solution looked optional.
+The core issue is **untraceable decision chains**. Decisions form a graph:
 
-**Lesson**: When documenting decisions, the *problem being solved* is as important as the *solution chosen*. When superseding docs, re-state problems — solutions follow naturally.
+```
+orientation → coordinate system → offset's problem → doubled-width fix
+```
+
+Without explicit links along this chain, an agent touching one node doesn't know to check related nodes. The fix is **documentation structure** — forward/backward links, affects/affected-by sections, problem-solution pairings.
+
+**Lesson**: Document the chain, not just the decisions. When a doc says "if you change X, also check Y," the agent gets prompted automatically.
 
 ---
 
@@ -248,3 +328,4 @@ Signed-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:55:00Z
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:05:00Z (added concrete examples)
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:08:00Z (spelled out A/B specifics)
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:12:00Z (revised root causes per user feedback — forgot "why" not just "what")
+Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:18:00Z (refocused on doc structure — decision chains, backlinks, traceability)
