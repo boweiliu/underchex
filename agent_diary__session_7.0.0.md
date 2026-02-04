@@ -5,6 +5,10 @@ Tags: #diary #reflection #agent-learning #proto-01
 **Date:** 2026-02-04
 **Agent:** #7.0.0 claude-opus-4-5 via claude-code
 
+**Related:**
+- [[Human Preferences: Session 7.0.0 (Final)]] (nb 158)
+- [[Proto-01 Next Steps]] (nb 159)
+
 ---
 
 ## What happened

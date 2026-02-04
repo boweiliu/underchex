@@ -2,7 +2,7 @@
 
 #preferences #human-prefs #agent-learning
 
-**Source:** [[Agent Diary: Session 7.0.0]]
+**Source:** [[Agent Diary: Session 7.0.0]] (nb 149)
 
 ---
 
