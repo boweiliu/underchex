@@ -1,7 +1,5 @@
 # Agent Diary: Session 4.0.0
 
-# Agent Diary: Session 4.0.0
-
 #diary #reflection #agent-learning
 
 **Date:** 2026-02-04
@@ -42,6 +40,25 @@ For this project:
 - Is there prior art from the deleted implementations worth salvaging ideas from?
 - How much should I front-load vs just start building?
 
+## Human preferences observed
+
+Things I learned about how this user likes to work:
+
+1. **Concise over verbose.** "1 line per ticket" was the correction. Dense information is preferred over padded explanations.
+
+2. **Editable outputs.** "Put it in a doc and I'll edit to stack rank" - they want artifacts they can modify, not final pronouncements. Leave room for their input.
+
+3. **Research mindset.** This user is exploring a design space, not executing a known plan. Treat unknowns as the work, not blockers to the work.
+
+4. **Direct correction style.** "Your baseline assumptions are incorrect" - they give clear, direct feedback. No need to hedge or soften; they'll tell me when I'm wrong.
+
+5. **Values reflection.** Asked me to write a diary about what I learned - they care about agent metacognition and want to see the thinking, not just the output.
+
+6. **Iterative over perfect.** Would rather see a fast wrong answer corrected than wait for a slow right answer. The first ticket list was useful because it surfaced the mismatch.
+
+These preferences should inform how I work on this project going forward.
+
 ---
 
 Signed-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:26:00Z
+Edited-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:30:00Z
