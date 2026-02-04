@@ -152,72 +152,156 @@ CUBE_NEIGHBORS = [
 
 ---
 
-## Recommendation for UNDERCHEX: **Axial with Cube Helpers**
+## Decision: Offset Coordinates
 
-**Primary storage**: Axial `(q, r)`
-- Compact (2 values)
-- Clean neighbor lookup
-- Good enough for basic prototype
+**Chosen**: Offset coordinates (flat-top, odd-r or even-r variant TBD)
 
-**When needed**: Convert to cube for distance/rotation:
-```python
-def axial_to_cube(q, r):
-    return (q, -q - r, r)
+**Rationale**: In chess, N/S (forward/backward) movement is fundamentally different from sideways movement:
+- Pawns only move forward
+- Promotion happens at the far rank
+- Castling is sideways
+- "Ahead" vs "behind" matters for strategy
 
-def cube_to_axial(x, y, z):
-    return (x, z)
+Offset coords preserve this directional asymmetry naturally - rows are rows, and the N/S axis is clearly distinguished. Axial/cube treat all 6 directions more symmetrically, which is elegant but obscures the chess-relevant distinction.
 
-def hex_distance(q1, r1, q2, r2):
-    x1, y1, z1 = axial_to_cube(q1, r1)
-    x2, y2, z2 = axial_to_cube(q2, r2)
-    return max(abs(x1 - x2), abs(y1 - y2), abs(z1 - z2))
-```
+**Challenge**: The even/odd row casework for neighbors is ugly. See investigation below for cleaner approaches.
 
-This gives us:
-- Simple storage and iteration
-- Clean neighbor code
-- Access to cube's distance/rotation when needed
-- Easy to extend later
+Decided-by: bowei 2026-02-04
+Recorded-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:40:00Z
 
 ---
 
-## Implementation Sketch for PROTO-01.2
+## Investigation: Cleaner Offset Representations
+
+The goal: keep offset's intuitive row-based structure, but avoid the ugly even/odd neighbor casework.
+
+### Option A: Lookup Table (Minimal Change)
+
+Instead of if/else, use a 2-element array indexed by `row & 1`:
 
 ```python
-from dataclasses import dataclass
-from typing import Iterator
+# [even_row_offsets, odd_row_offsets]
+NEIGHBOR_OFFSETS = [
+    # E,      W,      NE,       NW,       SE,       SW       (even rows)
+    [(+1,0), (-1,0), (0,-1),   (-1,-1),  (0,+1),   (-1,+1)],
+    # E,      W,      NE,       NW,       SE,       SW       (odd rows)
+    [(+1,0), (-1,0), (+1,-1),  (0,-1),   (+1,+1),  (0,+1)],
+]
 
-@dataclass(frozen=True)
-class Hex:
-    """Axial coordinate (q, r) for a hex cell."""
-    q: int
-    r: int
-
-    # Cube coordinate helpers
-    @property
-    def s(self) -> int:
-        """Third cube coordinate (derived)."""
-        return -self.q - self.r
-
-    def distance(self, other: 'Hex') -> int:
-        """Manhattan distance in cube space."""
-        return max(
-            abs(self.q - other.q),
-            abs(self.r - other.r),
-            abs(self.s - other.s)
-        )
-
-    def neighbors(self) -> Iterator['Hex']:
-        """Yield the 6 adjacent hexes."""
-        for dq, dr in [(1, 0), (1, -1), (0, -1), (-1, 0), (-1, 1), (0, 1)]:
-            yield Hex(self.q + dq, self.r + dr)
-
-    def __add__(self, other: 'Hex') -> 'Hex':
-        return Hex(self.q + other.q, self.r + other.r)
-
-    def __sub__(self, other: 'Hex') -> 'Hex':
-        return Hex(self.q - other.q, self.r - other.r)
+def neighbors(col, row):
+    return [(col + dc, row + dr) for dc, dr in NEIGHBOR_OFFSETS[row & 1]]
 ```
+
+**Verdict**: Still has casework, just hidden in data. No semantic improvement.
+
+### Option B: Doubled-Width Coordinates
+
+Double the column values so the half-step offset becomes a full step:
+
+```
+  Offset:     col 0   1   2           Doubled:    col 0  2  4
+  row 0:        A   B   C             row 0:        A  B  C
+  row 1:         D   E   F            row 1:         D  E  F  (cols 1,3,5)
+```
+
+Storage: `(col*2 + row%2, row)` — now neighbors are constant offsets!
+
+```python
+# Doubled-width neighbor offsets (constant!)
+DOUBLED_NEIGHBORS = [
+    (+2,  0),  # E
+    (-2,  0),  # W
+    (+1, -1),  # NE
+    (-1, -1),  # NW
+    (+1, +1),  # SE
+    (-1, +1),  # SW
+]
+```
+
+**Pros**: No casework! Clean neighbor math.
+**Cons**: Column values are "sparse" (0,2,4 or 1,3,5 depending on row). Array indexing needs `col//2`.
+
+### Option C: Store Offset, Compute in Axial
+
+Keep offset for storage/display, but convert to axial for any neighbor/distance logic:
+
+```python
+def offset_to_axial(col, row):
+    q = col - (row - (row & 1)) // 2  # or similar formula
+    r = row
+    return (q, r)
+
+def axial_to_offset(q, r):
+    col = q + (r - (r & 1)) // 2
+    row = r
+    return (col, row)
+```
+
+**Pros**: Best of both worlds conceptually.
+**Cons**: Conversion overhead, two mental models, easy to get formulas wrong.
+
+### Option D: Direction Enums with Semantic Meaning
+
+Define directions by their chess meaning, hide coord math:
+
+```python
+from enum import Enum
+
+class Direction(Enum):
+    N = "north"      # toward opponent
+    S = "south"      # toward home
+    NE = "northeast"
+    NW = "northwest"
+    SE = "southeast"
+    SW = "southwest"
+
+def step(col, row, direction: Direction) -> tuple[int, int]:
+    """Move one hex in the given direction."""
+    # Internals handle even/odd, caller doesn't care
+    ...
+```
+
+**Pros**: Caller code reads like chess (`step(pos, Direction.N)`), casework is encapsulated.
+**Cons**: Still have casework internally, just hidden.
+
+### Option E: Hybrid - Doubled Storage, Offset Display
+
+Store doubled-width internally (for clean math), but display/input as familiar offset:
+
+```python
+@dataclass
+class Hex:
+    _dcol: int  # doubled column (internal)
+    row: int
+
+    @classmethod
+    def from_offset(cls, col: int, row: int) -> 'Hex':
+        return cls(col * 2 + (row & 1), row)
+
+    @property
+    def col(self) -> int:
+        """Display column (offset coords)."""
+        return self._dcol // 2
+
+    def neighbors(self):
+        for ddcol, drow in [(2,0), (-2,0), (1,-1), (-1,-1), (1,1), (-1,1)]:
+            yield Hex(self._dcol + ddcol, self.row + drow)
+```
+
+**Pros**: Clean internal math, familiar external interface.
+**Cons**: Slight complexity in the abstraction layer.
+
+---
+
+## Recommendation: Option E (Doubled Internal, Offset External)
+
+This gives us:
+1. **Familiar offset display** - users see (col, row) with rows being ranks
+2. **Clean neighbor math** - no casework, just add constant offsets
+3. **N/S preserved as special** - row axis is still clearly "forward/backward"
+4. **Encapsulated complexity** - the doubling is an implementation detail
+
+Next step: prototype this representation and see how it feels in practice.
 
 ---
 
@@ -229,3 +313,4 @@ class Hex:
 ---
 
 Created-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:35:00Z
+Edited-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:42:00Z
