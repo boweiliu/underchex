@@ -1,7 +1,5 @@
 # 5 Whys Retro: Forgotten Decision Migration
 
-# 5 Whys Retro: Forgotten Decision Migration
-
 Tags: #retro #5whys #process #documentation #underchex
 
 **Date:** 2026-02-04
@@ -92,6 +90,140 @@ When a user points out a missing migration, that's a signal to:
 
 ---
 
+## Concrete Examples: What [[170]] Should Have Looked Like
+
+### Example 1: Header with Supersession Audit Table
+
+**What it had:**
+```markdown
+**Related**: [[146]], [[166]]
+
+## The Issue
+Previous docs assumed flat-top hexes with row-based offset...
+```
+
+**What it should have had:**
+```markdown
+**Related**: [[146]], [[166]]
+
+## Supersession Audit
+
+This doc refines/supersedes parts of [[146]]. Audit:
+
+| From [[146]]                   | Status      | Notes                                     |
+|--------------------------------|-------------|-------------------------------------------|
+| Offset coords (not axial/cube) | ✅ Kept     | Restated in "Coordinate System" section   |
+| Doubled-width internal storage | ✅ Kept     | Restated in "Doubled-Width" section below |
+| Flat-top orientation           | 🔄 Refined  | Changed from odd-r to odd-q               |
+| Neighbor offset tables         | 🔄 Refined  | Updated for odd-q in this doc             |
+
+## The Issue
+...
+```
+
+The table forces enumeration — the doubled-width decision can't be missed.
+
+---
+
+### Example 2: Dependencies Section
+
+**What it was missing:** Nothing — no dependencies section existed.
+
+**What it should have had:**
+```markdown
+## Dependencies
+
+This decision assumes/requires:
+
+1. **Offset coordinate system** ([[146]] main decision)
+   - We use (col, row) offset coords, not axial or cube
+   - Rationale: Preserves chess-like N/S directional asymmetry
+
+2. **Doubled-width internal storage** ([[146]] Option E)
+   - Store `_dcol = col * 2 + (row & 1)` internally
+   - Enables constant neighbor offsets (no even/odd branching)
+   - External API still uses familiar (col, row)
+```
+
+---
+
+### Example 3: Decision Section with "Carried Forward"
+
+**What it had:**
+```markdown
+## Decision
+
+**Use flat-top hexes with odd-q column offset.**
+
+- Flat edges at top/bottom of each hex
+- Columns (files) are contiguous vertically
+- Odd columns shifted down
+- External coordinates: `(col, row)`
+```
+
+**What it should have had:**
+```markdown
+## Decision
+
+**Use flat-top hexes with odd-q column offset and doubled-width internal storage.**
+
+- Flat edges at top/bottom
+- Columns contiguous vertically, odd columns shifted down
+- External coordinates: `(col, row)`
+- **Internal storage: doubled-width `_dcol`** (from [[146]] Option E)
+
+### Carried Forward from [[146]]
+
+The doubled-width representation remains the chosen approach:
+
+\`\`\`typescript
+class Hex {
+  constructor(private _dcol: number, public row: number) {}
+  get col() { return this._dcol >> 1; }
+  static fromOffset(col: number, row: number) {
+    return new Hex(col * 2 + (row & 1), row);
+  }
+}
+\`\`\`
+
+**Why keep this**: Constant neighbor offsets — no `if (col % 2)` branching.
+```
+
+---
+
+### Example 4: Agent Self-Review Checklist
+
+During doc creation, the agent could use an internal checklist:
+
+```markdown
+<!-- SUPERSESSION CHECKLIST (delete before finalizing):
+- [x] Read [[146]] completely before writing
+- [x] Listed all decisions: offset coords, doubled-width, flat-top, neighbor tables
+- [x] For each: keep/refine/drop?
+  - offset coords: KEEP
+  - doubled-width: KEEP  <-- would have caught this
+  - flat-top: REFINE (odd-r → odd-q)
+  - neighbor tables: REFINE
+- [x] Restated kept decisions explicitly
+- [x] Someone reading only THIS doc has complete context
+-->
+```
+
+---
+
+### Key Pattern
+
+The fix is **explicit enumeration**. The doc structure should force:
+
+1. List everything in the superseded doc
+2. Decide keep/refine/drop for each
+3. Restate kept decisions (not just reference)
+4. Include "Dependencies" or "Carried Forward" section
+
+The doubled-width decision would have been caught at step 1.
+
+---
+
 ## Recommended Actions
 
 1. **Add to CLAUDE.md or a skill**: A "when superseding docs" checklist.
@@ -111,3 +243,4 @@ The core issue is **implicit vs. explicit knowledge transfer**. Decisions don't 
 ---
 
 Signed-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:55:00Z
+Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:05:00Z (added concrete examples)
