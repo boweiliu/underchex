@@ -149,25 +149,63 @@ From cell `(col, row)`:
 
 ---
 
-## Why This Matters for Chess
+## Why Flat-Top?
 
-- **Files (columns)** are the primary axis for piece movement (rooks move along files)
-- **Forward/backward** maps naturally to row +/-
-- **Pawn promotion** happens at the far row (row 0 or row N)
-- Contiguous columns = cleaner file-based logic
+**Pawns march step-by-step.** In chess, pawns advance one square at a time — a satisfying, incremental march forward. With flat-top hexes and contiguous columns:
+- Moving N or S is a single step along the file
+- Pawns advance row-by-row in a natural, chess-like rhythm
+- "Forward" is visually and logically clear
+
+(This may change later, but it's the reasoning for now.)
+
+---
+
+## Doubled-Width Internal Coordinates
+
+**Problem**: Offset coordinates have ugly even/odd casework for neighbor calculations.
+
+**Solution**: Store **doubled-width** coordinates internally for clean neighbor math.
+
+From [[Hex Coordinate Systems]] (nb 146), Option E:
+
+```typescript
+class Hex {
+  constructor(private _dcol: number, public row: number) {}
+
+  get col() { return this._dcol >> 1; }  // display column
+
+  static fromOffset(col: number, row: number) {
+    return new Hex(col * 2 + (row & 1), row);
+  }
+
+  // Neighbors use CONSTANT offsets — no even/odd branching!
+  neighbors(): Hex[] {
+    const offsets = [(2,0), (-2,0), (1,-1), (-1,-1), (1,1), (-1,1)];
+    return offsets.map(([dc, dr]) => new Hex(this._dcol + dc, this.row + dr));
+  }
+}
+```
+
+**Why this works**:
+- Internally, columns are "doubled" so the half-hex offset becomes a full step
+- Even columns have `_dcol` = 0, 2, 4, ... ; odd columns have `_dcol` = 1, 3, 5, ...
+- Neighbor offsets are now **constant** — no `if (col % 2)` branching
+- External API still uses familiar `(col, row)` offset coordinates
 
 ---
 
 ## Decision
 
-**Use flat-top hexes with odd-q column offset.**
+**Use flat-top hexes with odd-q column offset and doubled-width internal storage.**
 
 - Flat edges at top/bottom of each hex
 - Columns (files) are contiguous vertically
 - Odd columns shifted down
-- Coordinates: `(col, row)` where col = file, row = rank-ish
+- External coordinates: `(col, row)` where col = file, row = rank-ish
+- Internal storage: doubled-width `_dcol` for clean neighbor math
 
 ---
 
 Created-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:15:00Z
 Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:25:00Z (corrected to flat-top per user feedback)
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:35:00Z (fixed reasoning, added doubled-width section)
