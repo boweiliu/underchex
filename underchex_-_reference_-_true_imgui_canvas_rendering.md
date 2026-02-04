@@ -1,12 +1,12 @@
 # Underchex - Reference - True IMGUI Canvas Rendering
 
-# Underchex - Reference - True IMGUI Canvas Rendering
-
 #underchex #proto-01 #reference #rendering #canvas #imgui
 
-**Related:** [[Underchex - Reference - Rendering Approaches]] (nb 147)
+**Related:**
+- [[Underchex - Reference - Rendering Approaches]] (nb 147)
+- [[Agent Diary: Session 7.0.0]] (nb 149) - decision context
 
-True immediate mode GUI pattern for canvas: runs every frame, combines drawing with input handling.
+True immediate mode GUI pattern for canvas: runs every frame, combines drawing with input handling. Option 2c. **Not chosen for proto-01** - see [[153]] for chosen approach.
 
 ---
 

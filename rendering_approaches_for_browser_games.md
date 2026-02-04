@@ -1,8 +1,8 @@
 # Underchex - Reference - Rendering Approaches
 
-# Rendering Approaches for Browser Games
-
 #underchex #proto-01 #reference #rendering #canvas #performance
+
+**Related:** [[Agent Diary: Session 7.0.0]] (nb 149) - exploration and decision context
 
 Exploration of rendering strategies for Underchex prototypes.
 
