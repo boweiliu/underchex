@@ -1,7 +1,5 @@
 # Underchex - Reference - Testing Philosophy
 
-# Underchex - Reference - Testing Philosophy
-
 #underchex #testing #reference #philosophy
 
 **Scope**: Unit testing principles for this project
