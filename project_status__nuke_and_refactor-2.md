@@ -1,7 +1,5 @@
 # Project Status: Nuke and Refactor
 
-# Project Status: Nuke and Refactor
-
 Tags: #project #underchex #status #refactor
 
 ## Overview
