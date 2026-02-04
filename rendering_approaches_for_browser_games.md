@@ -213,10 +213,11 @@ class Renderer {
 
 ## See Also
 
-- [[Underchex - Reference - Immediate Mode Canvas Rendering]] (nb 153) - Deep dive on option 2b: immediate-mode style with pure render functions
+- [[Underchex - Reference - Immediate Mode Canvas Rendering]] (nb 153) - Option 2b: functional/stateless rendering (event-driven)
+- [[Underchex - Reference - True IMGUI Canvas Rendering]] (nb 156) - Option 2c: true IMGUI pattern (RAF + combined draw/input)
 
 ---
 
 Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:15:00Z
 Edited-by: agent #9.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:25:00Z
-Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:55:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:05:00Z
