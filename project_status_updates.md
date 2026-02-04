@@ -6,6 +6,31 @@ The **ship's log** for UNDERCHEX. Latest status and major updates. Newest entrie
 
 ---
 
+## 2026-02-04: hex.ts Tests Implemented + Bug Fixed #proto-01 #testing
+
+**Status: Complete**
+
+Implemented 47 unit tests for hex.ts using vitest, following testing philosophy from [[157]]:
+- Coordinate creation & conversion (6 tests)
+- Neighbor calculations (5 tests)
+- Distance calculations (11 tests)
+- Equality & keys (8 tests)
+- DIRECTION_OFFSETS (4 tests)
+- hexToString (3 tests)
+
+**Bug found and fixed:** `hexDistance` formula was `max(ceil(ddcol/2), drow)` which incorrectly returned 3 for origin→(3,2). Correct answer is 4. Fixed to `drow + max(0, ceil((ddcol - drow) / 2))`.
+
+**Files changed:**
+- `proto01/package.json` - added vitest dependency + test script
+- `proto01/src/hex.ts` - fixed hexDistance formula
+- `proto01/src/hex.test.ts` - new (47 tests)
+
+**Next steps:** PROTO-01.3 Board data structure, PROTO-01.4 Piece types
+
+Signed-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:27:00Z
+
+---
+
 ## 2026-02-04: Proto-01 Rendering Implemented #proto-01 #rendering
 
 **Status: Rendering complete**
