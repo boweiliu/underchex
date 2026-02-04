@@ -1,22 +1,22 @@
-# Underchex - Reference - Immediate Mode Canvas Rendering
+# Underchex - Reference - Functional Stateless Rendering
 
-# Underchex - Reference - Immediate Mode Canvas Rendering
-
-#underchex #proto-01 #reference #rendering #canvas #immediate-mode
+#underchex #proto-01 #reference #rendering #canvas #functional
 
 **Related:** [[Underchex - Reference - Rendering Approaches]] (nb 147)
 
-Deeper exploration of event-driven rendering with an immediate-mode GUI style.
+Event-driven rendering with pure functions and external state. Option 2b.
+
+**Note:** This is NOT true IMGUI. True IMGUI runs every frame and combines drawing with input handling. See [[Underchex - Reference - True IMGUI Canvas Rendering]] (nb 156) for that pattern.
 
 ---
 
-## What is Immediate Mode?
+## What This Pattern Is
 
-Immediate mode GUI (IMGUI) pattern, popularized by Dear ImGui:
-- **No retained state** - UI is a pure function of data
-- **No widget objects** - just function calls that draw
-- **State lives in app** - not in the rendering system
-- **Rebuild every frame** - or in our case, every render call
+Borrows ideas from IMGUI but stays event-driven:
+- **No retained state** - render is a pure function of data
+- **External state** - passed in, not stored in renderer
+- **Event-driven** - render only on state change, not every frame
+- **Separate concerns** - input handlers are separate from render
 
 Contrast with **retained mode**:
 - Create sprite/widget objects
@@ -82,8 +82,8 @@ canvas.onclick = (e) => {
 
 ## Comparison with Event-Driven Class
 
-| Aspect | Event-Driven (2) | Immediate Mode (2b) |
-|--------|------------------|---------------------|
+| Aspect | Event-Driven Class (2) | Functional Stateless (2b) |
+|--------|------------------------|---------------------------|
 | State location | In Renderer class | External, passed in |
 | Render trigger | `this.render()` | `render(ctx, state)` |
 | Dirty tracking | Optional | None (always full) |
@@ -130,3 +130,4 @@ That's the whole rendering system. ~15 lines.
 ---
 
 Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:55:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:10:00Z
