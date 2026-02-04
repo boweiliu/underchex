@@ -16,7 +16,7 @@ direnv allow
 
 This sets:
 ```bash
-export NB_DIR="$(cd "$(dirname "$(git rev-parse --git-common-dir 2>/dev/null)")" && pwd)/.nb_docs_repo"
+export NB_DIR="$(cd "$(dirname "$(git rev-parse --git-common-dir 2>/dev/null)")" && pwd)/.docs"
 export NB_AUTO_SYNC=0
 ```
 
@@ -54,8 +54,8 @@ nb sync
 
 ## File Locations
 
-- Notes: `.nb_docs_repo/home/`
-- Agent onboarding: `.nb_docs_repo/home/NB_README.llm.md`
+- Notes: `.docs/home/`
+- Agent onboarding: `.docs/home/NB_README.llm.md`
 - Human quick reference: `NB_README.human.md`
 
 ## nb-visual (Graph Visualization)

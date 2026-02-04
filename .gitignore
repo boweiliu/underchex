@@ -1,4 +1,3 @@
-.nb_docs_repo
 .opencode
 **/.*.swp
 **/.*.swo
@@ -24,5 +23,7 @@ src/rust/target/
 src/c/test_crossimpl_tablebase
 
 .DS_STORE
-.docs/*
-!.docs/agent-ids.txt
+# nb docs (the home/ folder is its own git repo)
+.docs/home/
+.docs/.cache/
+.docs/.current

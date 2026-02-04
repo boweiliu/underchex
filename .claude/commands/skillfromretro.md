@@ -3,11 +3,11 @@
 When invoked:
 
 1. Ask the user for a filepath **if none is provided**.
-2. If a filepath is provided, make sure that the filepath is in the .nb_docs_repo/home/ directory.
+2. If a filepath is provided, make sure that the filepath is in the .docs/home/ directory.
 3. Read the file and check the frontmatter:
    - If `completed: false` or `completed` is not present, DO NOT write a skill. Exit gracefully.
-   - If `skillwritten: true`, DO NOT write a skill (already done). Exit gracefully, tell user why you exited.
-   - If there is NO frontmatter, but it is an md file and it is in the right location, you can write in the frontmatter as `completed: true` `skillwritten: false`.
+   - If `skillwritten: true`, DO NOT write a skill (already done). Exit gracefully, tell user why you exited. 
+   - If there is NO frontmatter, but it is an md file and it is in the right location, you can write in the frontmatter as `completed: true` `skillwritten: false`. 
    - Only proceed if `completed: true` AND `skillwritten` is not `true`.
 
 ## Writing Skills from Retros
@@ -15,7 +15,7 @@ When invoked:
 When creating a skill from a retro document:
 
 ### 1. Read and Analyze the Retro
-- Read the retro file from `.nb_docs_repo/home/{filename.md}`
+- Read the retro file from `.docs/home/{filename.md}`
 - Identify the core lesson or problem the retro addresses
 - Look for a **Triggers** section - this tells you when the lesson is relevant
 - Understand the context: what went wrong? what was learned? what should agents do differently?
@@ -102,3 +102,4 @@ If a retro teaches "Always check X before doing Y to avoid Z problem":
 - **Name:** `check-x-before-y`
 - **Description:** `Use when about to perform Y operations, ensures X is verified first`
 - **Content:** Explains why checking X matters, how to check it, and links to the full retro
+

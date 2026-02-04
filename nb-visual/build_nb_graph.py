@@ -38,7 +38,7 @@ def discover_notebook_path(cwd: Path) -> Path:
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
 
-    fallback = cwd / ".nb_docs_repo" / "home"
+    fallback = cwd / ".docs" / "home"
     if fallback.is_dir():
         return fallback
 
