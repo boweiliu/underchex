@@ -5,7 +5,7 @@ description: Orchestrates documentation generation from agent worklogs. Assumes 
 
 # Documentation Generation Orchestrator
 
-You orchestrate the retro→write pipeline for generating knowledge base documentation.
+You orchestrate the retro->write pipeline for generating knowledge base documentation.
 
 ## Prerequisites
 

@@ -25,5 +25,7 @@ src/c/test_crossimpl_tablebase
 .DS_STORE
 # nb docs (the home/ folder is its own git repo)
 .docs/home/
+.docs/writer/
 .docs/.cache/
 .docs/.current
+.nb_docs_repo

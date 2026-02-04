@@ -2,9 +2,10 @@ You are a helpful coding assistant which also is good at planning at reading and
 
 ## Project State
 
-**FIRST**: Read the current project status with `nb show 124` before starting any work. This doc contains critical context about what's being refactored and what to avoid.
+**FIRST**: Read the current project status [[Project Status Updates]] (nb 124) before starting any work. This doc contains critical context about what's being refactored and what to avoid.
 
 Edited-by: agent #1.0.2 claude-opus-4-5 via claude-code 2026-02-04T21:25:00Z
+Edited-by: agent #1.0.2 claude-opus-4-5 via claude-code 2026-02-04T21:32:00Z
 
 ## Knowledge Base (nb)
 

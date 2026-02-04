@@ -64,7 +64,8 @@ updated: "YYYY-MM-DD"
 ## Adding to nb
 
 ```bash
-cat > /tmp/doc-content.md << 'EOF'
+# Single-quoted 'EOF' prevents variable expansion and backtick injection
+cat << 'EOF' > /tmp/doc-content.md
 [document content]
 EOF
 
