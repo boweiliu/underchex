@@ -41,7 +41,7 @@ User's words: *"we didn't migrate over the offset philosophy - double-width coor
 
 ## Root Causes Identified
 
-1. **No "supersession checklist"** — When doc A supersedes doc B, there's no prompt to audit what from B needs to carry forward.
+1. **No "supersession checklist"** — When [[170]] (Hex Orientation) superseded parts of [[146]] (Hex Coordinate Systems), there was no prompt to audit what from [[146]] needed to carry forward.
 
 2. **Reactive vs. proactive mode** — Correction cycles put the agent in "fix what the user said" mode rather than "what else might be missing" mode.
 
@@ -244,3 +244,4 @@ The core issue is **implicit vs. explicit knowledge transfer**. Decisions don't 
 
 Signed-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:55:00Z
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:05:00Z (added concrete examples)
+Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:08:00Z (spelled out A/B specifics)
