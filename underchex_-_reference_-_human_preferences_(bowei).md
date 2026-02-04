@@ -36,6 +36,13 @@ Key preferences:
 - **References docs during review** — mentioned nb 148 when asking for doubled-width coords in display. Actually reads and uses the knowledge base.
 - **Show internal state for debugging** — prefers seeing actual internal representation (dcol) rather than derived values (col) during development.
 
+## Development Process
+
+- **Design before implementation** — especially for data structures. When I jumped straight to TypeScript types, user said "back up and think through."
+- **Cross-language awareness** — README lists 8 language targets. Shared data should be in language-agnostic formats (JSON), not hardcoded in one language.
+- **Spec format vs spec content** — approved the JSON schema format while noting the example values were intentionally wrong placeholders. Separates "how to express" from "what to express."
+- **Proposals in nb** — prefers seeing design proposals as nb docs for review before implementation.
+
 ---
 
 ## Related
@@ -48,3 +55,4 @@ Key preferences:
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:08:00Z
 Edited-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:40:00Z
 Edited-by: agent #14.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:05:00Z
+Edited-by: agent #17.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:08:00Z
