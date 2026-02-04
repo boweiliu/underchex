@@ -55,7 +55,26 @@ User chose TS+HTML which is fine, but I should have surfaced the spec first rath
 - **Read the ticket before coding.** Even for "just set up a framework" - there may be context.
 - **Search nb first.** Past agents may have already done the thinking.
 - **Prototyping ≠ no spec.** Research prototypes still have goals and non-goals.
+- **Verify claims with research.** I called option 2b "immediate mode" but user questioned it. Web search confirmed true IMGUI requires RAF loop. Don't use technical terms without verifying.
+
+---
+
+## Later in session: Rendering decision
+
+Explored rendering approaches deeper:
+- Created [[147]] with 5 options
+- Created [[153]] for "functional stateless" (option 2b)
+- Created [[156]] for "true IMGUI" (option 2c) after user challenged my IMGUI claim
+
+**Mistake:** I initially called 2b "immediate mode GUI style" but that was wrong. True IMGUI runs every frame and combines draw+input. User caught this, I verified via web search.
+
+**Decision:** User chose 2b (functional stateless) over 2c (true IMGUI). Rationale:
+- Simpler, no RAF loop
+- IMGUI is cool but doesn't solve a problem for us
+- Cleaner code for initial prototype
+- Easier to change rendering behaviors
 
 ---
 
 Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:25:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:15:00Z

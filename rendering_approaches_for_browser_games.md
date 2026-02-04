@@ -162,15 +162,15 @@ self.onmessage = (e) => {
 
 ---
 
-## Recommendation for Underchex
+## Decision for Proto-01
 
-**Use Event-Driven + Animation Hybrid (#3)**
+**Use Functional Stateless Rendering (2b)** - see [[153]]
 
 Rationale:
-- Chess is turn-based: no need to render 60fps continuously
-- Piece movement animations improve UX
-- Minimal battery/CPU usage
-- Clean separation: static renders vs animated transitions
+- Simplest approach, no RAF loop
+- No animations needed for research prototype
+- Cleaner code, easier to change rendering
+- True IMGUI (2c) is cool but doesn't solve a problem for us
 
 ## Implementation Sketch
 
@@ -213,11 +213,11 @@ class Renderer {
 
 ## See Also
 
-- [[Underchex - Reference - Immediate Mode Canvas Rendering]] (nb 153) - Option 2b: functional/stateless rendering (event-driven)
+- [[Underchex - Reference - Functional Stateless Rendering]] (nb 153) - Option 2b: functional/stateless rendering (event-driven) **← CHOSEN**
 - [[Underchex - Reference - True IMGUI Canvas Rendering]] (nb 156) - Option 2c: true IMGUI pattern (RAF + combined draw/input)
 
 ---
 
 Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:15:00Z
 Edited-by: agent #9.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:25:00Z
-Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:05:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:15:00Z
