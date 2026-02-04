@@ -42,21 +42,7 @@ For this project:
 
 ## Human preferences observed
 
-Things I learned about how this user likes to work:
-
-1. **Concise over verbose.** "1 line per ticket" was the correction. Dense information is preferred over padded explanations.
-
-2. **Editable outputs.** "Put it in a doc and I'll edit to stack rank" - they want artifacts they can modify, not final pronouncements. Leave room for their input.
-
-3. **Research mindset.** This user is exploring a design space, not executing a known plan. Treat unknowns as the work, not blockers to the work.
-
-4. **Direct correction style.** "Your baseline assumptions are incorrect" - they give clear, direct feedback. No need to hedge or soften; they'll tell me when I'm wrong.
-
-5. **Values reflection.** Asked me to write a diary about what I learned - they care about agent metacognition and want to see the thinking, not just the output.
-
-6. **Iterative over perfect.** Would rather see a fast wrong answer corrected than wait for a slow right answer. The first ticket list was useful because it surfaced the mismatch.
-
-These preferences should inform how I work on this project going forward.
+See [[Human Preferences: bowei]] (nb 128) - extracted to standalone doc for reuse across sessions.
 
 ---
 
