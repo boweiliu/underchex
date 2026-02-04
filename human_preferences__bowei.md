@@ -2,7 +2,7 @@
 
 #preferences #human-prefs #agent-learning
 
-**Source:** [[Agent Diary: Session 4.0.0]] (nb 127) | [[UNDERCHEX Tickets - Rebuild from Scratch]] (nb 126)
+**Source:** [[Agent Diary: Session 4.0.0]] (nb 127) | [[UNDERCHEX Tickets - Rebuild from Scratch]] (nb 126) | [[Agent Diary: Session 7.0.0]] (nb 149)
 
 Observed preferences for working with this user. Update as you learn more.
 
@@ -19,6 +19,7 @@ Observed preferences for working with this user. Update as you learn more.
 - **Research mindset.** Exploring a design space, not executing a known plan. Unknowns are the work, not blockers to the work.
 - **Iterative over perfect.** Fast wrong answer that gets corrected > slow right answer. First drafts surface mismatches.
 - **Values reflection.** Cares about agent metacognition. Wants to see thinking, not just output.
+- **Read before building.** Even for prototypes, check if there's an existing spec/ticket. Don't assume "just scaffold" - there may be context from past agents.
 
 ## Project preferences
 
