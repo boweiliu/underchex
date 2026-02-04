@@ -18,72 +18,91 @@ From the parent ticket:
 
 ## Coordinate System
 
-Per [[Hex Coordinate Systems]] (nb 146), this project uses **Offset Coordinates (col, row)** with:
-- **Flat-top hexes** (horizontal edges at top/bottom)
-- **Odd-r offset** (odd rows shifted right)
-- **Doubled-width internal storage** (Option E) for clean neighbor math
+> **UPDATED**: See [[Hex Orientation]] (nb 170) for the corrected orientation decision.
+
+Per [[Hex Orientation]] (nb 170), this project uses **Offset Coordinates (col, row)** with:
+- **Pointy-top hexes** (vertices pointing up/down)
+- **Odd-q offset** (odd columns shifted down)
+- Columns (files) are contiguous vertically — matches chess file intuition
 
 ---
 
-## Example: 5-column × 4-row Board
+## Example: 5-column × 4-row Board (Pointy-top, Odd-q)
 
 ```
-          col:  0       1       2       3       4
+        col:    0       1       2       3       4
+                        ↓               ↓
+               /\      /\      /\      /\      /\
+              /  \    /  \    /  \    /  \    /  \
+ row 0:      |0,0 |  |1,0 |  |2,0 |  |3,0 |  |4,0 |
+              \  /    \  /    \  /    \  /    \  /
+               \/  /\  \/  /\  \/  /\  \/  /\  \/
+                  /  \    /  \    /  \    /  \
+ row 1:      |0,1 |  |1,1 |  |2,1 |  |3,1 |  |4,1 |
+              \  /    \  /    \  /    \  /    \  /
+               \/  /\  \/  /\  \/  /\  \/  /\  \/
+                  /  \    /  \    /  \    /  \
+ row 2:      |0,2 |  |1,2 |  |2,2 |  |3,2 |  |4,2 |
+              \  /    \  /    \  /    \  /    \  /
+               \/  /\  \/  /\  \/  /\  \/  /\  \/
+                  /  \    /  \    /  \    /  \
+ row 3:      |0,3 |  |1,3 |  |2,3 |  |3,3 |  |4,3 |
+              \  /    \  /    \  /    \  /    \  /
+               \/      \/      \/      \/      \/
 
-                ___     ___     ___     ___     ___
-               /   \   /   \   /   \   /   \   /   \
- row 0:       | 0,0 | | 1,0 | | 2,0 | | 3,0 | | 4,0 |
-               \___/   \___/   \___/   \___/   \___/
-                   \___/   \___/   \___/   \___/
-                   /   \   /   \   /   \   /   \
- row 1:           | 0,1 | | 1,1 | | 2,1 | | 3,1 |        <- odd row, shifted right
-                   \___/   \___/   \___/   \___/
-               ___/   \___/   \___/   \___/   \___
-              /   \   /   \   /   \   /   \   /   \
- row 2:       | 0,2 | | 1,2 | | 2,2 | | 3,2 | | 4,2 |
-               \___/   \___/   \___/   \___/   \___/
-                   \___/   \___/   \___/   \___/
-                   /   \   /   \   /   \   /   \
- row 3:           | 0,3 | | 1,3 | | 2,3 | | 3,3 |        <- odd row, shifted right
-                   \___/   \___/   \___/   \___/
+              ↑ file  ↑ file  ↑ file  ↑ file  ↑ file
+                0       1       2       3       4
+           (contiguous vertically)
 ```
 
-**Notation**: `(col, row)` — e.g., `(2,1)` is column 2, row 1.
+**Notation**: `(col, row)` — col = file (vertical), row = rank-ish (horizontal)
 
-**Note**: Odd rows (1, 3, ...) have one fewer column due to the offset.
+**Key**: Odd columns (1, 3, ...) are shifted DOWN by half a hex. Columns are contiguous vertically — like chess files.
 
 ---
 
 ## Neighbor Example
 
-From cell `(1,1)` (center of an odd row), the 6 neighbors are:
+From cell `(2,1)` (in an even column), the 6 neighbors are:
 
 ```
-                ___         ___
-               /   \       /   \
-              | 1,0 |     | 2,0 |      <- NW (1,0)  and NE (2,0)
-               \___/   ___/\___/
-                   \  /   \
-                    \| 1,1 |/          <- center cell
-                ___/ \___/  \___
-               /   \     \  /   \
-              | 0,1 |     \| 2,1 |     <- W (0,1)   and E (2,1)
-               \___/   ___/\___/
-                   \  /   \
-                    \| 1,2 |           <- SW (1,2)  ... SE would be (2,2)
-                     \___/
+               /\      /\
+              /  \    /  \
+             |1,0 |  |2,0 |  <- NW (1,0), N (2,0)
+              \  /    \  /
+               \/  /\  \/
+                  /  \
+         /\      |2,1 |  /\    <- center cell (even col)
+        /  \      \  /  /  \
+       |1,1 |      \/  |3,1 |  <- W (1,1), E (3,1)
+        \  /    /\      \  /
+         \/    /  \      \/
+              |2,2 |           <- S (2,2)
+               \  /
+                \/
 ```
 
-| Direction | From (1,1) odd-row | Offset         |
-|-----------|-------------------|----------------|
-| E         | (2, 1)            | (+1, 0)        |
-| W         | (0, 1)            | (-1, 0)        |
-| NE        | (2, 0)            | (+1, -1) odd   |
-| NW        | (1, 0)            | (0, -1) odd    |
-| SE        | (2, 2)            | (+1, +1) odd   |
-| SW        | (1, 2)            | (0, +1) odd    |
+**Neighbor offsets for even column** (col % 2 == 0):
+| Direction | From (2,1) | Offset (dcol, drow) |
+|-----------|------------|---------------------|
+| N         | (2, 0)     | (0, -1)             |
+| S         | (2, 2)     | (0, +1)             |
+| NE        | (3, 0)     | (+1, -1)            |
+| SE        | (3, 1)     | (+1, 0)             |
+| NW        | (1, 0)     | (-1, -1)            |
+| SW        | (1, 1)     | (-1, 0)             |
 
-For even rows, NE/NW/SE/SW offsets differ — see [[146]] for the full offset tables.
+**Neighbor offsets for odd column** (col % 2 == 1):
+| Direction | Offset (dcol, drow) |
+|-----------|---------------------|
+| N         | (0, -1)             |
+| S         | (0, +1)             |
+| NE        | (+1, 0)             |
+| SE        | (+1, +1)            |
+| NW        | (-1, 0)             |
+| SW        | (-1, +1)            |
+
+See [[Hex Orientation]] (nb 170) for full details.
 
 ---
 
@@ -156,3 +175,4 @@ Options:
 
 Created-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:57:00Z
 Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:05:00Z
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:20:00Z (corrected to pointy-top odd-q per [[170]])

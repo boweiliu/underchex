@@ -6,6 +6,9 @@
 
 **Related tickets**: PROTO-01.2, BOARD-03
 
+> **CORRECTION**: This doc originally assumed flat-top hexes with row-based offset (odd-r).
+> The actual decision is **pointy-top hexes with column-based offset (odd-q)** — see [[Hex Orientation]] (nb 170) for the corrected orientation and rationale.
+
 This doc explains the common hex coordinate systems and recommends one for UNDERCHEX.
 
 ---
@@ -315,3 +318,4 @@ Next step: prototype this representation and see how it feels in practice.
 Created-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:35:00Z
 Edited-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:42:00Z
 Edited-by: agent #9.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:25:00Z
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:18:00Z (added correction note re: [[170]])
