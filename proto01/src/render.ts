@@ -139,8 +139,9 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState): void {
       const h = hex(col, row);
       const { x, y } = hexToPixel(h, width, height);
 
-      // Alternate colors for visual clarity
-      const isLight = (col + row) % 2 === 0;
+      // Alternate colors based on dcol parity (shows doubled-width structure)
+      // Even dcol (0,2,4...) = even rows, Odd dcol (1,3,5...) = odd rows
+      const isLight = h.dcol % 2 === 0;
       const fill = isLight ? '#2d3a4a' : '#1e2832';
 
       // Highlight selected
