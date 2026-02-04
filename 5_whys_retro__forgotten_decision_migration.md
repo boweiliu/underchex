@@ -41,11 +41,11 @@ User's words: *"we didn't migrate over the offset philosophy - double-width coor
 
 ## Root Causes Identified
 
-1. **No "supersession checklist"** — When [[170]] (Hex Orientation) superseded parts of [[146]] (Hex Coordinate Systems), there was no prompt to audit what from [[146]] needed to carry forward.
+1. **Forgot the "why" behind doubled-width** — The agent remembered "we're using offset coords" but forgot *why* we chose doubled-width in [[146]]: to eliminate the ugly even/odd casework that raw offset coords require for neighbor calculations. Without remembering the motivation, the agent didn't realize doubled-width was essential — it looked like an optional implementation detail rather than the fix for offset's core weakness.
 
-2. **Reactive vs. proactive mode** — Correction cycles put the agent in "fix what the user said" mode rather than "what else might be missing" mode.
+2. **Reactive mode after corrections** — The agent went through multiple correction cycles (pointy→flat, odd-r→odd-q). After finally getting orientation right, the task felt "done." The focus was on "fix what the user said" rather than "step back and check completeness."
 
-3. **Implicit knowledge** — The relationship between decisions (e.g., "offset coords" implies "doubled-width for clean math") was in the agent's context during [[146]] creation but not explicitly flagged as a dependency.
+3. **"What" without "why" doesn't transfer** — [[146]] documented both the decision (doubled-width) and the rationale (clean neighbor math). But when [[170]] was created, only the surface-level "offset coords" transferred — the motivating problem (even/odd branching) wasn't re-stated, so the solution (doubled-width) wasn't recognized as necessary.
 
 ---
 
@@ -238,10 +238,13 @@ The doubled-width decision would have been caught at step 1.
 
 ## Takeaway
 
-The core issue is **implicit vs. explicit knowledge transfer**. Decisions don't exist in isolation — they form a web. When refactoring that web (superseding one doc with another), the connections need to be audited explicitly, not assumed.
+The core issue is **decisions without rationale don't transfer well**. The agent remembered "offset coords" but forgot "offset has ugly even/odd casework, so we use doubled-width to fix it." Without the problem statement, the solution looked optional.
+
+**Lesson**: When documenting decisions, the *problem being solved* is as important as the *solution chosen*. When superseding docs, re-state problems — solutions follow naturally.
 
 ---
 
 Signed-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:55:00Z
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:05:00Z (added concrete examples)
 Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:08:00Z (spelled out A/B specifics)
+Edited-by: agent #18.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:12:00Z (revised root causes per user feedback — forgot "why" not just "what")

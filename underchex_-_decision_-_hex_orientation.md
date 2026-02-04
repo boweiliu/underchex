@@ -160,52 +160,64 @@ From cell `(col, row)`:
 
 ---
 
-## Doubled-Width Internal Coordinates
+## Doubled-HEIGHT Internal Coordinates
 
 **Problem**: Offset coordinates have ugly even/odd casework for neighbor calculations.
 
-**Solution**: Store **doubled-width** coordinates internally for clean neighbor math.
+**Solution**: Store **doubled-height** coordinates internally for clean neighbor math.
 
-From [[Hex Coordinate Systems]] (nb 146), Option E:
+For odd-q (columns contiguous), we double the ROW axis, not the column axis:
 
 ```typescript
-class Hex {
-  constructor(private _dcol: number, public row: number) {}
+interface Hex {
+  col: number;   // standard column
+  drow: number;  // doubled row = row * 2 + (col & 1)
+}
 
-  get col() { return this._dcol >> 1; }  // display column
+function hex(col: number, row: number): Hex {
+  return { col, drow: row * 2 + (col & 1) };
+}
 
-  static fromOffset(col: number, row: number) {
-    return new Hex(col * 2 + (row & 1), row);
-  }
-
-  // Neighbors use CONSTANT offsets — no even/odd branching!
-  neighbors(): Hex[] {
-    const offsets = [(2,0), (-2,0), (1,-1), (-1,-1), (1,1), (-1,1)];
-    return offsets.map(([dc, dr]) => new Hex(this._dcol + dc, this.row + dr));
-  }
+function offsetRow(h: Hex): number {
+  return h.drow >> 1;  // recover display row
 }
 ```
 
+**Constant neighbor offsets** (no even/odd branching):
+
+| Direction | Offset (dcol, ddrow) |
+|-----------|----------------------|
+| N         | (0, -2)              |
+| S         | (0, +2)              |
+| NE        | (+1, -1)             |
+| NW        | (-1, -1)             |
+| SE        | (+1, +1)             |
+| SW        | (-1, +1)             |
+
+**Note:** The 6 directions are **N, S, NE, NW, SE, SW** — no E/W. This matches the game design in README.md.
+
 **Why this works**:
-- Internally, columns are "doubled" so the half-hex offset becomes a full step
-- Even columns have `_dcol` = 0, 2, 4, ... ; odd columns have `_dcol` = 1, 3, 5, ...
-- Neighbor offsets are now **constant** — no `if (col % 2)` branching
-- External API still uses familiar `(col, row)` offset coordinates
+- Odd columns are shifted down by half a hex → in doubled space, that's +1 to drow
+- N/S moves change drow by ±2 (full row step)
+- Diagonal moves change col by ±1 and drow by ±1
+- All offsets are constant — no `if (col % 2)` branching
 
 ---
 
 ## Decision
 
-**Use flat-top hexes with odd-q column offset and doubled-width internal storage.**
+**Use flat-top hexes with odd-q column offset and doubled-HEIGHT internal storage.**
 
 - Flat edges at top/bottom of each hex
 - Columns (files) are contiguous vertically
 - Odd columns shifted down
-- External coordinates: `(col, row)` where col = file, row = rank-ish
-- Internal storage: doubled-width `_dcol` for clean neighbor math
+- External coordinates: `(col, row)` where col = file, row = rank
+- Internal storage: `(col, drow)` where `drow = row * 2 + (col & 1)`
+- 6 directions: N, S, NE, NW, SE, SW (no E/W)
 
 ---
 
 Created-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:15:00Z
 Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:25:00Z (corrected to flat-top per user feedback)
 Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:35:00Z (fixed reasoning, added doubled-width section)
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:10:00Z (doubled-HEIGHT not width; directions N/S not E/W)
