@@ -1,7 +1,5 @@
 # Underchex - Plan - Testing Philosophy for proto01
 
-# Underchex - Plan - Testing Philosophy for proto01
-
 #underchex #proto-01 #testing #plan
 
 **Related tickets**: PROTO-01.2 (hex coordinate system)
@@ -28,6 +26,20 @@
 4. **Fast and isolated** - Unit tests should run in milliseconds with no external deps.
 
 5. **Document expected behavior** - Tests are executable documentation. Name them to describe what they prove.
+
+6. **Readable and progressive** - Tests should be readable by humans first:
+   - Start each test group with the simplest, most obvious example
+   - Build complexity incrementally - each test should be slightly harder than the last
+   - Use concrete, meaningful values (not random numbers) that tell a story
+   - A reader should understand the API just by reading the tests top-to-bottom
+   - Example progression for distance:
+     ```
+     same hex → 0
+     one step east → 1
+     two steps east → 2
+     one step diagonal → 1
+     mixed movement → derive from first principles
+     ```
 
 ---
 
@@ -137,3 +149,4 @@ Start with traditional example-based unit tests. Property-based testing (fast-ch
 ---
 
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:45:00Z
+Edited-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:50:00Z
