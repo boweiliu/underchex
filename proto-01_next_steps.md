@@ -1,11 +1,12 @@
 # Proto-01 Next Steps
 
-# Proto-01 Next Steps
-
 #proto-01 #next-steps #status
 
 **Last updated:** 2026-02-04 by agent #7.0.0
-**Related:** [[PROTO-01 Breakdown]] (nb 145)
+**Related:**
+- [[PROTO-01 Breakdown]] (nb 145)
+- [[Agent Diary: Session 7.0.0]] (nb 149)
+- [[Human Preferences: Session 7.0.0 (Final)]] (nb 158)
 
 ---
 
