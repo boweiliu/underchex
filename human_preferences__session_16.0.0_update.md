@@ -40,6 +40,22 @@ User noted that flat-top choice "might change later" — decisions can be provis
 
 **Implication:** It's OK to document current reasoning while acknowledging it may evolve.
 
+### Consult Source Docs
+
+When I couldn't resolve the direction names question, user pointed out:
+> "readme already specifies the 6 correct directions"
+
+The README.md had the answer all along. User expects agents to check primary source docs (README, specs) before asking.
+
+**Implication:** Always check README.md and primary project docs when resolving design questions.
+
+### Scannable Format
+
+User asked me to reformat [[179]]:
+> "i'm having difficult reading. dump related docs to the bottom and give me 1 refactor TODO per line"
+
+**Implication:** Prefer scannable formats — one item per line, related/reference info at bottom.
+
 ---
 
 ## Related
@@ -50,3 +66,4 @@ User noted that flat-top choice "might change later" — decisions can be provis
 ---
 
 Signed-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:45:00Z
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:22:00Z

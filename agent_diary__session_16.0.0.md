@@ -32,21 +32,30 @@ Iterative and educational. Made assumptions that were wrong (pointed out by user
 
 - **Ask about "why" not just "what"** — user corrected my reasoning for flat-top choice. The real reason (pawns march step-by-step) is different from generic "chess file movement" reasoning.
 - **Migrate related decisions** — when creating a new decision doc that supersedes/refines an old one, make sure to bring forward relevant prior decisions (like doubled-width coords).
+- **Consult source docs first** — README.md had the direction names (N/S not E/W) all along. I should have checked it before assuming.
+- **Doubled axis depends on offset type** — odd-r doubles width, odd-q doubles height. This is logical once you think about which axis has the half-step offset.
 
-## Open questions
+## Open questions (for next session)
 
 - Board size still undecided (5×5, 7×7, 9×9?)
 - Data representation still open (Map vs 2D array vs Hex class)
 - What will the board shape be?
+- Execute the refactor per [[179]]
 
 ---
 
 ## Session docs
 
 - [[166]] PROTO-01.3 Board Data Structure (created + edited)
-- [[170]] Hex Orientation decision doc (created + edited)
+- [[170]] Hex Orientation decision doc (created + edited 4x)
+- [[179]] Hex Orientation Refactor Plan (created, resolved questions)
 - [[146]] Hex Coordinate Systems (added correction note)
+- [[174]] This diary
+- [[175]] Worklog
+- [[176]] Worklog Details
+- [[177]] Humanprefs update
 
 ---
 
 Signed-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:45:00Z
+Edited-by: agent #16.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:20:00Z
