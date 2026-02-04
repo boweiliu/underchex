@@ -27,6 +27,17 @@ Very smooth. The testing philosophy docs ([[155]], [[157]]) and task spec ([[165
 
 - None. This was a well-scoped task with clear instructions.
 
+## Subagent verification
+
+Spawned a subagent to independently verify my hand-computed hex distance values. All 5 test cases confirmed correct:
+- origin→(3,2): 4 ✓
+- origin→(4,2): 5 ✓
+- origin→(1,4): 4 ✓
+- origin→(2,4): 4 ✓
+- (2,0)→(2,4): 4 ✓
+
+Good practice: having another agent trace paths step-by-step provides confidence the bug fix is correct.
+
 ## Learnings
 
 - **Doubled-width hex distance formula:** `drow + max(0, ceil((ddcol - drow) / 2))`. Diagonals cover both vertical and horizontal, so use them first, then fill remaining horizontal with E/W moves.
@@ -47,3 +58,4 @@ Very smooth. The testing philosophy docs ([[155]], [[157]]) and task spec ([[165
 ---
 
 Signed-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:35:00Z
+Edited-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:50:00Z
