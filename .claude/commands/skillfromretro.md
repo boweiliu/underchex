@@ -2,8 +2,8 @@
 
 When invoked:
 
-1. Ask the user for a filepath **if none is provided**.
-2. If a filepath is provided, make sure that the filepath is in the .docs/home/ directory.
+1. Ask the user for an **nb note ID** (e.g., `nb 150`) if none is provided.
+2. If a note ID is provided, use `nb show -p --no-color <id>` to read it.
 3. Read the file and check the frontmatter:
    - If `completed: false` or `completed` is not present, DO NOT write a skill. Exit gracefully.
    - If `skillwritten: true`, DO NOT write a skill (already done). Exit gracefully, tell user why you exited. 
@@ -15,7 +15,7 @@ When invoked:
 When creating a skill from a retro document:
 
 ### 1. Read and Analyze the Retro
-- Read the retro file from `.docs/home/{filename.md}`
+- Read the retro using `nb show -p --no-color <id>`
 - Identify the core lesson or problem the retro addresses
 - Look for a **Triggers** section - this tells you when the lesson is relevant
 - Understand the context: what went wrong? what was learned? what should agents do differently?

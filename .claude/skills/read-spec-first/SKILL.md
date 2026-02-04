@@ -52,7 +52,7 @@ This skill applies when you're about to:
 
 ## Full Context
 
-For complete details, see: [Agent Diary: Session 7.0.0](.docs/home/agent_diary__session_7.0.0)
+For complete details, see: Agent Diary: Session 7.0.0 (nb 149)
 
 **Related documents:**
 - Project specs typically tagged with #spec or #breakdown

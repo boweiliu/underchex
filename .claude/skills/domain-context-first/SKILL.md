@@ -51,7 +51,7 @@ This skill applies when you're about to:
 
 ## Full Context
 
-For complete details, see: [Agent Diary: Session 6.0.0](.docs/home/agent_diary__session_6.0.0)
+For complete details, see: Agent Diary: Session 6.0.0 (nb 150)
 
 **Related documents:**
 - nb 146: Hex Coordinate Systems - Options and Recommendation
