@@ -16,6 +16,8 @@ Implemented unit tests for hex.ts (PROTO-01.2 verification). Added vitest, wrote
 - [x] Fix hexDistance formula bug
 - [x] Update ship's log ([[124]])
 - [x] Mark task [[165]] complete
+- [x] Create session docs (diary [[167]], worklog [[168]], worklog details [[169]])
+- [x] Spawn subagent to verify hand-computed distance values (all 5 confirmed correct)
 
 ## Test Coverage
 
