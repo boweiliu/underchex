@@ -201,10 +201,11 @@ EOF
 **Step 6b: Add or update the note in nb**
 ```bash
 # For new learning
-nb add --title "[Learning Title]" --content "$(cat /tmp/learning-content.md)" --tags "learning,<tag1>,<tag2>,<tag3>"
+cat /tmp/learning-content.md | nb add --title "[Learning Title]" --tags "learning,<tag1>,<tag2>,<tag3>"
 
-# For updating existing learning
-nb edit <note-id> --content "$(cat /tmp/learning-content.md)" --overwrite
+# For updating existing learning - get file path and edit directly
+nb list --paths <note-id>  # Get the file path
+# Then use Read/Edit tools on the file directly
 ```
 
 **Step 6c: Clean up temporary file**
@@ -229,8 +230,9 @@ After saving each learning to nb, add your signature to track agent authorship:
 # Get the note ID from the previous nb add command output
 NOTE_ID="<note-id-from-add>"
 
-# Append signoff
-nb edit $NOTE_ID --content "$(nb show $NOTE_ID --print --no-color; echo -e '\n\nSigned-by: agent compound $(date -u +%Y%m%dT%H:%M:%SZ)')" --overwrite
+# Append signoff - get file path and edit directly
+FILE_PATH=$(nb list --paths $NOTE_ID | awk '{print $2}')
+# Then use Read/Edit tools to append signoff to the file
 ```
 
 **Note:** The validation script (`tools/validate-learning.py`) is designed for flat files and is no longer used with nb storage. The YAML frontmatter validation now happens during the compound agent's review of the content before saving.

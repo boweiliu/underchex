@@ -1,5 +1,7 @@
 # UNDERCHEX
 
+> **⚠️ NUKE AND REFACTOR IN PROGRESS** - See `nb show 124` for current project status.
+
 (This readme was 100% human-writen).
 
 Repo to handle designing and playing a hex chess variant.

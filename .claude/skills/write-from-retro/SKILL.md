@@ -68,7 +68,7 @@ cat > /tmp/doc-content.md << 'EOF'
 [document content]
 EOF
 
-nb add --title "[Title]" --content "$(cat /tmp/doc-content.md)" --tags "learning,tag1,tag2"
+cat /tmp/doc-content.md | nb add --title "[Title]" --tags "learning,tag1,tag2"
 rm /tmp/doc-content.md
 ```
 
