@@ -1,4 +1,4 @@
-# Offset Hex Coords - Cleaner Representations
+# Underchex - Reference - Offset Hex Coords
 
 # Offset Hex Coords - Cleaner Representations
 
