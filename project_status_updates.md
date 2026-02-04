@@ -1,8 +1,8 @@
-# Project Status Updates
+# Project Status Updates (Ship's Log)
 
-#status #updates #project-state
+#status #updates #project-state #ships-log #log
 
-Latest status and major updates for UNDERCHEX. Newest entries at top.
+The **ship's log** for UNDERCHEX. Latest status and major updates. Newest entries at top.
 
 ---
 
