@@ -2,7 +2,7 @@
 
 # Rendering Approaches for Browser Games
 
-#rendering #canvas #performance #proto01
+#underchex #proto-01 #reference #rendering #canvas #performance
 
 Exploration of rendering strategies for Underchex prototypes.
 

@@ -2,7 +2,7 @@
 
 # Hex Coordinate Systems - Options and Recommendation
 
-#underchex #proto-01 #coordinates #reference
+#underchex #proto-01 #coordinates #decision
 
 **Related tickets**: PROTO-01.2, BOARD-03
 
@@ -164,7 +164,7 @@ CUBE_NEIGHBORS = [
 
 Offset coords preserve this directional asymmetry naturally - rows are rows, and the N/S axis is clearly distinguished. Axial/cube treat all 6 directions more symmetrically, which is elegant but obscures the chess-relevant distinction.
 
-**Challenge**: The even/odd row casework for neighbors is ugly. See investigation below for cleaner approaches.
+**Challenge**: The even/odd row casework for neighbors is ugly. See [[Underchex - Reference - Offset Hex Coords]] (nb 148) for cleaner approaches.
 
 Decided-by: bowei 2026-02-04
 Recorded-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:40:00Z

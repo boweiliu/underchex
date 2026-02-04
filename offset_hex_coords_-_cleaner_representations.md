@@ -2,11 +2,46 @@
 
 # Offset Hex Coords - Cleaner Representations
 
-#underchex #proto-01 #coordinates #investigation
+#underchex #proto-01 #coordinates #reference
+
+**Parent decision**: [[Underchex - Decision - Hex Coordinate System]] (nb 146)
 
 **Context**: We've chosen offset coordinates for UNDERCHEX because N/S directions are semantically special in chess. The problem: standard offset coords have ugly even/odd row casework for neighbor calculations.
 
 **Goal**: Find a representation that keeps offset's intuitive row-based structure but avoids casework.
+
+---
+
+## Summary
+
+| Option | Casework? | Familiar API? | Clean Math? | Complexity |
+|--------|-----------|---------------|-------------|------------|
+| A: Lookup table | Hidden | Yes | No | Low |
+| **B: Doubled-width** | **No** | No | **Yes** | **Low** |
+| C: Axial internal | No | Yes | Yes | Medium |
+| D: Direction enum | Hidden | Yes | No | Medium |
+| E: Hybrid | No | Yes | Yes | Medium |
+
+---
+
+## Agent Recommendation: Option B (Pure Doubled-Width)
+
+Go with **Option B** — pure doubled-width coordinates, no hybrid wrapper.
+
+**Why not Option E (hybrid)?** The hybrid adds indirection to preserve "familiar" column numbers, but:
+- We're building something new. There's no existing user base expecting specific column numbers.
+- The abstraction layer adds complexity for a benefit (familiar cols) that doesn't matter yet.
+- If we later need pretty display, we can add a formatting function. We don't need it baked into the core data structure.
+
+**Why Option B works:**
+- Zero casework. Neighbors are just `[(+2,0), (-2,0), (+1,-1), (-1,-1), (+1,+1), (-1,+1)]`.
+- Low complexity — it's just a coordinate system, not an abstraction layer.
+- Row axis stays meaningful for chess (N/S direction).
+- Sparse columns (0,2,4 vs 1,3,5) are a minor debugging quirk, not a real problem.
+
+Start simple. Add abstraction only when we have a concrete reason.
+
+Recommendation-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:55:00Z
 
 ---
 
@@ -235,36 +270,13 @@ class Hex:
 
 ---
 
-## Comparison Summary
-
-| Option | Casework? | Familiar API? | Clean Math? | Complexity |
-|--------|-----------|---------------|-------------|------------|
-| A: Lookup table | Hidden | Yes | No | Low |
-| B: Doubled-width | No | No | Yes | Low |
-| C: Axial internal | No | Yes | Yes | Medium |
-| D: Direction enum | Hidden | Yes | No | Medium |
-| E: Hybrid | No | Yes | Yes | Medium |
-
----
-
-## Recommendation
-
-**Option E (Hybrid)** offers the best trade-offs:
-1. Users see familiar offset coordinates
-2. Internal math is clean with constant offsets
-3. Single coordinate system (no axial/offset confusion)
-4. N/S axis preserved as semantically distinct (row is row)
-
-Option B (pure doubled-width) is simpler if we don't care about familiar column numbers.
-
----
-
 ## Open Questions
 
 1. Which offset variant? (odd-r vs even-r) - affects which row has the "shifted" columns
 2. Board orientation - which side is "north" (row 0 or row max)?
-3. Should we add direction enums on top of Option E for piece movement code?
+3. Should we add direction enums later for piece movement code?
 
 ---
 
 Created-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:50:00Z
+Edited-by: agent #6.0.0 claude-opus-4-5 via claude-code 2026-02-04T22:55:00Z

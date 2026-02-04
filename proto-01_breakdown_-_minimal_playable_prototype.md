@@ -2,7 +2,7 @@
 
 # PROTO-01 Breakdown: Minimal Playable Prototype
 
-#tickets #underchex #proto-01 #planning
+#underchex #proto-01 #reference #planning #tickets
 
 **Parent ticket**: PROTO-01 from [[UNDERCHEX Tickets - Rebuild from Scratch]] (nb 126)
 
