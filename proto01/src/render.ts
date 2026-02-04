@@ -42,32 +42,23 @@ export function createInitialState(): GameState {
 // Coordinate conversion
 // ============================================================================
 
+/** Board margin from canvas edge */
+const BOARD_MARGIN = 60;
+
 /**
  * Convert hex coordinate to pixel position (center of hex).
- * Origin is at canvas center.
+ * Origin (0,0) is at bottom-left.
  */
 export function hexToPixel(h: Hex, canvasWidth: number, canvasHeight: number): { x: number; y: number } {
   const col = offsetCol(h);
   const row = h.row;
 
   // Offset coords: odd rows shift right by half
-  const x = col * HEX_WIDTH + (row & 1) * (HEX_WIDTH / 2);
-  const y = row * HEX_HEIGHT;
+  const x = BOARD_MARGIN + col * HEX_WIDTH + (row & 1) * (HEX_WIDTH / 2);
+  // Flip y-axis: row 0 at bottom
+  const y = canvasHeight - BOARD_MARGIN - row * HEX_HEIGHT;
 
-  // Center on canvas
-  const centerX = canvasWidth / 2;
-  const centerY = canvasHeight / 2;
-
-  // Offset so (0,0) is roughly centered
-  const boardCenterCol = 3;
-  const boardCenterRow = 3;
-  const offsetX = boardCenterCol * HEX_WIDTH + (boardCenterRow & 1) * (HEX_WIDTH / 2);
-  const offsetY = boardCenterRow * HEX_HEIGHT;
-
-  return {
-    x: centerX + x - offsetX,
-    y: centerY + y - offsetY,
-  };
+  return { x, y };
 }
 
 /**
@@ -75,16 +66,10 @@ export function hexToPixel(h: Hex, canvasWidth: number, canvasHeight: number): {
  * Returns nearest hex.
  */
 export function pixelToHex(px: number, py: number, canvasWidth: number, canvasHeight: number): Hex {
-  // Reverse the centering offset
-  const centerX = canvasWidth / 2;
-  const centerY = canvasHeight / 2;
-  const boardCenterCol = 3;
-  const boardCenterRow = 3;
-  const offsetX = boardCenterCol * HEX_WIDTH + (boardCenterRow & 1) * (HEX_WIDTH / 2);
-  const offsetY = boardCenterRow * HEX_HEIGHT;
-
-  const x = px - centerX + offsetX;
-  const y = py - centerY + offsetY;
+  // Reverse the transform from hexToPixel
+  const x = px - BOARD_MARGIN;
+  // Flip y-axis back
+  const y = canvasHeight - BOARD_MARGIN - py;
 
   // Approximate row first
   const row = Math.round(y / HEX_HEIGHT);
