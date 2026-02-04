@@ -93,25 +93,24 @@ export function hexKey(h: Hex): string {
 
 /**
  * Calculate distance between two hexes.
- * Uses conversion to cube coordinates internally.
+ *
+ * For doubled-width coordinates:
+ * - E/W moves change dcol by 2, row by 0
+ * - Diagonal moves change dcol by 1, row by 1
+ *
+ * Optimal strategy: use diagonals first (they advance both dcol and row),
+ * then use E/W for remaining horizontal distance.
+ *
+ * Distance = drow + max(0, (ddcol - drow) / 2)
+ *          = max(drow, (ddcol + drow) / 2)
  */
 export function hexDistance(a: Hex, b: Hex): number {
-  // Convert doubled-width to cube: x = dcol, z = row, y = -x - z
-  // But we need to account for the doubling...
-  // Actually for doubled coords: distance = (|Δdcol| + |Δrow| + |Δdcol - Δrow|) / 2
-  // Simplified: max(|Δdcol|/2, |Δrow|, ceil(|Δdcol - Δrow| / 2))
-
   const ddcol = Math.abs(a.dcol - b.dcol);
   const drow = Math.abs(a.row - b.row);
 
-  // In doubled coords, distance formula:
-  // Each E/W step changes dcol by 2, row by 0
-  // Each diagonal step changes dcol by 1, row by 1
-  // So: distance = max(ddcol/2, drow) when ddcol >= drow*2
-  //     distance = drow when drow >= ddcol (all diagonals)
-  //     distance = (ddcol + drow) / 2 otherwise (mix)
-
-  return Math.max(Math.ceil(ddcol / 2), drow);
+  // Use diagonals for vertical movement (also covers ddcol up to drow)
+  // Then use E/W for remaining horizontal (each covers 2 dcol)
+  return drow + Math.max(0, Math.ceil((ddcol - drow) / 2));
 }
 
 /**
