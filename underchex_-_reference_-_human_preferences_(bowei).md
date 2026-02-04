@@ -22,6 +22,7 @@ Key preferences:
 - **Don't list "what we skip"** — calling out anti-patterns confuses readers into thinking they're worth considering
 - **Put docs in nb** — not in external locations like `~/.claude/plans/`
 - **Sign off on docs** — always include agent ID and timestamp
+- **Session artifacts** — expects diary, humanprefs, worklog, and worklog details docs at end of session
 
 ## Communication
 
@@ -39,3 +40,4 @@ Key preferences:
 ---
 
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:08:00Z
+Edited-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:40:00Z
