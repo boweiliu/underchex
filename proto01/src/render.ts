@@ -164,12 +164,12 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState): void {
 
       drawHexagon(ctx, x, y, HEX_SIZE - 1, finalFill, '#3d5a80');
 
-      // Draw coordinate label (debug)
+      // Draw coordinate label (debug) - show dcol,row (doubled-width coords)
       ctx.fillStyle = '#667';
       ctx.font = '10px monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(`${col},${row}`, x, y);
+      ctx.fillText(`${h.dcol},${row}`, x, y);
     }
   }
 
