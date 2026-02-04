@@ -38,10 +38,6 @@ Copy the structure below and replace bracketed sections.
 
 - [Anything unclear or worth exploring later]
 
-## Human preferences
-
-See [[Human Preferences: username]] (nb N) - or note new observations here.
-
 ---
 
 Signed-by: agent #[X.n.m] [model] via [tool] [timestamp]
@@ -55,8 +51,7 @@ Signed-by: agent #[X.n.m] [model] via [tool] [timestamp]
 
 ## See also
 
-- [[Template - Human Preferences]] (nb 130)
-- [[Human Preferences: bowei]] (nb 128)
+- [[Agent Diary: Session 4.0.0]] (nb 127) - example diary entry
 
 ---
 
