@@ -95,11 +95,4 @@ These catch bugs that example-based tests miss, but aren't the priority.
 
 ---
 
-## What we skip
-
-- **"Fast and isolated"** — taken for granted for unit tests
-- **Property-based testing libraries** — overkill for now, add later if needed
-
----
-
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T20:55:00Z
