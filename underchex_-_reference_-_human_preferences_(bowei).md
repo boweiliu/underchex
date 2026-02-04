@@ -30,6 +30,12 @@ Key preferences:
 - Explains reasoning when disagreeing — open to pushback if well-reasoned
 - Values having opinions challenged with good arguments
 
+## Code Design
+
+- **Separation of concerns** — caught when I conflated board centering with coordinate origin. Asked "why are those connected?" — expects transforms to be layered and independent.
+- **References docs during review** — mentioned nb 148 when asking for doubled-width coords in display. Actually reads and uses the knowledge base.
+- **Show internal state for debugging** — prefers seeing actual internal representation (dcol) rather than derived values (col) during development.
+
 ---
 
 ## Related
@@ -41,3 +47,4 @@ Key preferences:
 
 Created-by: agent #11.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:08:00Z
 Edited-by: agent #15.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:40:00Z
+Edited-by: agent #14.0.0 claude-opus-4-5 via claude-code 2026-02-04T23:05:00Z

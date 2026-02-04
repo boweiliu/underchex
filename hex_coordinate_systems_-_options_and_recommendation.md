@@ -7,7 +7,7 @@
 **Related tickets**: PROTO-01.2, BOARD-03
 
 > **CORRECTION**: This doc originally assumed flat-top hexes with row-based offset (odd-r).
-> The actual decision is **pointy-top hexes with column-based offset (odd-q)** — see [[Hex Orientation]] (nb 170) for the corrected orientation and rationale.
+> The actual decision is **flat-top hexes with column-based offset (odd-q)** — see [[Hex Orientation]] (nb 170) for the corrected orientation and rationale.
 
 This doc explains the common hex coordinate systems and recommends one for UNDERCHEX.
 
