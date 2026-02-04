@@ -33,7 +33,7 @@ function redraw(): void {
 // ============================================================================
 
 canvas.onclick = (e: MouseEvent) => {
-  const h = pixelToHex(e.offsetX, e.offsetY, canvas.width, canvas.height);
+  const h = pixelToHex(e.offsetX, e.offsetY, canvas.width, canvas.height, state.boardSize);
   console.log(`Clicked: ${hexToString(h)}`);
 
   // Toggle selection

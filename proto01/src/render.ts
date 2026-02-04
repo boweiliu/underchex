@@ -42,41 +42,71 @@ export function createInitialState(): GameState {
 // Coordinate conversion
 // ============================================================================
 
-/** Board margin from canvas edge */
-const BOARD_MARGIN = 60;
+/**
+ * Compute board dimensions in pixels for a given board size.
+ */
+function boardDimensions(boardSize: number): { width: number; height: number } {
+  // Width: boardSize columns + half-width for odd row offset
+  const width = boardSize * HEX_WIDTH + HEX_WIDTH / 2;
+  // Height: boardSize rows
+  const height = (boardSize - 1) * HEX_HEIGHT + HEX_SIZE * 2;
+  return { width, height };
+}
 
 /**
  * Convert hex coordinate to pixel position (center of hex).
- * Origin (0,0) is at bottom-left.
+ *
+ * Two separate transforms:
+ * 1. Hex -> board space (origin at bottom-left of board, y increases up)
+ * 2. Board space -> canvas space (board centered on canvas)
  */
-export function hexToPixel(h: Hex, canvasWidth: number, canvasHeight: number): { x: number; y: number } {
+export function hexToPixel(
+  h: Hex,
+  canvasWidth: number,
+  canvasHeight: number,
+  boardSize: number
+): { x: number; y: number } {
   const col = offsetCol(h);
   const row = h.row;
 
-  // Offset coords: odd rows shift right by half
-  const x = BOARD_MARGIN + col * HEX_WIDTH + (row & 1) * (HEX_WIDTH / 2);
-  // Flip y-axis: row 0 at bottom
-  const y = canvasHeight - BOARD_MARGIN - row * HEX_HEIGHT;
+  // Step 1: hex -> board space (origin bottom-left, y up)
+  const boardX = col * HEX_WIDTH + (row & 1) * (HEX_WIDTH / 2);
+  const boardY = row * HEX_HEIGHT;
 
-  return { x, y };
+  // Step 2: board space -> canvas space (center board, flip y for canvas)
+  const board = boardDimensions(boardSize);
+  const offsetX = (canvasWidth - board.width) / 2;
+  const offsetY = (canvasHeight - board.height) / 2;
+
+  return {
+    x: offsetX + boardX + HEX_WIDTH / 2,
+    y: canvasHeight - offsetY - boardY - HEX_SIZE,
+  };
 }
 
 /**
  * Convert pixel position to hex coordinate.
  * Returns nearest hex.
  */
-export function pixelToHex(px: number, py: number, canvasWidth: number, canvasHeight: number): Hex {
-  // Reverse the transform from hexToPixel
-  const x = px - BOARD_MARGIN;
-  // Flip y-axis back
-  const y = canvasHeight - BOARD_MARGIN - py;
+export function pixelToHex(
+  px: number,
+  py: number,
+  canvasWidth: number,
+  canvasHeight: number,
+  boardSize: number
+): Hex {
+  // Reverse the canvas -> board transform
+  const board = boardDimensions(boardSize);
+  const offsetX = (canvasWidth - board.width) / 2;
+  const offsetY = (canvasHeight - board.height) / 2;
 
-  // Approximate row first
-  const row = Math.round(y / HEX_HEIGHT);
+  const boardX = px - offsetX - HEX_WIDTH / 2;
+  const boardY = canvasHeight - py - offsetY - HEX_SIZE;
 
-  // Then col, accounting for row offset
+  // Board space -> hex
+  const row = Math.round(boardY / HEX_HEIGHT);
   const rowOffset = (row & 1) * (HEX_WIDTH / 2);
-  const col = Math.round((x - rowOffset) / HEX_WIDTH);
+  const col = Math.round((boardX - rowOffset) / HEX_WIDTH);
 
   return hex(col, row);
 }
@@ -137,7 +167,7 @@ export function render(ctx: CanvasRenderingContext2D, state: GameState): void {
   for (let row = 0; row < state.boardSize; row++) {
     for (let col = 0; col < state.boardSize; col++) {
       const h = hex(col, row);
-      const { x, y } = hexToPixel(h, width, height);
+      const { x, y } = hexToPixel(h, width, height, state.boardSize);
 
       // Alternate colors based on dcol parity (shows doubled-width structure)
       // Even dcol (0,2,4...) = even rows, Odd dcol (1,3,5...) = odd rows
