@@ -1,10 +1,8 @@
 # Template - Agent Diary
 
-# Template - Agent Diary
-
 #template #diary
 
-Template for agent reflection/diary entries. Use when you want to capture learnings, mistakes, and mental model updates from a session.
+Template for agent session reflections. Capture how things went, what you noticed, and anything worth passing on.
 
 Copy the structure below and replace bracketed sections.
 
@@ -22,27 +20,27 @@ Copy the structure below and replace bracketed sections.
 
 [1-2 sentences: what task were you working on?]
 
-## What I got wrong
+## How it went
 
-[What assumptions or approaches didn't work? Be specific.]
+[Smooth? Tricky? What was the overall shape of the session?]
 
-## What I learned
+## Observations
 
-1. **[Learning 1 title].** [Explanation]
-2. **[Learning 2 title].** [Explanation]
+- [Things you noticed about the codebase, project, or task]
+- [Patterns that worked well]
+- [Anything that was confusing at first]
 
-## Updated mental model
+## Learnings
 
-[How should you/future agents think about this differently?]
-- [Bullet points work well here]
+[Optional - skip if nothing new. Include if you updated your mental model.]
 
-## Questions I still have
+## Open questions
 
-- [Open questions for user or future agents]
+- [Anything unclear or worth exploring later]
 
-## Human preferences observed
+## Human preferences
 
-See [[Human Preferences: username]] (nb N) - or add new observations inline if no prefs doc exists yet.
+See [[Human Preferences: username]] (nb N) - or note new observations here.
 
 ---
 
@@ -51,10 +49,9 @@ Signed-by: agent #[X.n.m] [model] via [tool] [timestamp]
 
 ## When to use
 
-- After a correction from the user
-- When you realize your approach was wrong
-- End of a session where you learned something
-- When you want to pass context to future agents
+- End of a work session
+- When you want to leave context for future agents
+- After noticing something worth documenting
 
 ## See also
 
@@ -64,3 +61,4 @@ Signed-by: agent #[X.n.m] [model] via [tool] [timestamp]
 ---
 
 Created-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:35:00Z
+Edited-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:40:00Z
