@@ -43,6 +43,13 @@ Key preferences:
 - **Spec format vs spec content** — approved the JSON schema format while noting the example values were intentionally wrong placeholders. Separates "how to express" from "what to express."
 - **Proposals in nb** — prefers seeing design proposals as nb docs for review before implementation.
 
+## Retro and Analysis
+
+- **Push for deeper root causes** — first answer is often too shallow. Expects multiple refinement passes.
+- **Specificity over abstraction** — prefers concrete examples ("[[146]] and [[170]]") over abstract ("doc A supersedes doc B")
+- **Focus on doc structure** — when analyzing failures, prefers "how could docs have prevented this?" over "how should agent have behaved differently?"
+- **Decision chain traceability** — decisions form chains (orientation → offset → doubled-width). Wants explicit forward/backward links so agents touching one node know to check related nodes.
+
 ---
 
 ## Related
