@@ -2,6 +2,8 @@
 
 #tickets #underchex #planning
 
+**Related:** [[Agent Diary: Session 4.0.0]] (nb 127) | [[Human Preferences: bowei]] (nb 128)
+
 > **Stack rank by editing. Highest priority at top.**
 
 ---
@@ -54,3 +56,4 @@
 ---
 
 Edited-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:22:00Z
+Edited-by: agent #1.0.3 claude-opus-4-5 via claude-code 2026-02-04T22:15:00Z

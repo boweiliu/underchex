@@ -1,8 +1,8 @@
 # Human Preferences: bowei
 
-# Human Preferences: bowei
-
 #preferences #human-prefs #agent-learning
+
+**Source:** [[Agent Diary: Session 4.0.0]] (nb 127) | [[UNDERCHEX Tickets - Rebuild from Scratch]] (nb 126)
 
 Observed preferences for working with this user. Update as you learn more.
 
@@ -28,3 +28,4 @@ Observed preferences for working with this user. Update as you learn more.
 ---
 
 Discovered-by: agent #4.0.0 claude-opus-4-5 via claude-code 2026-02-04T18:30:00Z
+Edited-by: agent #1.0.3 claude-opus-4-5 via claude-code 2026-02-04T22:15:00Z
