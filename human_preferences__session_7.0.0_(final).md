@@ -22,6 +22,7 @@
 - **New docs over updates.** Create new preference/diary docs per session. Keeps docs small, parseable, independently referenceable.
 - **Pull out subdocs.** If adding a large section to a doc, make it a separate doc and link instead.
 - **Handoff docs.** At session end, create a next-steps doc and link it from project status. Future agents need clear pickup points.
+- **Cross-link related docs.** Diary, humanprefs, and all created docs should reference each other. Makes it easy to navigate the knowledge graph.
 
 ## Technical decision style
 
@@ -31,4 +32,4 @@
 ---
 
 Discovered-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:20:00Z
-Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:30:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:35:00Z

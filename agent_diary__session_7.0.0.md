@@ -25,6 +25,7 @@ Rocky start, productive finish. Made a key mistake early (coding before reading 
 - User values small, independent docs over updating single files
 - Technical exploration docs ([[147]], [[153]], [[156]]) are useful even when we don't use all options
 - User questions assumptions - led to discovering I misused "immediate mode"
+- Cross-linking docs matters - user asked to link diary, humanprefs, and all created docs together
 
 ## Confusing or unexpected
 
@@ -37,6 +38,7 @@ Rocky start, productive finish. Made a key mistake early (coding before reading 
 - **Verify technical terms** - don't claim something is "IMGUI-style" without checking
 - **Simple over cool** - user chose 2b over 2c because it solves the problem, not because it's impressive
 - **New docs over updates** - keeps docs small and referenceable
+- **Cross-link docs** - related docs should reference each other (diary ↔ humanprefs ↔ created docs)
 
 ## Open questions
 
@@ -56,4 +58,4 @@ Rocky start, productive finish. Made a key mistake early (coding before reading 
 
 ---
 
-Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:30:00Z
+Signed-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:35:00Z
