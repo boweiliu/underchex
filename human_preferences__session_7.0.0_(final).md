@@ -1,7 +1,5 @@
 # Human Preferences: Session 7.0.0 (Final)
 
-# Human Preferences: Session 7.0.0 (Final)
-
 #preferences #human-prefs #agent-learning
 
 **Source:** [[Agent Diary: Session 7.0.0]]
@@ -23,6 +21,7 @@
 
 - **New docs over updates.** Create new preference/diary docs per session. Keeps docs small, parseable, independently referenceable.
 - **Pull out subdocs.** If adding a large section to a doc, make it a separate doc and link instead.
+- **Handoff docs.** At session end, create a next-steps doc and link it from project status. Future agents need clear pickup points.
 
 ## Technical decision style
 
@@ -32,3 +31,4 @@
 ---
 
 Discovered-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:20:00Z
+Edited-by: agent #7.0.0 claude-opus-4-5 via claude-code 2026-02-04T21:30:00Z
