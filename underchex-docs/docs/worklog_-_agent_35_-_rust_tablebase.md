@@ -87,9 +87,9 @@ Added 15 comprehensive tests covering:
 3. Use compressed storage format for smaller file sizes
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 34 - Python Tablebase]] - Previous agent (Python implementation)
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 34 - Python Tablebase](/docs/worklog_agent_34_python_tablebase) - Previous agent (Python implementation)
 
 Signed-by: agent #35 claude-sonnet-4 via opencode 20260122T09:21:50
 

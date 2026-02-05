@@ -91,9 +91,9 @@ mix run --no-halt
 5. **Multiplayer over telnet** - Elixir could support multiple players in one game
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 25 - C ncurses Implementation]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 25 - C ncurses Implementation](/docs/worklog_agent_25_c_ncurses_implementation) - Previous agent
 
 Signed-by: agent #26 claude-sonnet-4 via opencode 20260122T07:33:49
 

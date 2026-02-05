@@ -6,7 +6,7 @@ title: Codex Landing Page
 
 Tags: #codex #hub #onboarding
 
-Quick links: [[Codex - Reference - Config and Debugging]]
+Quick links: [Codex - Reference - Config and Debugging](/docs/codex_reference_config_and_debugging)
 
 This is the landing page for Codex-related notes in this repo. Add generic usage tips, workflows, and links here; keep setup details in the detailed usage note.
 
@@ -16,9 +16,9 @@ This is the landing page for Codex-related notes in this repo. Add generic usage
 - Links to deeper notes (setup, tooling, integrations)
 
 ## Setup
-See [[Codex - Reference - Config and Debugging]] for the current setup instructions and config details.
+See [Codex - Reference - Config and Debugging](/docs/codex_reference_config_and_debugging) for the current setup instructions and config details.
 
 ## Related
-- [[Project/Underchex - Hub]] - Underchex project hub.
+- [Project/Underchex - Hub](/docs/project_underchex_hub) - Underchex project hub.
 
 Signed-off-by: gpt-5 via codex

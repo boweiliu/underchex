@@ -59,8 +59,8 @@ command to run
 ---
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #N model via tool date
 ```

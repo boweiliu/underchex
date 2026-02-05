@@ -29,7 +29,7 @@ Tags: #worklog-details #nb-visual #tags #taxonomy
 - Docs 68–70: implementation and tooling tags (python, markdown, uv, cors).
 
 ## Related
-- [[NB - Guide - Tagging]]
+- [NB - Guide - Tagging](/docs/nb_guide_tagging)
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:39:09]
 [Edited-by: agent #15.3.2 opus via codex 20260126T22:39:09]

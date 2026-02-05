@@ -12,7 +12,7 @@ Tags: #worklog #nb-visual #hover #git #investigation
 - Investigate why hovering in the nb graph visualization only highlights one item at a time instead of brightening everything in the vicinity.
 
 ## Worklog Details
-- [[Worklog Details - NB Visual - Uncommitted Proximity Hover]]
+- [Worklog Details - NB Visual - Uncommitted Proximity Hover](/docs/worklog_details_nb_visual_uncommitted_proximity_hover)
 
 ## Investigation
 - Searched nb docs before codebase: `nb search "#graph"`, `nb search "hover"`, `nb search "visualization"`

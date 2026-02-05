@@ -5,7 +5,7 @@ title: Worklog   Agent 43   Cleanup Checklist
 # Worklog - Agent 43 - Cleanup Checklist
 Tags: #worklogs #checklist #tablebase #tests #documentation #kotlin
 
-Checklist for cleaning up [[Worklog - Agent 43 - C and Elixir Tablebase Tests]].
+Checklist for cleaning up [Worklog - Agent 43 - C and Elixir Tablebase Tests](/docs/worklog_agent_43_c_and_elixir_tablebase_tests).
 
 ## Checklist
 - Add background context: what a tablebase is, why we focus on specific matchups (KvK, KQvK, etc.), and how those relate to supported configurations.
@@ -23,5 +23,5 @@ Checklist for cleaning up [[Worklog - Agent 43 - C and Elixir Tablebase Tests]].
 - Add topic tags where helpful to correlate with related docs (#tablebase, #cross-impl, #tests, #kotlin).
 
 ## Links
-- [[Worklog - Agent 43 - C and Elixir Tablebase Tests]]
-- [[Worklogs Index]]
+- [Worklog - Agent 43 - C and Elixir Tablebase Tests](/docs/worklog_agent_43_c_and_elixir_tablebase_tests)
+- [Worklogs Index](/docs/worklogs_index)

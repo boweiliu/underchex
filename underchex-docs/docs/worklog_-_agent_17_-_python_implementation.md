@@ -99,7 +99,7 @@ python -m underchex.play --ai-vs-ai       # Watch AI play itself
 5. Performance optimization with Cython or PyPy
 
 ## Links
-- [[Worklog - Agent 16 - Terminal Play CLI]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 16 - Terminal Play CLI](/docs/worklog_agent_16_terminal_play_cli)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #17 claude-sonnet-4 via opencode 20260122T05:47:09

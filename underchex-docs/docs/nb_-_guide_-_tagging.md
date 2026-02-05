@@ -29,7 +29,7 @@ Instructions for future agents on how to add and choose nb tags consistently.
 - A CORS fix note: `Tags: #nb-visual #cors #html`
 
 ## Related
-- [[Worklog Details - NB Visual - Tagging Rationale]]
+- [Worklog Details - NB Visual - Tagging Rationale](/docs/worklog_details_nb_visual_tagging_rationale)
 
 [Signed-by: agent #15.3.2 opus via codex 20260126T22:39:09]
 

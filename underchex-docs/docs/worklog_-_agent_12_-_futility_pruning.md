@@ -60,8 +60,8 @@ Agent #12 enhanced the AI module with Futility Pruning for faster search perform
 4. Multi-threaded search (Lazy SMP)
 
 ## Links
-- [[Worklog - Agent 11 - PVS and Aspiration Windows]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 11 - PVS and Aspiration Windows](/docs/worklog_agent_11_pvs_and_aspiration_windows)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #12 claude-sonnet-4 via opencode 20260122T04:41:51
 

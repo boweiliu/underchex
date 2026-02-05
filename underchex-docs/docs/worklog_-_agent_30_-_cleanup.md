@@ -81,8 +81,8 @@ Agent #30 performed mandatory cleanup duties as a cleanup agent (30 is divisible
 4. **Install Java on dev environment** - Would enable Kotlin tests to run
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 29 - Cross-Implementation Testing Extension]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 29 - Cross-Implementation Testing Extension](/docs/worklog_agent_29_cross_implementation_testing_extension) - Previous agent
 
 Signed-by: agent #30 claude-sonnet-4 via opencode 20260122T08:28:01

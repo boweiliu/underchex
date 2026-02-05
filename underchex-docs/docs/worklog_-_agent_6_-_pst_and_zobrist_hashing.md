@@ -80,8 +80,8 @@ Agent #6 enhanced the AI evaluation with Piece-Square Tables (PST) for nuanced p
 5. Balance testing with improved AI
 
 ## Links
-- [[Worklog - Agent 5 - TT and Quiescence Search]]
-- [[Worklog - Agent 4 - Self-Play Module]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 5 - TT and Quiescence Search](/docs/worklog_agent_5_tt_and_quiescence_search)
+- [Worklog - Agent 4 - Self-Play Module](/docs/worklog_agent_4_self_play_module)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #6 claude-sonnet-4 via opencode 20260122T03:06:11

@@ -25,11 +25,11 @@ Reviewed 10 existing nb notes, identified 5 topic clusters, and created 5 consol
 
 | # | Task | Status | Detail Doc |
 |---|------|--------|------------|
-| 1 | Create Notion API Authentication wiki | ✅ | [[worklog-47.1-detail-notion-api]] |
-| 2 | Create Latchkey Service Architecture wiki | ✅ | [[worklog-47.1-detail-latchkey]] |
-| 3 | Create Browser Credential Extraction Patterns wiki | ✅ | [[worklog-47.1-detail-credentials]] |
-| 4 | Create Playwright for Token Extraction wiki | ✅ | [[worklog-47.1-detail-playwright]] |
-| 5 | Create tmux Configuration wiki | ✅ | [[worklog-47.1-detail-tmux]] |
+| 1 | Create Notion API Authentication wiki | ✅ | [worklog-47.1-detail-notion-api](/docs/worklog_47_1_detail_notion_api) |
+| 2 | Create Latchkey Service Architecture wiki | ✅ | [worklog-47.1-detail-latchkey](/docs/worklog_47_1_detail_latchkey) |
+| 3 | Create Browser Credential Extraction Patterns wiki | ✅ | [worklog-47.1-detail-credentials](/docs/worklog_47_1_detail_credentials) |
+| 4 | Create Playwright for Token Extraction wiki | ✅ | [worklog-47.1-detail-playwright](/docs/worklog_47_1_detail_playwright) |
+| 5 | Create tmux Configuration wiki | ✅ | [worklog-47.1-detail-tmux](/docs/worklog_47_1_detail_tmux) |
 
 ## Notes Created
 - `[11]` wiki-notion-api

@@ -15,7 +15,7 @@ Created a topic-based worklog template doc (nb 93) to standardize how agents org
 User requested a better organization method for individual worklog docs. The existing worklogs had inconsistent structure and mixed topics within flat "Work Completed" sections, making it hard to follow what happened in each area.
 
 ### What Changed
-Created [[Worklog - Template - Topic-Based]] (nb 93) with:
+Created [Worklog - Template - Topic-Based](/docs/worklog_template_topic_based) with:
 - A preamble explaining when and why to use the template
 - A copyable markdown code fence containing the full template structure
 - Topic-based grouping: each topic (e.g., a language implementation) gets its own section with Changes, Files, and Commands together
@@ -67,9 +67,9 @@ This keeps all context for one topic together so readers do not have to jump bet
 ---
 
 ## Links
-- [[Worklogs Index]]
-- [[Worklog - Template - Topic-Based]]
-- [[Worklog - Agent 45 - Cleanup]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Worklog - Template - Topic-Based](/docs/worklog_template_topic_based)
+- [Worklog - Agent 45 - Cleanup](/docs/worklog_agent_45_cleanup) - Previous agent
 
 Signed-by: agent #46 claude-opus-4-5 via claude-code 20260127
 

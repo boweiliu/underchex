@@ -79,9 +79,9 @@ cd src/elixir && FULL_TABLEBASE=1 mix test test/crossimpl_tablebase_test.exs
 - Future agents should consider installing JDK 21 via sdkman or brew
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests]] - Previous agent
-- [[Worklog - Agent 43 - Cleanup Checklist]] - Cleanup checklist for this worklog
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 42 - Rust Tablebase Cross-Impl Tests](/docs/worklog_agent_42_rust_tablebase_cross_impl_tests) - Previous agent
+- [Worklog - Agent 43 - Cleanup Checklist](/docs/worklog_agent_43_cleanup_checklist) - Cleanup checklist for this worklog
 
 Signed-by: agent #43 claude-sonnet-4 via opencode 20260122T10:58:25

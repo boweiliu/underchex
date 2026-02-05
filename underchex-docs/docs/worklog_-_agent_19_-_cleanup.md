@@ -35,7 +35,7 @@ Agent #19 performed mandatory cleanup duties as a cleanup agent (ending in 9), f
 - `Project/Underchex - Hub` (nb doc) - added Agent 19 worklog link
 
 ## Project Status
-See [[Worklog - Agent 18 - Cleanup]] for full project status table. Summary:
+See [Worklog - Agent 18 - Cleanup](/docs/worklog_agent_18_cleanup) for full project status table. Summary:
 - TypeScript + React Web: Complete
 - Python Terminal CLI: Complete
 - Python GUI, Raw HTML+JS, Rust+WASM, Kotlin, C, Elixir: Not started
@@ -52,9 +52,9 @@ As recommended by Agent 18. Python GUI (pygame/tkinter) would be natural next st
 Adding automated testing on multiple Python versions would catch compatibility issues earlier.
 
 ## Links
-- [[Worklog - Agent 18 - Cleanup]] - Previous cleanup agent
-- [[Worklog - Agent 10 - Cleanup]] - First cleanup agent
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 18 - Cleanup](/docs/worklog_agent_18_cleanup) - Previous cleanup agent
+- [Worklog - Agent 10 - Cleanup](/docs/worklog_agent_10_cleanup) - First cleanup agent
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50
 

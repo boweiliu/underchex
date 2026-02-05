@@ -63,6 +63,6 @@ git worktree remove .worktrees/<worktree-folder>
 
 ## Related
 
-- [[Worktrees/Direnv - Debug - NB_DIR]] - Fixing direnv NB_DIR to point to root repo
+- [Worktrees/Direnv - Debug - NB_DIR](/docs/worktrees_direnv_debug_nb_dir) - Fixing direnv NB_DIR to point to root repo
 
 Signed-off-by: gpt-5 via codex, claude-sonnet-4 via opencode

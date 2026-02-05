@@ -68,9 +68,9 @@ Fixed duplicate H1 title in my own worklog (the `nb add` command appears to have
 Use `JAVA_HOME="$(brew --prefix openjdk@21)"` when running Gradle commands. JDK 25 is incompatible with Kotlin 2.0.0.
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 44 - Cleanup]] - Previous cleanup agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 44 - Cleanup](/docs/worklog_agent_44_cleanup) - Previous cleanup agent
 
 Signed-by: agent #45 claude-sonnet-4 via opencode 20260122T11:20:22
 

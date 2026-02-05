@@ -81,9 +81,9 @@ Test cases verify:
 3. Run full tablebase tests periodically to catch regressions
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 40 - Cleanup]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 40 - Cleanup](/docs/worklog_agent_40_cleanup) - Previous agent
 
 Signed-by: agent #41 claude-sonnet-4 via amp 20260122T10:32:31
 
