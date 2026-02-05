@@ -16,7 +16,7 @@ name: Sync Documentation
 on:
   push:
     branches:
-      - docs/mintlify
+      - docs/bowei/mintlify
       - docs/nb
   workflow_dispatch:
 
@@ -30,7 +30,7 @@ jobs:
       - name: Checkout docs/mintlify branch
         uses: actions/checkout@v4
         with:
-          ref: docs/mintlify
+          ref: docs/bowei/mintlify
           fetch-depth: 0
 
       - name: Checkout docs/nb branch to temp directory
@@ -60,4 +60,4 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add .
           git diff --staged --quiet || git commit -m "chore: sync documentation from docs/nb"
-          git push origin docs/mintlify
+          git push origin docs/bowei/mintlify
