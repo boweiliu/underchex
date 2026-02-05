@@ -1,6 +1,0 @@
-# Build artifacts
-/target/
-
-# Don't include pkg in git - it's built from source
-# Uncomment below if you want to track the built WASM package
-# /pkg/
