@@ -70,8 +70,8 @@ Created `src/elixir/test/crossimpl_test.exs` (~380 lines):
 4. **Add Kotlin cross-impl tests** - Only implementation without cross-impl tests now
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 28 - Cross-Implementation Testing]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 28 - Cross-Implementation Testing](/docs/worklog_agent_28_cross_implementation_testing) - Previous agent
 
 Signed-by: agent #29 claude-sonnet-4 via opencode 20260122T08:15:15

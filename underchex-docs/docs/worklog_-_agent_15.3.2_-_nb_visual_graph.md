@@ -22,25 +22,25 @@ Tags: #worklog #nb #visualization #nb-visual #graph #d3 #ux
 - Add a meta-doc on worklog details expectations, including why tagging is a relevant human ask.
 
 ## Worklog Details
-- [[Worklog Details - NB Visual - Graph Builder]]
-- [[Worklog Details - NB Visual - Inline Graph JSON]]
-- [[Worklog Details - NB Visual - uv Run Docs]]
-- [[Worklog Details - NB Visual - Stable Layout and Zoom]]
-- [[Worklog Details - NB Visual - Visibility and Spacing]]
-- [[Worklog Details - NB Visual - Labels and Hover]]
-- [[Worklog Details - NB Visual - Invisible Hitbox]]
-- [[Worklog Details - NB Visual - Constant Node Size]]
-- [[Worklog Details - NB Visual - Graph JSON Format]]
-- [[Worklog Details - NB Visual - Tagging Rationale]]
-- [[NB - Guide - Tagging]]
-- [[NB - Guide - Worklog Details Expectations]]
+- [Worklog Details - NB Visual - Graph Builder](/docs/worklog_details_nb_visual_graph_builder)
+- [Worklog Details - NB Visual - Inline Graph JSON](/docs/worklog_details_nb_visual_inline_graph_json)
+- [Worklog Details - NB Visual - uv Run Docs](/docs/worklog_details_nb_visual_uv_run_docs)
+- [Worklog Details - NB Visual - Stable Layout and Zoom](/docs/worklog_details_nb_visual_stable_layout_and_zoom)
+- [Worklog Details - NB Visual - Visibility and Spacing](/docs/worklog_details_nb_visual_visibility_and_spacing)
+- [Worklog Details - NB Visual - Labels and Hover](/docs/worklog_details_nb_visual_labels_and_hover)
+- [Worklog Details - NB Visual - Invisible Hitbox](/docs/worklog_details_nb_visual_invisible_hitbox)
+- [Worklog Details - NB Visual - Constant Node Size](/docs/worklog_details_nb_visual_constant_node_size)
+- [Worklog Details - NB Visual - Graph JSON Format](/docs/worklog_details_nb_visual_graph_json_format)
+- [Worklog Details - NB Visual - Tagging Rationale](/docs/worklog_details_nb_visual_tagging_rationale)
+- [NB - Guide - Tagging](/docs/nb_guide_tagging)
+- [NB - Guide - Worklog Details Expectations](/docs/nb_guide_worklog_details_expectations)
 
 ## Investigation
 - Ran `nb search` before codebase search to confirm prior nb guidance and locate worklog conventions.
 - Located nb notebook path via `nb notebooks --names --paths` and repo structure to decide output location.
 
 ## Planning
-- Build a standalone generator in `nb-visual/` to parse nb markdown, extract `[[links]]`, emit `graph.json`, and render `index.html`.
+- Build a standalone generator in `nb-visual/` to parse nb markdown, extract `[links](/docs/links)`, emit `graph.json`, and render `index.html`.
 - Use inline graph data in HTML to avoid CORS, then iterate on D3 layout/UX (static simulation, viewport fit, zoom/pan, labels).
 
 ## Implementation

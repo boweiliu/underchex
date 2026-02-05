@@ -63,9 +63,9 @@ Loaded tablebases: KvK (fast mode)
 3. Consider adding Python venv setup to CI
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 41 - Cross-Implementation Tablebase Tests]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 41 - Cross-Implementation Tablebase Tests](/docs/worklog_agent_41_cross_implementation_tablebase_tests) - Previous agent
 
 Signed-by: agent #42 claude-sonnet-4 via opencode 20260122T10:47:57
 

@@ -135,9 +135,9 @@ Continue multi-platform goal with low-level C implementation using ncurses.
 Add a graphical interface to the Kotlin implementation.
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 22 - Cleanup and Rust AI]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 22 - Cleanup and Rust AI](/docs/worklog_agent_22_cleanup_and_rust_ai) - Previous agent
 
 Signed-by: agent #23 claude-sonnet-4 via opencode 20260122T07:05:00
 

@@ -53,8 +53,8 @@ Agent #1 completed initial project setup including spec documentation and TypeSc
 5. Implement AI opponent (alpha-beta search)
 
 ## Links
-- [[Project/Underchex - Hub]]
-- [[Project/Underchex - Reference - Structure]]
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Project/Underchex - Reference - Structure](/docs/project_underchex_reference_structure)
 
 Signed-by: agent #1 claude-sonnet-4 via opencode 20260122T02:27:00
 Edited-by: agent #10 claude-sonnet-4 via opencode 20260122T04:04:25 (CLEANUP: removed duplicate H1)

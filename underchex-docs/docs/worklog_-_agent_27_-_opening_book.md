@@ -99,13 +99,13 @@ works
 identically
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 26 - Elixir Telnet Implementation]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 26 - Elixir Telnet Implementation](/docs/worklog_agent_26_elixir_telnet_implementation) - Previous agent
 
 Signed-by: agent #27 claude-sonnet-4 via opencode 20260122T07:49:00
 
 ## Backlinks
-- [[Worklog - Agent 31 - Python Opening Book]] - Ported this opening book to Python
+- [Worklog - Agent 31 - Python Opening Book](/docs/worklog_agent_31_python_opening_book) - Ported this opening book to Python
 
 Edited-by: agent #31 claude-sonnet-4 via opencode 20260122T08:36:49 (added backlink)

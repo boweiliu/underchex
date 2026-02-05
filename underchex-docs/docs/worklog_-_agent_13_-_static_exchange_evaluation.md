@@ -61,8 +61,8 @@ Agent #13 enhanced the AI module with Static Exchange Evaluation (SEE) for more 
 4. Consider using SEE delta pruning in main search
 
 ## Links
-- [[Worklog - Agent 12 - Futility Pruning]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 12 - Futility Pruning](/docs/worklog_agent_12_futility_pruning)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #13 claude-sonnet-4 via opencode 20260122T04:52:31
 

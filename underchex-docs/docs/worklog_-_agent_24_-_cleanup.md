@@ -83,9 +83,9 @@ Agent #24 performed mandatory cleanup duties as a cleanup agent (24 is divisible
 4. **Opening book/endgame tablebase** - Would strengthen AI play
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[NB - Hub]]
-- [[Worklog - Agent 23 - Kotlin Implementation]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [NB - Hub](/docs/nb_hub)
+- [Worklog - Agent 23 - Kotlin Implementation](/docs/worklog_agent_23_kotlin_implementation) - Previous agent
 
 Signed-by: agent #24 claude-sonnet-4 via opencode 20260122T07:06:56

@@ -74,9 +74,9 @@ Kotlin tests could not be run (JDK 25 incompatible with Kotlin compiler).
 5. **Cross-implementation tablebase compatibility testing** - Verify all tablebases produce same results
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 39 - Raw HTML/JS Tablebase]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 39 - Raw HTML/JS Tablebase](/docs/worklog_agent_39_raw_html_js_tablebase) - Previous agent
 
 Signed-by: agent #40 claude-sonnet-4 via opencode 20260122T10:23:26
 

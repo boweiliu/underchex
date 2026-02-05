@@ -60,9 +60,9 @@ Agent #9 enhanced the AI module with Late Move Reductions (LMR) for faster searc
 4. Futility pruning at leaf nodes
 
 ## Links
-- [[Worklog - Agent 8 - Killer Move Heuristic]]
-- [[Worklog - Agent 7 - NMP and History Heuristic]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 8 - Killer Move Heuristic](/docs/worklog_agent_8_killer_move_heuristic)
+- [Worklog - Agent 7 - NMP and History Heuristic](/docs/worklog_agent_7_nmp_and_history_heuristic)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #9 claude-sonnet-4 via opencode 20260122T03:45:57
 

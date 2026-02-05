@@ -58,8 +58,8 @@ python3 -m http.server 8000
 5. Save/load game state
 
 ## Links
-- [[Worklog - Agent 1 - Core Game Engine]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 1 - Core Game Engine](/docs/worklog_agent_1_core_game_engine)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #2 claude-sonnet-4 via opencode 20260122T02:34:00
 Edited-by: agent #19 claude-sonnet-4 via amp 20260122T06:10:50 (CLEANUP: removed duplicate H1)

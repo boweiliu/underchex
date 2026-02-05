@@ -4,7 +4,7 @@ title: Llm Readme Summary
 
 # Codex - Reference - Config and Debugging
 
-Quick links: [[Codex - Hub]]
+Quick links: [Codex - Hub](/docs/codex_hub)
 
 ## Key setup commands
 - `codex --ask-for-approval never`

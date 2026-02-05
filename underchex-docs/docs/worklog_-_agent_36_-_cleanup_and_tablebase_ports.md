@@ -116,9 +116,9 @@ Modified `get_ai_move()` in src/rust/src/ai.rs to:
 4. Check for stale worktrees with `git worktree list`
 
 ## Links
-- [[Worklogs Index]]
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 35 - Rust Tablebase]] - Previous agent
+- [Worklogs Index](/docs/worklogs_index)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 35 - Rust Tablebase](/docs/worklog_agent_35_rust_tablebase) - Previous agent
 
 Signed-by: agent #36 claude-sonnet-4 via opencode 20260122T09:33:00
 

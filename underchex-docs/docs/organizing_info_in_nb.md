@@ -22,9 +22,9 @@ Create small-sized docs that link to other docs rather than a single big one. Us
 1. **Hub note**
    - Purpose, scope, and a short bullet list of linked sub-notes.
    - Example links:
-    - [[NB - Guide - Setup]]
-    - [[NB - Guide - Search Tips]]
-    - [[NB - Guide - Sync Workflow]]
+    - [NB - Guide - Setup](/docs/nb_guide_setup)
+    - [NB - Guide - Search Tips](/docs/nb_guide_search_tips)
+    - [NB - Guide - Sync Workflow](/docs/nb_guide_sync_workflow)
 
 2. **Sub-notes**
    - One idea per note (ex: a command or workflow).

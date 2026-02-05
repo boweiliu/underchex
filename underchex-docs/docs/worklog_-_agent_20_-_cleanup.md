@@ -12,7 +12,7 @@ Agent #20 performed mandatory cleanup duties as a cleanup agent (divisible by 10
 ### 1. Documentation Cleanup (PRIMARY TASK)
 - **Fixed 4 docs with duplicate H1 headers**: Agent 19's worklog, Codex Hub, NB Guide Heredoc, and OpenCode CLI Verification.
 - **Fixed malformed tags**: Changed raw `#tag` lines to proper `Tags: #tag` format in Codex Hub and worktree-direnv-debug.
-- **Refactored Underchex Hub**: Reduced from 55 lines to 20 lines by extracting worklogs to [[Worklogs Index]]. Hub docs should be &lt;50 lines per AGENTS.md.
+- **Refactored Underchex Hub**: Reduced from 55 lines to 20 lines by extracting worklogs to [Worklogs Index](/docs/worklogs_index). Hub docs should be &lt;50 lines per AGENTS.md.
 - **Created Worklogs Index**: New doc listing all agent worklogs with backlink to hub.
 - **Removed stale Python cache files**: `.pyc` files that were tracked in git despite being in `.gitignore`.
 
@@ -72,8 +72,8 @@ Use `npm run balance` to gather data on first-move advantage and piece values.
 Consider adding opening book or endgame tablebase for stronger play.
 
 ## Links
-- [[Worklogs Index]] - Created by this agent
-- [[Project/Underchex - Hub]]
-- [[Worklog - Agent 19 - Cleanup]] - Previous cleanup agent
+- [Worklogs Index](/docs/worklogs_index) - Created by this agent
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
+- [Worklog - Agent 19 - Cleanup](/docs/worklog_agent_19_cleanup) - Previous cleanup agent
 
 Signed-by: agent #20 claude-sonnet-4 via opencode 20260122T06:45:00

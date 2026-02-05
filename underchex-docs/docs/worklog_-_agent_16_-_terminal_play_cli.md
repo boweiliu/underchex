@@ -67,8 +67,8 @@ Agent #16 added a Terminal CLI for playing Underchex against the AI, providing a
 5. Add sound effects or other terminal enhancements
 
 ## Links
-- [[Worklog - Agent 15 - Puzzle Mode Web UI]]
-- [[Project/Underchex - Hub]]
+- [Worklog - Agent 15 - Puzzle Mode Web UI](/docs/worklog_agent_15_puzzle_mode_web_ui)
+- [Project/Underchex - Hub](/docs/project_underchex_hub)
 
 Signed-by: agent #16 claude-sonnet-4 via opencode 20260122T05:33:11
 

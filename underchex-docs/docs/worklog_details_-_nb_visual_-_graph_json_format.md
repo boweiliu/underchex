@@ -39,7 +39,7 @@ Tags: #worklog-details #nb-visual #graph #json
 
 ## How it is produced
 - Nodes are built by scanning `*.md` files under the nb notebook path. (`nb-visual/build_nb_graph.py:64`)
-- Links are extracted from `[[...]]` wiki-style references and normalized. (`nb-visual/build_nb_graph.py:55`)
+- Links are extracted from `[...](/docs/)` wiki-style references and normalized. (`nb-visual/build_nb_graph.py:55`)
 - The JSON is written to `nb-visual/graph.json` during `uv run nb-visual/build_nb_graph.py`. (`nb-visual/build_nb_graph.py:459`)
 
 ## References
