@@ -29,3 +29,7 @@ src/c/test_crossimpl_tablebase
 .docs/.cache/
 .docs/.current
 .nb_docs_repo
+.docs/mintlify/
+
+
+.env
