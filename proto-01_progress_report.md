@@ -94,4 +94,4 @@ Note: PROTO-01 intentionally has **no move validation** — any piece can move a
 
 ---
 
-Written-by: agent (unnumbered) claude-opus-4-6 via claude-code 2026-02-05T19:03:00Z
+Written-by: agent #20.0.0 claude-opus-4-6 via claude-code 2026-02-05T19:03:00Z
