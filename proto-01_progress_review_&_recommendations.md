@@ -83,6 +83,84 @@ All 61 tests pass. Dev server on port 5888.
 
 ---
 
+## Test Status & Analysis
+
+### Testing infrastructure
+
+- **Framework**: Vitest (zero-config with Vite, native TS)
+- **Philosophy doc**: nb 157 — test behavior not implementation, progressive complexity, concrete hand-worked values, hierarchical naming, happy paths first for prototypes
+- **Test plan**: nb 155 — detailed categories for hex.ts, co-located test files
+
+### What's tested now
+
+**`hex.test.ts` — 47 tests across 8 groups**
+
+| Group | Tests | Verdict | Notes |
+|-------|-------|---------|-------|
+| `creation` | 6 | Correct | Even/odd row conversion, negatives. Values hand-worked. |
+| `hexFromDoubled` | 1 | Correct | Passthrough constructor. |
+| `offsetCol` | 5 | Correct | Includes roundtrip property (`offsetCol(hex(c,r)) === c`). |
+| `neighbors` | 5 | Correct | Count, order, uniqueness, distance-1 invariant. Concrete values verified by hand. |
+| `neighbor` | 1 | Correct | Cross-checks `neighbor(dir)` against `neighbors()` array. |
+| `hexEquals` | 5 | Correct | Reflexive, equivalent, not-equal, symmetric. |
+| `hexKey` | 4 | Correct | String format, uniqueness, negatives. |
+| `hexDistance` | 11 | Correct | Progressive: same→adjacent→multi-step. Includes the bug-finding test (origin→(3,2)=4). Symmetry property. |
+| `hexToString` | 3 | Correct | Format check, negatives, origin. |
+| `DIRECTION_OFFSETS` | 4 | Correct | Count, E/W horizontal, E/W magnitude, diagonal offsets. |
+
+**Assessment**: Well-structured, follows the philosophy doc closely. The hand-worked concrete values caught a real bug in `hexDistance` (nb 169). **If we keep odd-r, all 47 tests are correct and complete. If we switch to odd-q, all 47 need rewriting** — directions change from E/W to N/S, `dcol` becomes `drow`, every concrete value changes.
+
+**`types.test.ts` — 14 tests across 5 groups**
+
+| Group | Tests | Verdict | Notes |
+|-------|-------|---------|-------|
+| `Player` | 2 | Correct | Enum values, oppositePlayer. |
+| `PieceType` | 1 | Correct | All 6 enum values. |
+| `piece constructor` | 2 | Correct | With and without variant. |
+| `convenience constructors` | 5 | Correct | white/black, variant required for knight/lance. |
+| `pieceSymbol` | 2 | Correct | All 6 types × 2 players. |
+| `pieceName` | 2 | Correct | With/without variant suffix. |
+
+**Assessment**: Thorough for a data-only module. Orientation-independent — these survive any hex refactor unchanged.
+
+### What's planned but not written
+
+**Position parser tests** (nb 188) — sketched as pseudocode:
+
+```typescript
+parsePosition(". . .\n . . .\n. . .") → []           // empty board
+parsePosition(". . .\n . K .\n. . .") → [{hex, piece}] // single piece
+// Also planned: both players, variants (Na, Lb), full row, board size inference
+```
+
+These are just ideas, not implemented. They depend on open decisions (board size, row orientation, variant encoding format).
+
+**Board data structure tests** — not planned anywhere. Would need tests for:
+- Creating empty board
+- Placing/removing pieces
+- Querying what's at a hex
+- Board bounds checking
+
+**Rendering tests** — none exist, none planned. Rendering is visual/canvas-based, hard to unit test. The manual "click a hex and see it highlight" is the current verification.
+
+### Orientation impact on tests
+
+| If we... | hex.test.ts (47) | types.test.ts (14) | Future tests |
+|----------|------------------|---------------------|--------------|
+| **Keep odd-r** | No changes needed | No changes | Write for odd-r coords |
+| **Switch to odd-q** | Rewrite all 47 | No changes | Write for odd-q coords |
+
+This is another reason to keep odd-r: 47 correct, hand-verified tests are an asset. Rewriting them means re-verifying every concrete value by hand.
+
+### Test gaps (not urgent for prototype)
+
+- No tests for `render.ts` coordinate conversion (`hexToPixel`, `pixelToHex`) — these are the most bug-prone functions but hard to test without visual verification
+- No integration test for "click on hex X, see it selected" loop
+- No tests for board bounds (which hexes are valid for a 7×7 board)
+- No edge case for `hex()` with non-integer inputs (not a real risk in TS)
+
+---
+
 ## Process Notes from Doc Review
 
 Things past agents learned the hard way (from retros and worklogs):
@@ -95,3 +173,4 @@ Things past agents learned the hard way (from retros and worklogs):
 ---
 
 Written-by: agent #20.0.0 claude-opus-4-6 via claude-code 2026-02-05T19:15:00Z
+Edited-by: agent #20.0.0 claude-opus-4-6 via claude-code 2026-02-05T19:20:00Z (added test status & analysis section)
